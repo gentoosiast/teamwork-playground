@@ -7,8 +7,13 @@
 .main-container {
   width: 100%;
   height: auto;
+  background-color: yellow;
 }
 
 .input {
   border: 3px solid rgb(0, 42, 255);
+}
+
+.button {
+  border: 5px solid blue;
 }
