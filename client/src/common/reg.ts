@@ -1,22 +1,22 @@
 import {Control} from "./control";
 
 
-class Button extends Element {
-  constructor (parent, className, onClick) {
-      super(parent, 'button', className, content);
-      this.elem.onclick = onClick;
+class Button extends Control<HTMLButtonElement> {
+  constructor (parent: HTMLElement, className: string, onClick?: ()=>void) {
+      super(parent, 'button', className);
+      // this.el.onclick = onClick;
   }
 }
 
 
 class RegForm extends Control<HTMLInputElement> {
-  constructor(parent: HTMLElement, tag: HTMLFormElement, className: string = '') {
-    super(parent, tag, className);
+  constructor(parent: HTMLElement, className: string = '') {
+    super(parent, 'input', className);
 
-    const nameForm = new Control(this.elem, 'name');
-    const ageForm = new Control(this.elem, 'age');
+    const nameForm = new Control(this.el, 'name');
+    const ageForm = new Control(this.el, 'age');
 
-    const btn = new Button(this.elem, 'button')
+    const btn = new Button(this.el, 'btn')
 
   }
 }
