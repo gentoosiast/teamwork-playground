@@ -7,7 +7,7 @@
 .main-container {
   width: 100%;
   height: auto;
-  background-color: yellow;
+  background-color: rgb(230, 236, 237);
 }
 
 .input {
@@ -17,3 +17,10 @@
 .button {
   border: 5px solid blue;
 }
+
+.reg-form {
+  display: flex;
+  flex-direction: column;
+  align-items:flex-start;
+}
+
