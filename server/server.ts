@@ -1,7 +1,7 @@
 import http from "http";
 
 const server = http.createServer((req, res) => {
-  console.log(req.url);
+  console.log((new Date()) + ' Received request for ' + req.url);
   // /register?name=JohnDoe&age=42
   const reqData = req.url?.split("?");
   if (!reqData) {
@@ -13,7 +13,9 @@ const server = http.createServer((req, res) => {
     return { key, val };
   });
   console.log(endpoint, queryParams);
-  res.end("dasdsada");
+  res.end("recieved");
 });
 
-server.listen(3000);
+server.listen(3000, () => {
+  console.log((new Date()) + ' Server is listening port 3000');
+});
