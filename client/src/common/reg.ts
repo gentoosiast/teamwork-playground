@@ -1,31 +1,39 @@
 import {Control} from "./control";
 
 
-class Button extends Control<HTMLButtonElement> {
-  constructor (parent: HTMLElement, className: string, content: string, onClick?: ()=>void) {
-      super(parent, 'button', className, content);
-      this.el.onclick = onClick;
-  }
-}
+// class Button extends Control<HTMLButtonElement> {
+//   constructor (parent: HTMLElement, className: string, content: string, onClick?: ()=>void) {
+//       super(parent, 'button', className, content);
+//       this.el.onclick = onClick;
+//   }
+// }
 
 
-export class RegForm extends Control<HTMLInputElement> {
+export class RegForm extends Control<HTMLFormElement> {
   constructor(parent: HTMLElement) {
-    super(parent, 'div', 'reg-form', '');
+    super(parent, 'form', 'reg-form', '');
 
-    const email = new Control<HTMLInputElement>(this.el, "input", 'input-email');
+    const fieldSet = new Control<HTMLFieldSetElement>(this.el, "fieldset", 'fieldset');
+
+    const email = new Control<HTMLInputElement>(fieldSet.el, "input", 'input-email');
     email.el.type = 'email';
     email.el.name = 'email';
-    const labelEmail = new Control<HTMLLabelElement>(this.el, 'label', 'input-label', 'Your email');
+    email.el.id = 'email';
+    email.el.required = true;
+    const labelEmail = new Control<HTMLLabelElement>(fieldSet.el, 'label', 'input-label', 'Your email');
     labelEmail.el.htmlFor = 'email';
 
-    const age = new Control<HTMLInputElement>(this.el, "input", 'input-age');
+    const age = new Control<HTMLInputElement>(fieldSet.el, "input", 'input-age');
     age.el.type = 'number';
     age.el.name = 'age';
-    const labelage = new Control<HTMLLabelElement>(this.el, 'label', 'input-label', 'Your age');
+    age.el.id = 'age';
+    const labelage = new Control<HTMLLabelElement>(fieldSet.el, 'label', 'input-label', 'Your age');
     labelage.el.htmlFor = 'age';
 
-    const btn = new Button(this.el, 'form-btn', 'Submit')
-
+    const btn = new Control<HTMLInputElement>(fieldSet.el, "input", 'form-btn', 'Submit');
+    btn.el.type = 'submit';
+    this.el.action = '//localhost:3000'
+    this.el.enctype = 'application/x-www-form-urlencoded'
+    this.el.method = 'GET';
   }
 }
