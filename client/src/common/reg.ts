@@ -32,8 +32,8 @@ export class RegForm extends Control<HTMLFormElement> {
 
     const btn = new Control<HTMLInputElement>(fieldSet.el, "input", 'form-btn', 'Submit');
     btn.el.type = 'submit';
-    this.el.action = '//localhost:3000'
-    this.el.enctype = 'application/x-www-form-urlencoded'
+    this.el.action = '//localhost:3000';
+    this.el.enctype = 'application/x-www-form-urlencoded';
     this.el.method = 'GET';
   }
 }
