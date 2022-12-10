@@ -98,7 +98,7 @@ export function RequestServer() {
   return (
     <div>
       <span>{response}</span>
-      <input value={inputMsg} onChange={(e) => {
+      <input className="bg-blue-600 placeholder-sky-200 rounded-md placeholder:text-center m-1 py-3 px-2 placeholder:text-2xl" value={inputMsg} onChange={(e) => {
         setInputMsg(e.target.value)
       }} type="text" placeholder="something" />
       <button

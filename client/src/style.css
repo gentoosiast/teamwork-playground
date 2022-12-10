@@ -1,3 +1,14 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+body {
+    @apply bg-blue-500 text-white tracking-wide m-5 flex flex-col
+}
+
+@layer common {
+    input {
+        outline: 0 !important;
+        border: 0 !important;
+    }
+}
