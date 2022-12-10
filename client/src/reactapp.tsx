@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 
+
 interface IAppProps {
   onClick: () => void;
   text: string;
@@ -21,7 +22,7 @@ export function App(props: IAppProps) {
       >
         click me {props.text}
       </button>
-      <CheckBox onClick={() => {}} text="checkbox string" />
+      <CheckBox onClick={() => { }} text="checkbox string" />
       <RequestServer></RequestServer>
       <RequestServer1></RequestServer1>
     </div>
@@ -47,14 +48,33 @@ export function CheckBox(props: ICheckBoxProps) {
 
 export function RequestServer() {
   const [response, setResponse] = useState("");
+  const [socket, setSocket] = useState<WebSocket>(null);
+
+  useEffect(() => {
+    const websocket = new WebSocket('ws://localhost:3000')
+    websocket.onmessage = (msg) => {
+      console.log(msg)
+    }
+    websocket.onopen = () => {
+      console.log('connected')
+      setSocket(websocket)
+      websocket.send('hello from react')
+    }
+    return () => {
+      websocket.close()
+    }
+  }, [])
+
   return (
     <div>
       <span>{response}</span>
+      <input type="text" placeholder="something" />
       <button
         onClick={() => {
-          fetch("http://localhost:3000")
-            .then((data) => data.text())
-            .then((data) => setResponse(data));
+          socket.send('click')
+          // fetch("http://localhost:3000")
+          //   .then((data) => data.text())
+          //   .then((data) => setResponse(data));
         }}
       >
         New button

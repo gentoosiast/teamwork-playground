@@ -37,12 +37,22 @@ server.listen(3000, () => {
 });
 
 const websocket = new WebSocket.server({ httpServer: server })
+
+const clients: Array<WebSocket.connection> = []
 websocket.on('request', (e) => {
   const client = e.accept()
+  clients.push(client)
   console.log('connect');
 
   client.on('message', (msg) => {
     console.log(msg)
+    client.sendUTF('msg from ws')
+    clients.forEach(c => {
+      c.sendUTF("something")
+    })
+  })
+  client.on('close', () => {
+    clients.splice(clients.indexOf(client), 1)
   })
 })
 
