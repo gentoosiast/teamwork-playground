@@ -1,6 +1,8 @@
 import http from "http";
+import { IMessage } from "../interface/IMessage"
 import * as WebSocket from "websocket";
 import { DataBase } from "./src/database/db";
+import { json } from "body-parser";
 const db = new DataBase();
 
 const server = http.createServer((req, res) => {
@@ -36,8 +38,9 @@ server.listen(3000, () => {
   console.log((new Date()) + ' Server is listening port 3000');
 });
 
-const websocket = new WebSocket.server({ httpServer: server })
 
+const websocket = new WebSocket.server({ httpServer: server })
+const messages: Array<string> = []
 const clients: Array<WebSocket.connection> = []
 websocket.on('request', (e) => {
   const client = e.accept()
@@ -47,10 +50,33 @@ websocket.on('request', (e) => {
   client.on('message', (msg) => {
     console.log(msg)
     if (msg.type != 'utf8') return;
-    // client.sendUTF('msg from ws')
-    clients.forEach(c => {
-      c.sendUTF(msg.utf8Data)
-    })
+    const parsedMsg: IMessage = JSON.parse(msg.utf8Data)
+    switch (parsedMsg.type) {
+      case 'chat_message': {
+        messages.push(parsedMsg.data)
+        const chatObj: IMessage = {
+          type: "chat_message",
+          data: parsedMsg.data,
+          id: 0
+        }
+        clients.forEach(c => {
+          c.sendUTF(JSON.stringify(chatObj))
+        })
+        break;
+      }
+      case 'chat_history': {
+        const chatObj: IMessage = {
+          type: "chat_history",
+          data: JSON.stringify(messages),
+          id: 0
+        }
+        client.sendUTF(JSON.stringify(chatObj))
+        break;
+      }
+      default:
+        break;
+    }
+
   })
   client.on('close', () => {
     clients.splice(clients.indexOf(client), 1)

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-
+import { IMessage } from "../../interface/IMessage"
 
 interface IAppProps {
   onClick: () => void;
@@ -55,15 +55,40 @@ export function RequestServer() {
   useEffect(() => {
     const websocket = new WebSocket('ws://localhost:3000')
     websocket.onmessage = (msg) => {
+      const parsedMsg: IMessage = JSON.parse(msg.data)
+      console.log(parsedMsg.type);
+
+      switch (parsedMsg.type) {
+        case 'chat_message': {
+          console.log(parsedMsg.data)
+          setMessages((last) => {
+            return [parsedMsg.data, ...last]
+          })
+          break;
+        }
+        case 'chat_history': {
+          const msgList: Array<string> = JSON.parse(parsedMsg.data)
+          console.log(msgList)
+          setMessages(msgList.reverse())
+          break;
+        }
+        default:
+          break;
+      }
       console.log(msg)
-      setMessages((last) => {
-        return [msg.data, ...last]
-      })
+      // setMessages((last) => {
+      //   return [msg.data, ...last]
+      // })
     }
     websocket.onopen = () => {
       console.log('connected')
       setSocket(websocket)
-      websocket.send('hello from react')
+      const request: IMessage = {
+        type: 'chat_history',
+        data: '',
+        id: 0
+      }
+      websocket.send(JSON.stringify(request))
     }
     return () => {
       websocket.close()
@@ -78,7 +103,13 @@ export function RequestServer() {
       }} type="text" placeholder="something" />
       <button
         onClick={() => {
-          socket.send(inputMsg)
+          const request: IMessage = {
+            type: 'chat_message',
+            data: inputMsg,
+            id: 0
+          }
+          socket.send(JSON.stringify(request))
+
           setInputMsg('')
 
           // fetch("http://localhost:3000")
