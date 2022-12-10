@@ -46,9 +46,10 @@ websocket.on('request', (e) => {
 
   client.on('message', (msg) => {
     console.log(msg)
-    client.sendUTF('msg from ws')
+    if (msg.type != 'utf8') return;
+    // client.sendUTF('msg from ws')
     clients.forEach(c => {
-      c.sendUTF("something")
+      c.sendUTF(msg.utf8Data)
     })
   })
   client.on('close', () => {

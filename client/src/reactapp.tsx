@@ -49,11 +49,16 @@ export function CheckBox(props: ICheckBoxProps) {
 export function RequestServer() {
   const [response, setResponse] = useState("");
   const [socket, setSocket] = useState<WebSocket>(null);
+  const [inputMsg, setInputMsg] = useState('');
+  const [messages, setMessages] = useState<Array<string>>([]);
 
   useEffect(() => {
     const websocket = new WebSocket('ws://localhost:3000')
     websocket.onmessage = (msg) => {
       console.log(msg)
+      setMessages((last) => {
+        return [msg.data, ...last]
+      })
     }
     websocket.onopen = () => {
       console.log('connected')
@@ -68,10 +73,14 @@ export function RequestServer() {
   return (
     <div>
       <span>{response}</span>
-      <input type="text" placeholder="something" />
+      <input value={inputMsg} onChange={(e) => {
+        setInputMsg(e.target.value)
+      }} type="text" placeholder="something" />
       <button
         onClick={() => {
-          socket.send('click')
+          socket.send(inputMsg)
+          setInputMsg('')
+
           // fetch("http://localhost:3000")
           //   .then((data) => data.text())
           //   .then((data) => setResponse(data));
@@ -79,6 +88,13 @@ export function RequestServer() {
       >
         New button
       </button>
+      <div>
+        {messages.map(msg => {
+          return (<div>
+            {msg}
+          </div>)
+        })}
+      </div>
     </div>
   );
 }
