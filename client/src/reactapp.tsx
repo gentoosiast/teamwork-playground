@@ -58,7 +58,7 @@ export function RequestServer() {
   const [messages, setMessages] = useState<Array<string>>([]);
 
   useEffect(() => {
-    const webSocket = new SocketModel({setMessages, setEnemyField});
+    const webSocket = new SocketModel({setMessages, setEnemyField, setOurField});
     setSocket(webSocket);
     return () => {
       webSocket.close();
@@ -66,11 +66,12 @@ export function RequestServer() {
   }, [])
 
   const [enemyField, setEnemyField] = useState<Array<Array<Cell>>>(emptyState());
+  const [ourField, setOurField] = useState<Array<Array<Cell>>>(emptyState());
   return (
     <div>
       <GameField onAttack={(x, y) => {
         socket.attack(x, y);
-      }} enemyField={enemyField}></GameField>
+      }} enemyField={enemyField} ourField={ourField}></GameField>
       <span>{response}</span>
       <input className="bg-sky-400 placeholder-white text-center placeholder:opacity-50 m-5 p-2 rounded-md" value={inputMsg} onChange={(e) => {
         setInputMsg(e.target.value)

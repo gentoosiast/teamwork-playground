@@ -10,9 +10,14 @@ interface IEnemyFieldProps {
   field: Array<Array<Cell>>;
 }
 
+interface IOurFieldProps {
+  field: Array<Array<Cell>>;
+}
+
 interface IGameFieldProps {
   onAttack: (x: number, y: number) => void;
   enemyField: Array<Array<Cell>>;
+  ourField: Array<Array<Cell>>;
 }
 
 export function EnemyField(props: IEnemyFieldProps) {
@@ -35,11 +40,10 @@ export function EnemyField(props: IEnemyFieldProps) {
   );
 }
 
-export function OurField() {
-  const [ourField, setOurField] = useState<FieldState>(emptyState());
+export function OurField(props: IOurFieldProps) {
   return (
     <div className="field">
-      {ourField.map((row) => {
+      {props.field.map((row) => {
         return (
           <div className="row">
             {
@@ -59,7 +63,7 @@ export function OurField() {
 export function GameField(props: IGameFieldProps) {
   return (
     <div>
-      <OurField></OurField>
+      <OurField field = {props.ourField}></OurField>
       <EnemyField onAttack={props.onAttack} field={props.enemyField}></EnemyField>
     </div>
   );

@@ -3,7 +3,7 @@ import { IMessage } from "../../interface/IMessage";
 
 export class SocketModel {
   webSocket: WebSocket;
-  constructor({setMessages, setEnemyField}) {
+  constructor({setMessages, setEnemyField, setOurField}) {
     const websocket = new WebSocket('ws://localhost:3000')
     this.webSocket = websocket;
     websocket.onmessage = (msg) => {
@@ -26,9 +26,10 @@ export class SocketModel {
           break;
         }
         case 'attack': {
-          const position: IVector = JSON.parse(parsedMsg.data)
+          const {position, currentPlayer}: IVector = JSON.parse(parsedMsg.data)
           console.log(position)
-          setEnemyField((last) => {
+          const setField = [setEnemyField, setOurField][currentPlayer]
+          setField((last) => {
             return last.map((row, y) => {
               return row.map((cell, x) => {
                 return position.x === x && position.y === y ? Cell.Unavailable : cell;
