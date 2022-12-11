@@ -1,38 +1,24 @@
 import './game.css';
 import React, { useEffect, useState } from "react";
-
-const enum Cell {
-  Empty,
-  Unavailable,
-}
+import { Cell } from './../../interface/IField'
+import { emptyState } from './fieldGenerator';
 
 type FieldState = Cell[][];
 
 interface IEnemyFieldProps {
   onAttack: (x: number, y: number) => void;
+  field: Array<Array<Cell>>;
 }
 
 interface IGameFieldProps {
   onAttack: (x: number, y: number) => void;
-}
-
-function emptyState() {
-  const initialState: Cell[][] = [];
-  for (let i = 0; i < 9; i += 1) {
-    const row: Cell[] = [];
-    for (let j = 0; j < 9; j += 1) {
-      row.push(Cell.Empty);
-    }
-    initialState.push(row);
-  }
-  return initialState;
+  enemyField: Array<Array<Cell>>;
 }
 
 export function EnemyField(props: IEnemyFieldProps) {
-  const [enemyField, setEnemyField] = useState<FieldState>(emptyState());
   return (
     <div className="field">
-      {enemyField.map((row, y) => {
+      {props.field.map((row, y) => {
         return (
         <div className="row">
           {row.map((cell, x) => {
@@ -73,7 +59,7 @@ export function GameField(props: IGameFieldProps) {
   return (
     <div>
       <OurField></OurField>
-      <EnemyField onAttack={props.onAttack}></EnemyField>
+      <EnemyField onAttack={props.onAttack} field={props.enemyField}></EnemyField>
     </div>
   );
 }

@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { IMessage } from "../../interface/IMessage"
+import { IVector } from '../../interface/IVector';
 import { GameField } from './game';
+import { emptyState } from './fieldGenerator';
+import { Cell } from "../../interface/IField";
 
 interface IAppProps {
   onClick: () => void;
@@ -73,6 +76,16 @@ export function RequestServer() {
           setMessages(msgList.reverse())
           break;
         }
+        case 'attack': {
+          const position: IVector = JSON.parse(parsedMsg.data)
+          console.log(position)
+          setEnemyField((last) => { return last.map((row, y) => {
+            return row.map((cell, x) => {
+              return position.x === x && position.y === y ? Cell.Unavailable : cell;
+            })
+          })})
+          break;
+        }
         default:
           break;
       }
@@ -96,16 +109,17 @@ export function RequestServer() {
     }
   }, [])
 
+  const [enemyField, setEnemyField] = useState<Array<Array<Cell>>>(emptyState());
   return (
     <div>
       <GameField onAttack={(x, y) => {
         const request: IMessage = {
-            type: 'chat_message',
-            data: `${x}, ${y}`,
+            type: 'attack',
+            data: JSON.stringify({x, y}),
             id: 0
           }
           socket.send(JSON.stringify(request))
-      }}></GameField>
+      }} enemyField={enemyField}></GameField>
       <span>{response}</span>
       <input className="bg-sky-400 placeholder-white text-center placeholder:opacity-50 m-5 p-2 rounded-md" value={inputMsg} onChange={(e) => {
         setInputMsg(e.target.value)

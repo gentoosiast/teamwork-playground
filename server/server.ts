@@ -1,5 +1,7 @@
 import http from "http";
-import { IMessage } from "../interface/IMessage"
+import { IMessage } from "../interface/IMessage";
+import { IOurField, IEnemyField } from '../interface/IField';
+import { IVector } from '../interface/IVector';
 import * as WebSocket from "websocket";
 import { DataBase } from "./src/database/db";
 import { json } from "body-parser";
@@ -71,6 +73,16 @@ websocket.on('request', (e) => {
           id: 0
         }
         client.sendUTF(JSON.stringify(chatObj))
+        break;
+      }
+      case 'attack': {
+        const position: IVector = JSON.parse(parsedMsg.data);
+        const responseObj: IMessage = {
+          type: "attack",
+          data: JSON.stringify(position),
+          id: 0
+        }
+        clients.forEach((c) => c.sendUTF(JSON.stringify(responseObj)));
         break;
       }
       default:
