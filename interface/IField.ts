@@ -1,6 +1,7 @@
 export const enum Cell {
   Empty = 0,
   Unavailable = 1,
+  Occupied = 2,
 }
 
 export interface IOurField {

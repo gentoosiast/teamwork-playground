@@ -4,7 +4,7 @@ import { IMessage } from "../../interface/IMessage";
 export class SocketModel {
   webSocket: WebSocket;
   playerIdx: number = -1;
-  constructor({setMessages, setEnemyField, setOurField, setPlayerIdx}) {
+  constructor({setMessages, setEnemyField, setOurField, setPlayerIdx, setShips}) {
     const websocket = new WebSocket('ws://localhost:3000')
     this.webSocket = websocket;
     websocket.onmessage = (msg) => {
@@ -46,8 +46,9 @@ export class SocketModel {
           break;
         }
         case 'join': {
-          const index = JSON.parse(parsedMsg.data);
+          const { ships, idx: index } = JSON.parse(parsedMsg.data);
           setPlayerIdx(index);
+          setShips(ships);
           this.playerIdx = index;
           break;
         }

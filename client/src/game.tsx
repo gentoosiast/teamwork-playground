@@ -4,6 +4,11 @@ import { Cell } from './../../interface/IField'
 import { emptyState } from './../../interface/fieldGenerator';
 
 type FieldState = Cell[][];
+const styleMap = {
+  [Cell.Empty]: '',
+  [Cell.Occupied]: 'cell_occupied',
+  [Cell.Unavailable]: 'cell_unavailable',
+};
 
 interface IEnemyFieldProps {
   onAttack: (x: number, y: number) => void;
@@ -49,7 +54,7 @@ export function OurField(props: IOurFieldProps) {
             {
               row.map((cell) => {
                 return (
-                  <div className={"cell" + (cell === Cell.Unavailable ? " cell_unavailable" : "")}></div>
+                  <div className={"cell" + (` ${styleMap[cell]}`)}></div>
                 )
               })
             }

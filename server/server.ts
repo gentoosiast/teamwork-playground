@@ -13,6 +13,24 @@ interface IPlayer {
   index: number;
 }
 
+const ships = [
+  {
+    position: {x: 0, y: 0},
+    direction: 1,
+    length: 3
+  },
+  {
+    position: {x: 4, y: 4},
+    direction: 1,
+    length: 2
+  },
+  {
+    position: {x: 7, y: 7},
+    direction: 0,
+    length: 1
+  }
+];
+
 const server = http.createServer((req, res) => {
 
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -116,13 +134,13 @@ websocket.on('request', (e) => {
         clients.forEach((c) => c.sendUTF(JSON.stringify(responseObj)));
         break;
       }
-      case 'join': { 
+      case 'join': {
         players.push({connection: client, index: players.length});
         const responseObj: IMessage = {
           type: "join",
-          data: JSON.stringify(players.length - 1),
+          data: JSON.stringify({ ships, idx: players.length - 1}),
           id: 0
-        }
+        } 
         client.sendUTF(JSON.stringify(responseObj));
         break;
       }

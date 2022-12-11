@@ -17,3 +17,7 @@
 .cell_unavailable {
   background-color: #ff3333;
 }
+
+.cell_occupied {
+  background-color: #222;
+}
