@@ -1,0 +1,19 @@
+.field {
+  margin-bottom: 50px;
+}
+
+.row {
+  display: flex;
+}
+
+.cell {
+  background-color: #3333ff;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border: 1px solid #333;
+}
+
+.cell_unavailable {
+  background-color: #ff3333;
+}

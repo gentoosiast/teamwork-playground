@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { IMessage } from "../../interface/IMessage"
+import { GameField } from './game';
 
 interface IAppProps {
   onClick: () => void;
@@ -97,6 +98,14 @@ export function RequestServer() {
 
   return (
     <div>
+      <GameField onAttack={(x, y) => {
+        const request: IMessage = {
+            type: 'chat_message',
+            data: `${x}, ${y}`,
+            id: 0
+          }
+          socket.send(JSON.stringify(request))
+      }}></GameField>
       <span>{response}</span>
       <input className="bg-sky-400 placeholder-white text-center placeholder:opacity-50 m-5 p-2 rounded-md" value={inputMsg} onChange={(e) => {
         setInputMsg(e.target.value)
