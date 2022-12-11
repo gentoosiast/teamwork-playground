@@ -89,13 +89,20 @@ websocket.on('request', (e) => {
       }
       case 'attack': {
         const position: IVector = JSON.parse(parsedMsg.data);
-        fields[currentPlayer][position.y][position.x] = Cell.Unavailable
-        const responseObj: IMessage = {
-          type: "attack",
-          data: JSON.stringify({position, currentPlayer}),
-          id: 0
+        const player = players.find((player) => player.connection === client);
+        console.log("DEBUG: currentPlayer, player.index", currentPlayer, player?.index);
+        if (player?.index !== currentPlayer) {
+          return;
         }
-        clients.forEach((c) => c.sendUTF(JSON.stringify(responseObj)));
+        fields[currentPlayer][position.y][position.x] = Cell.Unavailable
+        players.forEach((player) => {
+          const responseObj: IMessage = {
+            type: "attack",
+            data: JSON.stringify({position, currentPlayer}),
+            id: 0
+          }
+          player.connection.sendUTF(JSON.stringify(responseObj))
+        });
         currentPlayer = (currentPlayer + 1) % 2;
         break;
       }
@@ -109,8 +116,14 @@ websocket.on('request', (e) => {
         clients.forEach((c) => c.sendUTF(JSON.stringify(responseObj)));
         break;
       }
-      case 'join': {
+      case 'join': { 
         players.push({connection: client, index: players.length});
+        const responseObj: IMessage = {
+          type: "join",
+          data: JSON.stringify(players.length - 1),
+          id: 0
+        }
+        client.sendUTF(JSON.stringify(responseObj));
         break;
       }
       default:
@@ -119,9 +132,9 @@ websocket.on('request', (e) => {
   })
   client.on('close', () => {
     clients.splice(clients.indexOf(client), 1);
-    const player = players.find(player => client === player.connection);
-    if (player) {
-      players.splice(player.index, 1);
+    const playerIdx = players.findIndex(player => client === player.connection);
+    if (playerIdx !== -1) {
+      players.splice(playerIdx, 1);
     }
   })
 })

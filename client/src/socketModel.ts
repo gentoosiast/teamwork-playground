@@ -3,7 +3,8 @@ import { IMessage } from "../../interface/IMessage";
 
 export class SocketModel {
   webSocket: WebSocket;
-  constructor({setMessages, setEnemyField, setOurField}) {
+  playerIdx: number = -1;
+  constructor({setMessages, setEnemyField, setOurField, setPlayerIdx}) {
     const websocket = new WebSocket('ws://localhost:3000')
     this.webSocket = websocket;
     websocket.onmessage = (msg) => {
@@ -26,9 +27,9 @@ export class SocketModel {
           break;
         }
         case 'attack': {
-          const {position, currentPlayer}: IVector = JSON.parse(parsedMsg.data)
+          const {position, currentPlayer} = JSON.parse(parsedMsg.data)
           console.log(position)
-          const setField = [setEnemyField, setOurField][currentPlayer]
+          const setField = [setEnemyField, setOurField][(currentPlayer + this.playerIdx) % 2]
           setField((last) => {
             return last.map((row, y) => {
               return row.map((cell, x) => {
@@ -42,6 +43,12 @@ export class SocketModel {
           const field = JSON.parse(parsedMsg.data)
           console.log(field)
           setEnemyField(field)
+          break;
+        }
+        case 'join': {
+          const index = JSON.parse(parsedMsg.data);
+          setPlayerIdx(index);
+          this.playerIdx = index;
           break;
         }
         default:
@@ -60,6 +67,12 @@ export class SocketModel {
         data: '',
         id: 0
       }
+      const joinRequest: IMessage = {
+        type: 'join',
+        data: '',
+        id: 0
+      }
+      websocket.send(JSON.stringify(joinRequest));
       websocket.send(JSON.stringify(request))
       const getField: IMessage = {
         type: 'get_field',

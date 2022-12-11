@@ -56,9 +56,10 @@ export function RequestServer() {
   const [socket, setSocket] = useState<SocketModel>(null);
   const [inputMsg, setInputMsg] = useState('');
   const [messages, setMessages] = useState<Array<string>>([]);
+  const [playerIdx, setPlayerIdx] = useState(-1);
 
   useEffect(() => {
-    const webSocket = new SocketModel({setMessages, setEnemyField, setOurField});
+    const webSocket = new SocketModel({setMessages, setEnemyField, setOurField, setPlayerIdx});
     setSocket(webSocket);
     return () => {
       webSocket.close();
@@ -94,6 +95,7 @@ export function RequestServer() {
           </div>)
         })}
       </div>
+      <div>player index: {playerIdx}</div>
     </div>
   );
 }
