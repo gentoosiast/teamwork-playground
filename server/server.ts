@@ -8,6 +8,11 @@ import { DataBase } from "./src/database/db";
 import { json } from "body-parser";
 const db = new DataBase();
 
+interface IPlayer {
+  connection: WebSocket.connection;
+  index: number;
+}
+
 const server = http.createServer((req, res) => {
 
   res.setHeader('Access-Control-Allow-Origin', '*')
@@ -15,7 +20,6 @@ const server = http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Headers', 'X-PINGOTHER, Content-Type')
   res.setHeader('Content-Type', 'text/plain')
   console.log((new Date()) + ' Received request for ' + req.url);
-  // /register?name=JohnDoe&age=42
   const reqData = req.url?.split("?");
   if (!reqData) {
     throw new Error("Empty request data");
@@ -43,10 +47,15 @@ server.listen(3000, () => {
 
 
 const websocket = new WebSocket.server({ httpServer: server })
-const messages: Array<string> = []
-const field: Array<Array<Cell>> = emptyState()
+const messages: Array<string> = [];
+const field: Array<Array<Cell>> = emptyState();
+const field2: Array<Array<Cell>> = emptyState();
+const fields = [field, field2];
+let currentPlayer = 0;
 
-const clients: Array<WebSocket.connection> = []
+const clients: Array<WebSocket.connection> = [];
+const players: Array<IPlayer> = [];
+
 websocket.on('request', (e) => {
   const client = e.accept()
   clients.push(client)
@@ -80,13 +89,14 @@ websocket.on('request', (e) => {
       }
       case 'attack': {
         const position: IVector = JSON.parse(parsedMsg.data);
-        field[position.y][position.x] = Cell.Unavailable
+        fields[currentPlayer][position.y][position.x] = Cell.Unavailable
         const responseObj: IMessage = {
           type: "attack",
-          data: JSON.stringify(position),
+          data: JSON.stringify({position, currentPlayer}),
           id: 0
         }
         clients.forEach((c) => c.sendUTF(JSON.stringify(responseObj)));
+        currentPlayer = (currentPlayer + 1) % 2;
         break;
       }
       case 'get_field': {
@@ -99,13 +109,20 @@ websocket.on('request', (e) => {
         clients.forEach((c) => c.sendUTF(JSON.stringify(responseObj)));
         break;
       }
+      case 'join': {
+        players.push({connection: client, index: players.length});
+        break;
+      }
       default:
         break;
     }
-
   })
   client.on('close', () => {
-    clients.splice(clients.indexOf(client), 1)
+    clients.splice(clients.indexOf(client), 1);
+    const player = players.find(player => client === player.connection);
+    if (player) {
+      players.splice(player.index, 1);
+    }
   })
 })
 
