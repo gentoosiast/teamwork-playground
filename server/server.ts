@@ -11,6 +11,7 @@ const db = new DataBase();
 interface IPlayer {
   connection: WebSocket.connection;
   index: number;
+  shipField: Array<Array<number>>;
 }
 
 const ships = [
@@ -113,6 +114,7 @@ websocket.on('request', (e) => {
           return;
         }
         fields[currentPlayer][position.y][position.x] = Cell.Unavailable
+        const shipIndex = players[(currentPlayer + 1) % 2].shipField[position.y][position.x];
         players.forEach((player) => {
           const responseObj: IMessage = {
             type: "attack",
@@ -121,7 +123,9 @@ websocket.on('request', (e) => {
           }
           player.connection.sendUTF(JSON.stringify(responseObj))
         });
-        currentPlayer = (currentPlayer + 1) % 2;
+        if (shipIndex === -1) {
+          currentPlayer = (currentPlayer + 1) % 2;
+        }
         break;
       }
       case 'get_field': {
@@ -135,12 +139,30 @@ websocket.on('request', (e) => {
         break;
       }
       case 'join': {
-        players.push({connection: client, index: players.length});
+        const shipField: Array<Array<number>> = [];
+        for (let i = 0; i < 9; i += 1) {
+          const row = [];
+          for (let j = 0; j < 9; j += 1) {
+            row.push(-1);
+          }
+          shipField.push(row);
+        }
+
+        ships.forEach((ship, idx) => {
+          for (let i = 0; i < ship.length; i += 1) {
+            if (ship.direction === 0) {
+              shipField[ship.position.y][ship.position.x + i] = idx;
+            } else {
+              shipField[ship.position.y + i][ship.position.x] = idx;
+            }
+          }
+        });
+        players.push({connection: client, index: players.length, shipField});
         const responseObj: IMessage = {
           type: "join",
           data: JSON.stringify({ ships, idx: players.length - 1}),
           id: 0
-        } 
+        }
         client.sendUTF(JSON.stringify(responseObj));
         break;
       }
