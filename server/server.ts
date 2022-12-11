@@ -1,6 +1,7 @@
 import http from "http";
 import { IMessage } from "../interface/IMessage";
-import { IOurField, IEnemyField } from '../interface/IField';
+import { IOurField, IEnemyField, Cell } from '../interface/IField';
+import { emptyState } from '../interface/fieldGenerator'
 import { IVector } from '../interface/IVector';
 import * as WebSocket from "websocket";
 import { DataBase } from "./src/database/db";
@@ -43,6 +44,8 @@ server.listen(3000, () => {
 
 const websocket = new WebSocket.server({ httpServer: server })
 const messages: Array<string> = []
+const field: Array<Array<Cell>> = emptyState()
+
 const clients: Array<WebSocket.connection> = []
 websocket.on('request', (e) => {
   const client = e.accept()
@@ -77,9 +80,20 @@ websocket.on('request', (e) => {
       }
       case 'attack': {
         const position: IVector = JSON.parse(parsedMsg.data);
+        field[position.y][position.x] = Cell.Unavailable
         const responseObj: IMessage = {
           type: "attack",
           data: JSON.stringify(position),
+          id: 0
+        }
+        clients.forEach((c) => c.sendUTF(JSON.stringify(responseObj)));
+        break;
+      }
+      case 'get_field': {
+        // const field: IVector = JSON.parse(parsedMsg.data);
+        const responseObj: IMessage = {
+          type: "get_field",
+          data: JSON.stringify(field),
           id: 0
         }
         clients.forEach((c) => c.sendUTF(JSON.stringify(responseObj)));

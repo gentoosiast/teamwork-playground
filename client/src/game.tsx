@@ -1,7 +1,7 @@
 import './game.css';
 import React, { useEffect, useState } from "react";
 import { Cell } from './../../interface/IField'
-import { emptyState } from './fieldGenerator';
+import { emptyState } from './../../interface/fieldGenerator';
 
 type FieldState = Cell[][];
 
@@ -20,16 +20,17 @@ export function EnemyField(props: IEnemyFieldProps) {
     <div className="field">
       {props.field.map((row, y) => {
         return (
-        <div className="row">
-          {row.map((cell, x) => {
-            return (
-              <div className={"cell" + (cell === Cell.Unavailable ? " cell_unavailable" : "")} onClick={() => {
-                props.onAttack(x, y);
-              }}></div>
-            );
-          })}
-        </div>
-      )})}
+          <div className="row">
+            {row.map((cell, x) => {
+              return (
+                <div className={"cell" + (cell === Cell.Unavailable ? " cell_unavailable" : "")} onClick={() => {
+                  props.onAttack(x, y);
+                }}></div>
+              );
+            })}
+          </div>
+        )
+      })}
     </div>
   );
 }

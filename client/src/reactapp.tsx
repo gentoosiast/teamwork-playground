@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { IMessage } from "../../interface/IMessage"
 import { IVector } from '../../interface/IVector';
 import { GameField } from './game';
-import { emptyState } from './fieldGenerator';
+import { emptyState } from '../../interface/fieldGenerator';
 import { Cell } from "../../interface/IField";
 
 interface IAppProps {
@@ -79,11 +79,19 @@ export function RequestServer() {
         case 'attack': {
           const position: IVector = JSON.parse(parsedMsg.data)
           console.log(position)
-          setEnemyField((last) => { return last.map((row, y) => {
-            return row.map((cell, x) => {
-              return position.x === x && position.y === y ? Cell.Unavailable : cell;
+          setEnemyField((last) => {
+            return last.map((row, y) => {
+              return row.map((cell, x) => {
+                return position.x === x && position.y === y ? Cell.Unavailable : cell;
+              })
             })
-          })})
+          })
+          break;
+        }
+        case 'get_field': {
+          const field = JSON.parse(parsedMsg.data)
+          console.log(field)
+          setEnemyField(field)
           break;
         }
         default:
@@ -103,6 +111,12 @@ export function RequestServer() {
         id: 0
       }
       websocket.send(JSON.stringify(request))
+      const getField: IMessage = {
+        type: 'get_field',
+        data: '',
+        id: 0
+      }
+      websocket.send(JSON.stringify(getField))
     }
     return () => {
       websocket.close()
@@ -114,11 +128,11 @@ export function RequestServer() {
     <div>
       <GameField onAttack={(x, y) => {
         const request: IMessage = {
-            type: 'attack',
-            data: JSON.stringify({x, y}),
-            id: 0
-          }
-          socket.send(JSON.stringify(request))
+          type: 'attack',
+          data: JSON.stringify({ x, y }),
+          id: 0
+        }
+        socket.send(JSON.stringify(request))
       }} enemyField={enemyField}></GameField>
       <span>{response}</span>
       <input className="bg-sky-400 placeholder-white text-center placeholder:opacity-50 m-5 p-2 rounded-md" value={inputMsg} onChange={(e) => {
