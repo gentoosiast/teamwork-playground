@@ -115,17 +115,37 @@ websocket.on('request', (e) => {
         }
         fields[currentPlayer][position.y][position.x] = Cell.Unavailable
         const shipIndex = players[(currentPlayer + 1) % 2].shipField[position.y][position.x];
+        let status = 'miss';
+        let nextPlayer = currentPlayer;
+        if (shipIndex === -1) {
+          nextPlayer = (currentPlayer + 1) % 2;
+        } else {
+          const ship = ships[shipIndex];
+          let isKilled = true;
+          for (let i = 0; i < ship.length; i += 1) {
+            if (ship.direction === 0) {
+              if (fields[currentPlayer][ship.position.y][ship.position.x + i] === Cell.Empty) {
+                isKilled = false;
+                break;
+              }
+            } else {
+              if (fields[currentPlayer][ship.position.y + i][ship.position.x] === Cell.Empty) {
+                isKilled = false;
+                break;
+              }
+            }
+          }
+          status = isKilled ? 'killed' : 'shot';
+        }
         players.forEach((player) => {
           const responseObj: IMessage = {
             type: "attack",
-            data: JSON.stringify({position, currentPlayer}),
+            data: JSON.stringify({position, currentPlayer, status}),
             id: 0
           }
           player.connection.sendUTF(JSON.stringify(responseObj))
         });
-        if (shipIndex === -1) {
-          currentPlayer = (currentPlayer + 1) % 2;
-        }
+        currentPlayer = nextPlayer;
         break;
       }
       case 'get_field': {

@@ -8,6 +8,8 @@ const styleMap = {
   [Cell.Empty]: '',
   [Cell.Occupied]: 'cell_occupied',
   [Cell.Unavailable]: 'cell_unavailable',
+  [Cell.Shot]: 'cell_shot',
+  [Cell.Killed]: 'cell_killed'
 };
 
 interface IEnemyFieldProps {
@@ -33,7 +35,7 @@ export function EnemyField(props: IEnemyFieldProps) {
           <div className="row">
             {row.map((cell, x) => {
               return (
-                <div className={"cell" + (cell === Cell.Unavailable ? " cell_unavailable" : "")} onClick={() => {
+                <div className={"cell" + (` ${styleMap[cell]}`)} onClick={() => {
                   props.onAttack(x, y);
                 }}></div>
               );

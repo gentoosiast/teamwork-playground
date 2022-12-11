@@ -21,3 +21,11 @@
 .cell_occupied {
   background-color: #222;
 }
+
+.cell_shot {
+  background-color: #228833;
+}
+
+.cell_killed {
+  background-color: #228899;
+}

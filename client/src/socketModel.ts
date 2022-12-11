@@ -27,12 +27,19 @@ export class SocketModel {
           break;
         }
         case 'attack': {
-          const {position, currentPlayer} = JSON.parse(parsedMsg.data)
+          const {position, currentPlayer, status} = JSON.parse(parsedMsg.data)
+          console.log(status);
           console.log(position)
           const setField = [setEnemyField, setOurField][(currentPlayer + this.playerIdx) % 2]
           setField((last) => {
+            console.log(last);
             return last.map((row, y) => {
               return row.map((cell, x) => {
+                if (status === 'killed') {
+                  return position.x === x && position.y === y ? Cell.Killed : cell;
+                } else if (status === 'shot') {
+                  return position.x === x && position.y === y ? Cell.Shot : cell;
+                }
                 return position.x === x && position.y === y ? Cell.Unavailable : cell;
               })
             })
