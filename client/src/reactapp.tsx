@@ -4,6 +4,7 @@ import { IVector } from '../../interface/IVector';
 import { GameField } from './game';
 import { emptyState } from '../../interface/fieldGenerator';
 import { Cell } from "../../interface/IField";
+import { SocketModel } from "./socketModel";
 
 interface IAppProps {
   onClick: () => void;
@@ -52,74 +53,15 @@ export function CheckBox(props: ICheckBoxProps) {
 
 export function RequestServer() {
   const [response, setResponse] = useState("");
-  const [socket, setSocket] = useState<WebSocket>(null);
+  const [socket, setSocket] = useState<SocketModel>(null);
   const [inputMsg, setInputMsg] = useState('');
   const [messages, setMessages] = useState<Array<string>>([]);
 
   useEffect(() => {
-    const websocket = new WebSocket('ws://localhost:3000')
-    websocket.onmessage = (msg) => {
-      const parsedMsg: IMessage = JSON.parse(msg.data)
-      console.log(parsedMsg.type);
-
-      switch (parsedMsg.type) {
-        case 'chat_message': {
-          console.log(parsedMsg.data)
-          setMessages((last) => {
-            return [parsedMsg.data, ...last]
-          })
-          break;
-        }
-        case 'chat_history': {
-          const msgList: Array<string> = JSON.parse(parsedMsg.data)
-          console.log(msgList)
-          setMessages(msgList.reverse())
-          break;
-        }
-        case 'attack': {
-          const position: IVector = JSON.parse(parsedMsg.data)
-          console.log(position)
-          setEnemyField((last) => {
-            return last.map((row, y) => {
-              return row.map((cell, x) => {
-                return position.x === x && position.y === y ? Cell.Unavailable : cell;
-              })
-            })
-          })
-          break;
-        }
-        case 'get_field': {
-          const field = JSON.parse(parsedMsg.data)
-          console.log(field)
-          setEnemyField(field)
-          break;
-        }
-        default:
-          break;
-      }
-      console.log(msg)
-      // setMessages((last) => {
-      //   return [msg.data, ...last]
-      // })
-    }
-    websocket.onopen = () => {
-      console.log('connected')
-      setSocket(websocket)
-      const request: IMessage = {
-        type: 'chat_history',
-        data: '',
-        id: 0
-      }
-      websocket.send(JSON.stringify(request))
-      const getField: IMessage = {
-        type: 'get_field',
-        data: '',
-        id: 0
-      }
-      websocket.send(JSON.stringify(getField))
-    }
+    const webSocket = new SocketModel({setMessages, setEnemyField});
+    setSocket(webSocket);
     return () => {
-      websocket.close()
+      webSocket.close();
     }
   }, [])
 
@@ -127,12 +69,7 @@ export function RequestServer() {
   return (
     <div>
       <GameField onAttack={(x, y) => {
-        const request: IMessage = {
-          type: 'attack',
-          data: JSON.stringify({ x, y }),
-          id: 0
-        }
-        socket.send(JSON.stringify(request))
+        socket.attack(x, y);
       }} enemyField={enemyField}></GameField>
       <span>{response}</span>
       <input className="bg-sky-400 placeholder-white text-center placeholder:opacity-50 m-5 p-2 rounded-md" value={inputMsg} onChange={(e) => {
@@ -140,15 +77,8 @@ export function RequestServer() {
       }} type="text" placeholder="something" />
       <button
         onClick={() => {
-          const request: IMessage = {
-            type: 'chat_message',
-            data: inputMsg,
-            id: 0
-          }
-          socket.send(JSON.stringify(request))
-
-          setInputMsg('')
-
+          socket.sendChatMessage(inputMsg);
+          setInputMsg('');
           // fetch("http://localhost:3000")
           //   .then((data) => data.text())
           //   .then((data) => setResponse(data));
