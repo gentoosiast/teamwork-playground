@@ -6,6 +6,8 @@ import { IVector } from '../interface/IVector';
 import * as WebSocket from "websocket";
 import { DataBase } from "./src/database/db";
 import { json } from "body-parser";
+import Room from "./src/room/room";
+import { Game } from "./src/game/game";
 const db = new DataBase();
 
 interface IPlayer {
@@ -33,7 +35,6 @@ const ships = [
 ];
 
 const server = http.createServer((req, res) => {
-
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'X-PINGOTHER, Content-Type')
@@ -64,6 +65,12 @@ server.listen(3000, () => {
   console.log((new Date()) + ' Server is listening port 3000');
 });
 
+interface IClients{
+  connection: WebSocket.connection,
+  index: number,
+  name: string,
+};
+
 
 const websocket = new WebSocket.server({ httpServer: server })
 const messages: Array<string> = [];
@@ -72,12 +79,15 @@ const field2: Array<Array<Cell>> = emptyState();
 const fields = [field, field2];
 let currentPlayer = 0;
 
-const clients: Array<WebSocket.connection> = [];
+const clients: Array<IClients> = [];
 const players: Array<IPlayer> = [];
+
+const rooms:Room[] = []
+const games:Game[]=[]
 
 websocket.on('request', (e) => {
   const client = e.accept()
-  clients.push(client)
+  //clients.push({connection: client, name: 'ddd',index:0 })
   console.log('connect');
 
   client.on('message', (msg) => {
@@ -85,67 +95,32 @@ websocket.on('request', (e) => {
     if (msg.type != 'utf8') return;
     const parsedMsg: IMessage = JSON.parse(msg.utf8Data)
     switch (parsedMsg.type) {
-      case 'chat_message': {
-        messages.push(parsedMsg.data)
-        const chatObj: IMessage = {
-          type: "chat_message",
-          data: parsedMsg.data,
-          id: 0
-        }
-        clients.forEach(c => {
-          c.sendUTF(JSON.stringify(chatObj))
-        })
-        break;
-      }
-      case 'chat_history': {
-        const chatObj: IMessage = {
-          type: "chat_history",
-          data: JSON.stringify(messages),
-          id: 0
-        }
-        client.sendUTF(JSON.stringify(chatObj))
-        break;
-      }
+      // case 'chat_message': {
+      //   messages.push(parsedMsg.data)
+      //   const chatObj: IMessage = {
+      //     type: "chat_message",
+      //     data: parsedMsg.data,
+      //     id: 0
+      //   }
+      //   clients.forEach(c => {
+      //     c.connection.sendUTF(JSON.stringify(chatObj))
+      //   })
+      //   break;
+      // }
+      // case 'chat_history': {
+      //   const chatObj: IMessage = {
+      //     type: "chat_history",
+      //     data: JSON.stringify(messages),
+      //     id: 0
+      //   }
+      //   client.sendUTF(JSON.stringify(chatObj))
+      //   break;
+      // }
       case 'attack': {
-        const position: IVector = JSON.parse(parsedMsg.data);
-        const player = players.find((player) => player.connection === client);
-        console.log("DEBUG: currentPlayer, player.index", currentPlayer, player?.index);
-        if (player?.index !== currentPlayer) {
-          return;
-        }
-        fields[currentPlayer][position.y][position.x] = Cell.Unavailable
-        const shipIndex = players[(currentPlayer + 1) % 2].shipField[position.y][position.x];
-        let status = 'miss';
-        let nextPlayer = currentPlayer;
-        if (shipIndex === -1) {
-          nextPlayer = (currentPlayer + 1) % 2;
-        } else {
-          const ship = ships[shipIndex];
-          let isKilled = true;
-          for (let i = 0; i < ship.length; i += 1) {
-            if (ship.direction === 0) {
-              if (fields[currentPlayer][ship.position.y][ship.position.x + i] === Cell.Empty) {
-                isKilled = false;
-                break;
-              }
-            } else {
-              if (fields[currentPlayer][ship.position.y + i][ship.position.x] === Cell.Empty) {
-                isKilled = false;
-                break;
-              }
-            }
-          }
-          status = isKilled ? 'killed' : 'shot';
-        }
-        players.forEach((player) => {
-          const responseObj: IMessage = {
-            type: "attack",
-            data: JSON.stringify({position, currentPlayer, status}),
-            id: 0
-          }
-          player.connection.sendUTF(JSON.stringify(responseObj))
-        });
-        currentPlayer = nextPlayer;
+        
+        const data= JSON.parse(parsedMsg.data);
+        const game = games.find(it=>it.id==data.gameId);
+        game?.attack(data.x, data.y,client )
         break;
       }
       case 'get_field': {
@@ -155,8 +130,85 @@ websocket.on('request', (e) => {
           data: JSON.stringify(field),
           id: 0
         }
-        clients.forEach((c) => c.sendUTF(JSON.stringify(responseObj)));
+        clients.forEach((c) => c.connection.sendUTF(JSON.stringify(responseObj)));
         break;
+      }
+      case 'reg':{
+        const name = JSON.parse(parsedMsg.data).name
+        clients.push({connection: client, name: name,index:clients.length });
+
+        const responseObj: IMessage = {
+          type: "reg",
+          data: JSON.stringify({name,index: clients.length-1}),
+          id: 0
+        }
+        client.sendUTF(JSON.stringify(responseObj))
+        if(rooms.length){
+          rooms.forEach(room=>{
+            const responseObj: IMessage = {
+              type: "create_room",
+              data: JSON.stringify({roomId: room.id, roomUsers: room.sendUsers()}),
+              id: 0
+            }
+           
+            client.sendUTF(JSON.stringify(responseObj))
+          })
+        } 
+        break; 
+      }
+      case 'create_room':{
+        
+        const room = new Room(Math.floor(Math.random()*100));
+        const user = clients.find(it=>it.connection===client)
+        if(!user){
+          return;
+        }
+        console.log('CREATEROOM')
+        room.addUser(user.connection, user.index,user.name)
+        rooms.push(room);
+        const responseObj: IMessage = {
+          type: "create_room",
+          data: JSON.stringify({roomId: room.id, roomUsers: room.sendUsers()}),
+          id: 0
+        }
+        clients.forEach((c) => c.connection.sendUTF(JSON.stringify(responseObj)));
+        break;
+      } 
+      case 'add_user_to_room':{
+        console.log(parsedMsg.data)
+        const data =JSON.parse(parsedMsg.data);
+        const room = rooms.find(it=>it.id==data.indexRoom);
+        const user = clients.find(it=>it.connection===client)
+        if(!room||!user){
+          return;
+        }
+        room.addUser(user.connection, user.index,user.name)
+        const responseObj: IMessage = {
+          type: "create_room",
+          data: JSON.stringify({roomId: room.id, roomUsers: room.sendUsers()}),
+          id: 0
+        }
+        clients.forEach((c) => c.connection.sendUTF(JSON.stringify(responseObj)));
+        if(room.users.length>=2){
+          const idGame = Math.floor(Math.random()*100)
+          games.push(new Game(room.users, idGame));
+          const responseObj: IMessage = {
+            type: "create_game",
+            data: JSON.stringify({roomUsers: room.sendUsers(), idGame}),
+            id: 0
+          }
+          room.users.forEach(c=>c.connection.sendUTF(JSON.stringify(responseObj)));
+        }
+        break;
+      }
+      case 'start_game':{
+        const data =JSON.parse(parsedMsg.data);
+        const game = games.find(it=>it.id ==data.gameId )
+        if(game){
+            game.startGame()
+        }
+        break;
+
       }
       case 'join': {
         const shipField: Array<Array<number>> = [];
@@ -167,23 +219,8 @@ websocket.on('request', (e) => {
           }
           shipField.push(row);
         }
-
-        ships.forEach((ship, idx) => {
-          for (let i = 0; i < ship.length; i += 1) {
-            if (ship.direction === 0) {
-              shipField[ship.position.y][ship.position.x + i] = idx;
-            } else {
-              shipField[ship.position.y + i][ship.position.x] = idx;
-            }
-          }
-        });
         players.push({connection: client, index: players.length, shipField});
-        const responseObj: IMessage = {
-          type: "join",
-          data: JSON.stringify({ ships, idx: players.length - 1}),
-          id: 0
-        }
-        client.sendUTF(JSON.stringify(responseObj));
+       
         break;
       }
       default:
@@ -191,7 +228,7 @@ websocket.on('request', (e) => {
     }
   })
   client.on('close', () => {
-    clients.splice(clients.indexOf(client), 1);
+    clients.filter(it=> it.connection!==client);
     const playerIdx = players.findIndex(player => client === player.connection);
     if (playerIdx !== -1) {
       players.splice(playerIdx, 1);

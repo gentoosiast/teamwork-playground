@@ -1,7 +1,7 @@
 import './game.css';
 import React, { useEffect, useState } from "react";
-import { Cell } from './../../interface/IField'
-import { emptyState } from './../../interface/fieldGenerator';
+import { Cell } from '../../../../interface/IField'
+import { emptyState } from '../../../../interface/fieldGenerator';
 
 type FieldState = Cell[][];
 const styleMap = {
