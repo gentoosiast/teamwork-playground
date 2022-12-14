@@ -9,6 +9,7 @@ import { SocketModel } from "../../socketModel";
 import {IRegData, IRoom, IUser} from '../../dto'
 import Room from '../room/room';
 import ChooseShip from '../chooseShip/chooseShip';
+import ChooseComponent from "../chooseShip/ChooseComponent";
 
 interface IAppProps {
   onClick: () => void;
@@ -120,7 +121,8 @@ export function RequestServer() {
 
   return (
       <>
-      {content}
+        {/*// {content}*/}
+        <ChooseComponent/>
       </>  
     // <div>
     //   <Registration onSubmit={registration}/>
