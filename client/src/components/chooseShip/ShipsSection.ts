@@ -1,22 +1,21 @@
 import Control from "../../../common/controll";
+import {ShipsCount, ShipsSizes} from "./ChooseComponent";
 
 export class ShipsSection extends Control {
 
 	private shipsCountBlock: { type:string,count:number }[];
 	public ships: Record<string, number>
 
-	constructor(parentNode: HTMLElement) {
+	constructor(parentNode: HTMLElement,ships:Record<string, number>) {
 		super(parentNode);
 		this.shipsCountBlock = []
-		this.ships = {
-			huge: 1,
-			big: 2,
-			middle: 3,
-			small: 4
-		}
-		Object.entries(this.ships).forEach((ship,i) => {
+		this.ships = ships
+		console.log(ships)
+		Object.entries(this.ships).forEach((ship:[string,number],i) => {
+			console.log(ShipsSizes[ship[0] as keyof typeof ShipsSizes])
+			const size=ShipsSizes[ship[0] as keyof typeof ShipsSizes]
 			const shipItem = new Control(this.node, 'div')
-			shipItem.node.style.width=`${50/(i+1)}px`
+			shipItem.node.style.width=`${50*size}px`
 			const image = new Image()
 			image.src = `./public/assets/ship.png`;
 			image.style.width = '60%'
