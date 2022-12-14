@@ -9,12 +9,14 @@ export enum ShipsCount {
 	small
 }
 export enum ShipsSizes{
-	small=1,
+	small=2,
 	medium,
 	large,
 	huge
 }
-
+//todo add the other color under dragged ship
+//todo draw cells
+//
 const ChooseComponent = () => {
 	const [ships,setShips]=useState({
 		huge: ShipsCount["huge"],
