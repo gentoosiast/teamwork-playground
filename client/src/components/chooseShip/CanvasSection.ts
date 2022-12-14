@@ -1,7 +1,7 @@
 import Control from "../../../common/controll";
 import {ShipsSizes} from "./ChooseComponent";
 
-type tShipCanvas = { x: number, y: number, rotate: false, image: HTMLImageElement,  width:number,height:number }
+type tShipCanvas = { x: number, y: number, rotate: false, image: HTMLImageElement, width: number, height: number }
 
 export class CanvasSection extends Control {
 	private canvasSection: Control<HTMLCanvasElement>;
@@ -23,15 +23,15 @@ export class CanvasSection extends Control {
 		super(parentNode);
 		this.parentNode = parentNode
 		this.canvasSection = new Control(parentNode, 'canvas', 'canvas')
-		this.cellSize=30
-		this.canvasSection.node.width = this.canvasWidth = this.cellSize*10
-		this.canvasSection.node.height = this.canvasHeight = this.cellSize*10
+		this.cellSize = 30
+		this.canvasSection.node.width = this.canvasWidth = this.cellSize * 10
+		this.canvasSection.node.height = this.canvasHeight = this.cellSize * 10
 		this.prevPosX
 		this.prevPosX
 		this.mouseDownHandlerBinded = this.mouseDownHandler.bind(this)
 		this.moveHandlerBinded = this.moveHandler.bind(this)
 		this.shipsOnCanvas = []
-		this.fillCells=new Set()
+		this.fillCells = new Set()
 		this.ctx = this.canvasSection.node.getContext('2d')
 		this.canvasSection.node.addEventListener('mousedown', this.mouseDownHandlerBinded)
 		this.canvasSection.node.ondragover = (e) => {
@@ -39,23 +39,23 @@ export class CanvasSection extends Control {
 		}
 		this.canvasSection.node.ondrop = (e) => {
 			const {x, y} = this.getCursorPosition(e, this.canvasSection.node)
-			const xFix=(Math.floor(x/this.cellSize))*this.cellSize
-			const yFix=(Math.floor(y/this.cellSize))*this.cellSize
+			const xFix = (Math.floor(x / this.cellSize)) * this.cellSize
+			const yFix = (Math.floor(y / this.cellSize)) * this.cellSize
 
 			const eventData = e.dataTransfer.getData('el')
 			const shipWidth = ShipsSizes[eventData as keyof typeof ShipsSizes] * this.cellSize
-			const shipHeight=this.cellSize
-			console.log(shipWidth,shipHeight)
-			this.createImage('./public/assets/ship.png', shipWidth,shipHeight, (image) => {
-				this.shipsOnCanvas.push({x:xFix, y:yFix, rotate: false, image, width:shipWidth,height:shipHeight})
-				this.drawShip(image, xFix, yFix,  shipWidth,shipHeight)
+			const shipHeight = this.cellSize
+			console.log(shipWidth, shipHeight)
+			this.createImage('./public/assets/ship.png', shipWidth, shipHeight, (image) => {
+				this.shipsOnCanvas.push({x: xFix, y: yFix, rotate: false, image, width: shipWidth, height: shipHeight})
+				this.drawShip(image, xFix, yFix, shipWidth, shipHeight)
 			})
 		}
 		this.drawScene()
 	}
 
-	drawShip(image: HTMLImageElement, x: number, y: number, width:number,height:number) {
-		this.ctx.drawImage(image, x, y, width,height)
+	drawShip(image: HTMLImageElement, x: number, y: number, width: number, height: number) {
+		this.ctx.drawImage(image, x, y, width, height)
 	}
 
 	mouseDownHandler(e: MouseEvent) {
@@ -85,12 +85,30 @@ export class CanvasSection extends Control {
 		this.shipsOnCanvas.forEach(ship => {
 			this.ctx.drawImage(ship.image, ship.x, ship.y, ship.width, ship.height)
 		})
+		this.drawMesh()
 	}
 
-	getCurrentShip(x: number, y: number){
+	drawLine(x1: number, y1: number, x2: number, y2: number) {
+		this.ctx.beginPath()
+		this.ctx.moveTo(x1, y1)
+		this.ctx.strokeStyle = 'darkred'
+		this.ctx.lineTo(x2, y2)
+		this.ctx.stroke()
+	}
+
+	drawMesh() {
+		for (let i = 0; i < this.canvasWidth; i += this.cellSize) {
+			this.drawLine(i, 0, i, this.canvasHeight)
+		}
+		for (let i = 0; i < this.canvasHeight; i += this.cellSize) {
+			this.drawLine(0, i, this.canvasWidth, i)
+		}
+	}
+
+	getCurrentShip(x: number, y: number) {
 		//
-	//	const current = this.shipsOnCanvas.find()
-	//	return current[current.length - 1]
+		//	const current = this.shipsOnCanvas.find()
+		//	return current[current.length - 1]
 	}
 
 	public getCursorPosition(event: MouseEvent, node: HTMLElement) {
