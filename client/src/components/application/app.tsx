@@ -121,8 +121,8 @@ export function RequestServer() {
 
   return (
       <>
-        {/*// {content}*/}
-        <ChooseComponent/>
+        {content}
+        {/*<ChooseComponent/>*/}
       </>  
     // <div>
     //   <Registration onSubmit={registration}/>

@@ -18,20 +18,24 @@ export class CanvasSection extends Control {
 	private shipsOnCanvas: tShipCanvas[];
 	private cellSize: number;
 	private fillCells: Set<string>;
+	private boardMatrix: number[][];
+	private cellsInRow: number;
 
 	constructor(parentNode: HTMLElement, ships: Record<string, number>) {
 		super(parentNode);
 		this.parentNode = parentNode
 		this.canvasSection = new Control(parentNode, 'canvas', 'canvas')
 		this.cellSize = 30
-		this.canvasSection.node.width = this.canvasWidth = this.cellSize * 10
-		this.canvasSection.node.height = this.canvasHeight = this.cellSize * 10
+		this.cellsInRow = 10
+		this.canvasSection.node.width = this.canvasWidth = this.cellSize * this.cellsInRow
+		this.canvasSection.node.height = this.canvasHeight = this.cellSize * this.cellsInRow
 		this.prevPosX
 		this.prevPosX
 		this.mouseDownHandlerBinded = this.mouseDownHandler.bind(this)
 		this.moveHandlerBinded = this.moveHandler.bind(this)
 		this.shipsOnCanvas = []
 		this.fillCells = new Set()
+		this.boardMatrix = []
 		this.ctx = this.canvasSection.node.getContext('2d')
 		this.canvasSection.node.addEventListener('mousedown', this.mouseDownHandlerBinded)
 		this.canvasSection.node.ondragover = (e) => {
@@ -51,7 +55,18 @@ export class CanvasSection extends Control {
 				this.drawShip(image, xFix, yFix, shipWidth, shipHeight)
 			})
 		}
+		this.createEmptyMatrix()
 		this.drawScene()
+	}
+
+	createEmptyMatrix() {
+		for (let i = 0; i < this.cellsInRow; i++) {
+			const row = []
+			for (let j = 0; j < this.cellsInRow; i++) {
+				row.push(0)
+			}
+			this.boardMatrix.push(row)
+		}
 	}
 
 	drawShip(image: HTMLImageElement, x: number, y: number, width: number, height: number) {
