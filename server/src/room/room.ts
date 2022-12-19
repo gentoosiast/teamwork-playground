@@ -6,9 +6,9 @@ interface IClients{
   };
 
 export default class Room{
-    id:number;
+    id:string;
     users: IClients[] =[];
-    constructor(id: number){
+    constructor(id: string){
         this.id=id;
         
     }

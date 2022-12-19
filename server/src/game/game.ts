@@ -39,12 +39,20 @@ interface IPlayer {
   }
 export class Game {
     users: IClients[]=[];
-    id:number=-1;
+    id:string;
     players: IPlayer[]=[];
     currentPlayer =0;
-    constructor(users:IClients[],id: number){
+    constructor(users:IClients[],id: string){
         this.users = users;
         this.id=id;
+        this.users.forEach((c,ind)=>{
+          const responseObj: IMessage = {
+                type: "create_game",
+                data: JSON.stringify({idGame: id, idPlayer:ind }),
+                id: 0
+              }
+              c.connection.sendUTF(JSON.stringify(responseObj))
+        })
     }
     startGame(){      
               const shipField: Array<Array<number>> = [];
@@ -70,8 +78,9 @@ export class Game {
                 data: JSON.stringify({ ships}),
                 id: 0
               };
-              this.users.forEach(c=>{
-                this.players.push({...c,shipField });
+
+              this.users.forEach((c, index)=>{
+                this.players.push({...c,shipField,index });
                 c.connection.sendUTF(JSON.stringify(responseObj))
               }         );
            

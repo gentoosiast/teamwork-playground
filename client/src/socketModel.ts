@@ -42,8 +42,8 @@ export class SocketModel {
         // }
         case 'attack': {
           const {position, currentPlayer, status} = JSON.parse(parsedMsg.data)
-          console.log(status);
-          console.log(position)
+          
+          console.log('ATTACK', position, currentPlayer, status)
           const setField = [setEnemyField, setOurField][(currentPlayer + this.playerIdx) % 2]
           setField((last:Array<Array<number>>) => {
             console.log(last);
@@ -67,11 +67,9 @@ export class SocketModel {
           break;
         }
         case 'join': {
+          console.log('join', JSON.parse(parsedMsg.data))
           setPage('gameField');
-          const { ships, idx: index } = JSON.parse(parsedMsg.data);
-          setPlayerIdx(index);
-          setShips(ships);
-          this.playerIdx = index;
+          setShips(JSON.parse(parsedMsg.data).ships);
           break;
         }
         case 'reg':{
@@ -97,7 +95,12 @@ export class SocketModel {
           break;
         }
         case 'create_game':{
-          setIdGame(JSON.parse(parsedData).idGame)
+          //idPlayer
+          const data = JSON.parse(parsedData)
+          console.log('create_game', data)
+          setIdGame(data.idGame);
+          setPlayerIdx(data.idPlayer);
+          this.playerIdx = data.idPlayer;
           setPage('chooseShip');
           break;
         }

@@ -69,9 +69,26 @@ export function RequestServer() {
   const [user, setUserData]=useState<IUser>({name:'', index:-1});
   const [rooms, setRoom] = useState<IRoom[]>([])
   const [idGame, setIdGame] = useState(-1);
-
+  const [enemyField, setEnemyField] = useState<Array<Array<Cell>>>(emptyState());
+  const [ourField, setOurField] = useState<Array<Array<Cell>>>(emptyState());
   const [content, setContent]=useState(null);
   const [page, setPage]=useState('reg');
+  const fieldWithShips = useMemo(() => {
+    const result = ourField.map((row) => row.map((cell) => {
+      return cell;
+    }));
+    ships.forEach((ship) => {
+      for (let i = 0; i < ship.length; i += 1) {
+        if (ship.direction === 0) {
+          result[ship.position.y][ship.position.x + i] = Cell.Occupied;
+        } else {
+          result[ship.position.y + i][ship.position.x] = Cell.Occupied;
+        }
+      }
+    });
+    return result;
+  }, [ourField, ships]);
+  
   useEffect(()=>{
     console.log('app',rooms)
     if(page==='room'){
@@ -89,7 +106,7 @@ export function RequestServer() {
        <div>player index: {playerIdx}</div>
       </>);
     }
-  },[page,rooms])
+  },[page,rooms, enemyField, fieldWithShips])
   useEffect(() => {
     const webSocket = new SocketModel({setMessages, setEnemyField, setOurField, setPlayerIdx, setShips, setPage,setUserData,setRoom,setIdGame});
     setSocket(webSocket);
@@ -100,29 +117,14 @@ export function RequestServer() {
     // }
   }, [])
   
-  const [enemyField, setEnemyField] = useState<Array<Array<Cell>>>(emptyState());
-  const [ourField, setOurField] = useState<Array<Array<Cell>>>(emptyState());
-  const fieldWithShips = useMemo(() => {
-    const result = ourField.map((row) => row.map((cell) => {
-      return cell;
-    }));
-    ships.forEach((ship) => {
-      for (let i = 0; i < ship.length; i += 1) {
-        if (ship.direction === 0) {
-          result[ship.position.y][ship.position.x + i] = Cell.Occupied;
-        } else {
-          result[ship.position.y + i][ship.position.x] = Cell.Occupied;
-        }
-      }
-    });
-    return result;
-  }, [ourField, ships]);
+ 
+  
 
 
   return (
       <>
-        {/*{content}*/}
-        <ChooseComponent/>
+        {content}
+        {/* <ChooseComponent/> */}
       </>  
     // <div>
     //   <Registration onSubmit={registration}/>

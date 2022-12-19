@@ -32,10 +32,10 @@ export function EnemyField(props: IEnemyFieldProps) {
     <div className="field">
       {props.field.map((row, y) => {
         return (
-          <div className="row">
+          <div className="row" key={y}>
             {row.map((cell, x) => {
               return (
-                <div className={"cell" + (` ${styleMap[cell]}`)} onClick={() => {
+                <div className={"cell" + (` ${styleMap[cell]}`)} key={x} onClick={() => {
                   props.onAttack(x, y);
                 }}></div>
               );
@@ -50,13 +50,13 @@ export function EnemyField(props: IEnemyFieldProps) {
 export function OurField(props: IOurFieldProps) {
   return (
     <div className="field">
-      {props.field.map((row) => {
+      {props.field.map((row,i) => {
         return (
-          <div className="row">
+          <div className="row" key={i}>
             {
-              row.map((cell) => {
+              row.map((cell, j) => {
                 return (
-                  <div className={"cell" + (` ${styleMap[cell]}`)}></div>
+                  <div className={"cell" + (` ${styleMap[cell]}`)} key={j}></div>
                 )
               })
             }
@@ -68,6 +68,8 @@ export function OurField(props: IOurFieldProps) {
 }
 
 export function GameField(props: IGameFieldProps) {
+  console.log('GIMEFIELD ENEMY', props.enemyField)
+  console.log("GIMEFIELD OURR", props.ourField)
   return (
     <div>
       <OurField field = {props.ourField}></OurField>
