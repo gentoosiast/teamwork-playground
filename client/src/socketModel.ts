@@ -24,7 +24,7 @@ export class SocketModel {
     websocket.onmessage = (msg) => {
       const parsedMsg: IMessage = JSON.parse(msg.data);
       const parsedData = parsedMsg.data;
-
+      console.log('TYPE', parsedMsg.type)
       switch (parsedMsg.type) {
         // case 'chat_message': {
         //   console.log(parsedMsg.data)
@@ -46,8 +46,7 @@ export class SocketModel {
           console.log('ATTACK', position, currentPlayer, status)
           const setField = [setEnemyField, setOurField][(currentPlayer + this.playerIdx) % 2]
           setField((last:Array<Array<number>>) => {
-            console.log(last);
-            return last.map((row, y) => {
+            const arr = last.map((row, y) => {
               return row.map((cell, x) => {
                 if (status === 'killed') {
                   return position.x === x && position.y === y ? Cell.Killed : cell;
@@ -57,6 +56,8 @@ export class SocketModel {
                 return position.x === x && position.y === y ? Cell.Unavailable : cell;
               })
             })
+            console.log(arr)
+            return arr;
           })
           break;
         }
@@ -69,7 +70,7 @@ export class SocketModel {
         case 'join': {
           console.log('join', JSON.parse(parsedMsg.data))
           setPage('gameField');
-          setShips(JSON.parse(parsedMsg.data).ships);
+          setOurField(JSON.parse(parsedMsg.data).ships);
           break;
         }
         case 'reg':{

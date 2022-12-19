@@ -73,24 +73,9 @@ export function RequestServer() {
   const [ourField, setOurField] = useState<Array<Array<Cell>>>(emptyState());
   const [content, setContent]=useState(null);
   const [page, setPage]=useState('reg');
-  const fieldWithShips = useMemo(() => {
-    const result = ourField.map((row) => row.map((cell) => {
-      return cell;
-    }));
-    ships.forEach((ship) => {
-      for (let i = 0; i < ship.length; i += 1) {
-        if (ship.direction === 0) {
-          result[ship.position.y][ship.position.x + i] = Cell.Occupied;
-        } else {
-          result[ship.position.y + i][ship.position.x] = Cell.Occupied;
-        }
-      }
-    });
-    return result;
-  }, [ourField, ships]);
   
+
   useEffect(()=>{
-    console.log('app',rooms)
     if(page==='room'){
       console.log('regUser', socket)
       setContent(<Room rooms={rooms} socket={socket} user={user}/>);
@@ -102,11 +87,11 @@ export function RequestServer() {
       setContent(<>
       <GameField onAttack={(x, y) => {
         socket.attack(x, y, idGame);
-      }} enemyField={enemyField} ourField={fieldWithShips}></GameField>
+      }} enemyField={enemyField} ourField={ourField}></GameField>
        <div>player index: {playerIdx}</div>
       </>);
     }
-  },[page,rooms, enemyField, fieldWithShips])
+  },[page,rooms, enemyField, ourField])
   useEffect(() => {
     const webSocket = new SocketModel({setMessages, setEnemyField, setOurField, setPlayerIdx, setShips, setPage,setUserData,setRoom,setIdGame});
     setSocket(webSocket);

@@ -214,19 +214,19 @@ websocket.on('request', (e) => {
         break;
 
       }
-      case 'join': {
-        const shipField: Array<Array<number>> = [];
-        for (let i = 0; i < 9; i += 1) {
-          const row = [];
-          for (let j = 0; j < 9; j += 1) {
-            row.push(-1);
-          }
-          shipField.push(row);
-        }
-        players.push({connection: client, index: players.length, shipField});
+      // case 'join': {
+      //   const shipField: Array<Array<number>> = [];
+      //   for (let i = 0; i < 9; i += 1) {
+      //     const row = [];
+      //     for (let j = 0; j < 9; j += 1) {
+      //       row.push(-1);
+      //     }
+      //     shipField.push(row);
+      //   }
+      //   players.push({connection: client, index: players.length, shipField});
        
-        break;
-      }
+      //   break;
+      // }
       default:
         break;
     }

@@ -73,16 +73,26 @@ export class Game {
                   }
                 }
               });
+              const shipForClient = emptyState();
+              ships.forEach((ship) => {
+                for (let i = 0; i < ship.length; i += 1) {
+                  if (ship.direction === 0) {
+                    shipForClient[ship.position.y][ship.position.x + i] = Cell.Occupied;
+                  } else {
+                    shipForClient[ship.position.y + i][ship.position.x] = Cell.Occupied;
+                  }
+                }
+              });
               const responseObj: IMessage = {
                 type: "join",
-                data: JSON.stringify({ ships}),
+                data: JSON.stringify({ ships: shipForClient}),
                 id: 0
               };
 
               this.users.forEach((c, index)=>{
                 this.players.push({...c,shipField,index });
                 c.connection.sendUTF(JSON.stringify(responseObj))
-              }         );
+              }         ); 
            
               
     }
