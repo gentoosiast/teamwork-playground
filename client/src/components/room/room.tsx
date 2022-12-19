@@ -10,17 +10,16 @@ interface IRoomComponent {
 const Room = ({socket,rooms,user}:IRoomComponent)=>{
     console.log(user, rooms)
     const handlerClick =(ind: number)=>{
-        socket.addUserToRoom(user,ind)
+        socket.addUserToRoom(ind)
     }
     const roomsComp = !rooms.length?'emptyRooms':
     (<><h2>Rooms</h2>
-        {rooms.map(it=>{
-            const isUserInRoom = Boolean(it.roomUsers.find(i=>i.index==user.index))
+        {rooms.map((it,ind)=>{
             return(
-            <div >
+            <div key={ind}>
                 Rooom id={it.roomId}
                 Users: {it.roomUsers.map(i=>i.name).join()}
-                <button onClick={()=>handlerClick(it.roomId)}>{isUserInRoom?'remove room':'add to Room'}</button>
+                <button onClick={()=>handlerClick(it.roomId)}>add to Room</button>
             </div>
             )
         })}

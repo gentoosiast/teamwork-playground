@@ -4,11 +4,9 @@ import { IMessage } from "../../interface/IMessage";
 import { IRegData ,IOurField, IUser, IRoom} from "./dto";
 
 interface ISocketModel{
-  setMessages:Dispatch<React.SetStateAction<Array<string>>>;
   setEnemyField: Dispatch<React.SetStateAction<Array<Array<Cell>>>>;
   setOurField: Dispatch<React.SetStateAction<Array<Array<Cell>>>>;
   setPlayerIdx: Dispatch<React.SetStateAction<number>>;
-  setShips: Dispatch<React.SetStateAction<any>>;
   setPage:(page: string)=>void;
   setUserData: Dispatch<React.SetStateAction<IUser>>
   setRoom: Dispatch<React.SetStateAction<IRoom[]>>
@@ -18,7 +16,8 @@ export class SocketModel {
   webSocket: WebSocket;
   playerIdx: number = -1;
   rooms: []=[]
-  constructor({setMessages, setEnemyField, setOurField, setPlayerIdx, setShips,setPage,setUserData,setRoom,setIdGame}:ISocketModel) {
+  user:IUser;
+  constructor({ setEnemyField, setOurField, setPlayerIdx, setPage,setUserData,setRoom,setIdGame}:ISocketModel) {
     const websocket = new WebSocket('ws://localhost:3000')
     this.webSocket = websocket;
     websocket.onmessage = (msg) => {
@@ -74,25 +73,14 @@ export class SocketModel {
           break;
         }
         case 'reg':{
-          setUserData(JSON.parse(parsedData))
+          this.user = JSON.parse(parsedData);
+          setUserData(this.user)
           setPage('room');
         break;  
         }
-        case 'create_room':{
-          const content = JSON.parse(parsedData)
-          setRoom(data=>{
-            const room = data.find(it=>it.roomId==content.roomId);
-            if(!room){
-              return [...data, content] 
-            }else{
-              return data.map(it=>{
-                if(it.roomId==content.roomId){
-                  return content
-                }
-                return it;
-              })
-            }
-          });
+        case 'update_room':{
+          const content = JSON.parse(parsedData);
+          setRoom(content)
           break;
         }
         case 'create_game':{
@@ -194,18 +182,18 @@ export class SocketModel {
     }
     this.webSocket.send(JSON.stringify(request))
   }
-  addUserToRoom(user:IUser, indexRoom: number){
+  addUserToRoom(indexRoom: number){
     const request: IMessage = {
       type: 'add_user_to_room',
-      data: JSON.stringify({user, indexRoom}),
+      data: JSON.stringify({user: this.user, indexRoom}),
       id: 0
     }
     this.webSocket.send(JSON.stringify(request))
   }
-  startGame(user:IUser,gameId: number){
+  startGame(gameId: number){
     const request: IMessage = {
       type: 'start_game',
-      data: JSON.stringify({user,gameId}),
+      data: JSON.stringify({user: this.user,gameId}),
       id: 0
     }
     this.webSocket.send(JSON.stringify(request))

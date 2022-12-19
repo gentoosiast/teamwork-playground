@@ -164,12 +164,23 @@ websocket.on('request', (e) => {
         if(!user){
           return;
         }
+        rooms.forEach(it=>it.removeUser(user.connection))
         console.log('CREATEROOM')
         room.addUser(user.connection, user.index,user.name)
         rooms.set(ind, room);
+        // const responseObj: IMessage = {
+        //   type: "create_room",
+        //   data: JSON.stringify({roomId: room.id, roomUsers: room.sendUsers()}),
+        //   id: 0
+        // }
+        // clients.forEach((c) => c.connection.sendUTF(JSON.stringify(responseObj)));
+        const roomsInfo = [];
+        for (const value of rooms.values()) {
+          roomsInfo.push({roomId: value.id, roomUsers: value.sendUsers()});
+        }
         const responseObj: IMessage = {
-          type: "create_room",
-          data: JSON.stringify({roomId: room.id, roomUsers: room.sendUsers()}),
+          type: "update_room",
+          data: JSON.stringify(roomsInfo),
           id: 0
         }
         clients.forEach((c) => c.connection.sendUTF(JSON.stringify(responseObj)));
@@ -183,16 +194,21 @@ websocket.on('request', (e) => {
         if(!room||!user){
           return;
         }
+        rooms.forEach(it=>it.removeUser(user.connection))
         room.addUser(user.connection, user.index,user.name)
+        const roomsInfo = [];
+        for (const value of rooms.values()) {
+          roomsInfo.push({roomId: value.id, roomUsers: value.sendUsers()});
+        }
         const responseObj: IMessage = {
-          type: "create_room",
-          data: JSON.stringify({roomId: room.id, roomUsers: room.sendUsers()}),
+          type: "update_room",
+          data: JSON.stringify(roomsInfo),
           id: 0
         }
         clients.forEach((c) => c.connection.sendUTF(JSON.stringify(responseObj)));
         if(room.users.length>=2){
-          const idGame = Math.floor(Math.random()*100)+''
-          games.set(idGame, new Game(room.users, idGame) );
+         const idGame = Math.floor(Math.random()*100)+''
+         games.set(idGame, new Game(room.users, idGame) );
         
           // room.users.forEach((c, ind)=>{
           //   const responseObj: IMessage = {

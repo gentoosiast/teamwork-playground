@@ -13,16 +13,11 @@ export default class Room{
         
     }
     addUser(connection:connection, index:number, name:string){
-        const user = this.users.find(it=>it.index==index);
-        if(!user){
-             this.users.push({connection,index,name})
-        }else{
-            this.users = this.users.filter(it=>it.index!=index);
-        }
+        this.users.push({connection,index,name})
        
     }
     removeUser(connection:connection){
-        this.users.filter(it=>it.connection!==connection);
+        this.users = this.users.filter(it=>it.connection!==connection);
     }
     sendUsers(){
         return this.users.map(it=>{

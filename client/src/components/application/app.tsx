@@ -60,12 +60,8 @@ export const App = () => {
 
 
 export function RequestServer() {
-  const [response, setResponse] = useState("");
   const [socket, setSocket] = useState<SocketModel>(null);
-  const [inputMsg, setInputMsg] = useState('');
-  const [messages, setMessages] = useState<Array<string>>([]);
   const [playerIdx, setPlayerIdx] = useState(-1);
-  const [ships, setShips] = useState([]);
   const [user, setUserData]=useState<IUser>({name:'', index:-1});
   const [rooms, setRoom] = useState<IRoom[]>([])
   const [idGame, setIdGame] = useState(-1);
@@ -76,12 +72,13 @@ export function RequestServer() {
   
 
   useEffect(()=>{
+    console.log(rooms)
     if(page==='room'){
       console.log('regUser', socket)
       setContent(<Room rooms={rooms} socket={socket} user={user}/>);
     }
     if(page==='chooseShip'){
-      setContent(<ChooseShip user={user} socket={socket} gameId={idGame}/>);
+      setContent(<ChooseShip socket={socket} gameId={idGame}/>);
     }
     if(page==='gameField'){
       setContent(<>
@@ -93,7 +90,7 @@ export function RequestServer() {
     }
   },[page,rooms, enemyField, ourField])
   useEffect(() => {
-    const webSocket = new SocketModel({setMessages, setEnemyField, setOurField, setPlayerIdx, setShips, setPage,setUserData,setRoom,setIdGame});
+    const webSocket = new SocketModel({ setEnemyField, setOurField, setPlayerIdx,  setPage,setUserData,setRoom,setIdGame});
     setSocket(webSocket);
     setContent(<Registration socket={webSocket}/>);
 
