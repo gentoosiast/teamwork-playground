@@ -7,7 +7,7 @@ type tShipCanvas = {
 	width: number, height: number,
 	xPx: number, yPx: number,
 	shipCells: { x: number, y: number }[],
-	shipType:string
+	shipType: string
 }
 
 export class CanvasSection extends Control {
@@ -26,6 +26,7 @@ export class CanvasSection extends Control {
 	private cellSize: number;
 	private boardMatrix: number[][];
 	private cellsInRow: number;
+	private mouseUpDebounce: boolean;
 
 	constructor(parentNode: HTMLElement, ships: Record<string, number>) {
 		super(parentNode);
@@ -37,6 +38,7 @@ export class CanvasSection extends Control {
 		this.canvasSection.node.height = this.canvasHeight = this.cellSize * this.cellsInRow
 		this.prevPosX
 		this.prevPosX
+		this.mouseUpDebounce = false
 		this.mouseDownHandlerBinded = this.mouseDownHandler.bind(this)
 		this.moveHandlerBinded = this.moveHandler.bind(this)
 		this.shipsOnCanvas = []
@@ -53,6 +55,7 @@ export class CanvasSection extends Control {
 			const shipWidth = this.inPixels(ShipsSizes[eventData as keyof typeof ShipsSizes])
 			const shipHeight = this.inPixels(1)
 			const shipCells: { x: number, y: number }[] = []
+
 			for (let i = 0; i < ShipsSizes[eventData as keyof typeof ShipsSizes]; i++) {
 				shipCells.push({x: xC, y: yC + i})
 				this.boardMatrix[yC][xC] = 1
@@ -65,7 +68,7 @@ export class CanvasSection extends Control {
 					shipCells,
 					xPx: this.inPixels(xC),
 					yPx: this.inPixels(yC),
-					shipType:eventData
+					shipType: eventData
 				}
 				this.shipsOnCanvas.push(imageObj)
 				//todo boardMatrix fillcells
@@ -103,24 +106,33 @@ export class CanvasSection extends Control {
 	}
 
 	isChangeCell(x: number, y: number) {
+		console.log(this.prevPosX !== x || this.prevPosY !== y)
 		return this.prevPosX !== x || this.prevPosY !== y
+	}
+
+	stopMoveShip(ship: tShipCanvas, x: number, y: number) {
+		console.log("------")
+		this.prevPosX = x
+		this.prevPosY = y
+		this.canvasSection.node.removeEventListener('mousemove', this.moveHandlerBinded)
+		ship.shipCells = []
+		for (let i = 0; i <= ShipsSizes[ship.shipType as keyof typeof ShipsSizes]; i++) {
+			ship.shipCells.push({x, y: y + i})
+		}
 	}
 
 	moveHandler(e: MouseEvent) {
 		const {x, y} = this.getCursorPosition(e, this.canvasSection.node)
+		if (this.isChangeCell(x, y)) {
+			const currentShip = this.getCurrentShip(this.prevPosX, this.prevPosY)
+			currentShip.xPx = this.inPixels(x)
+			currentShip.yPx = this.inPixels(y)
+			this.canvasSection.node.addEventListener('mouseup', () => this.stopMoveShip(currentShip, x, y))
+			//this.canvasSection.node.addEventListener('mouseleave', ()=>this.stopMoveShip(currentShip,x,y))
+			// 	console.log('change')
+			// 	currentShip.shipCells=[]
 
-		const currentShip = this.getCurrentShip(x, y)
-
-		currentShip.xPx = this.inPixels(x)
-		currentShip.yPx = this.inPixels(y)
-		if(this.isChangeCell(x,y)){
-		//	currentShip.shipCells=
-			currentShip.shipCells=[]
-			for (let i = 0; i < ShipsSizes[currentShip.shipType as keyof typeof ShipsSizes]; i++) {
-
-				currentShip.shipCells.push({x, y: y + i})
-			}
-				//todo redraw in matrix
+			//todo redraw in matrix
 			///if position from corner dons allow
 		}
 		//console.log(currentShip.yPx,currentShip.xPx,'^^^^^')
@@ -159,9 +171,7 @@ export class CanvasSection extends Control {
 	}
 
 	getCurrentShip(x: number, y: number) {
-		return this.shipsOnCanvas.find(el => el.shipCells.find(cell => {
-			console.log(cell.x, '((', cell.y)
-			console.log('inpt', x, y)
+return this.shipsOnCanvas.find(el => el.shipCells.find(cell => {
 			return cell.x === x && cell.y === y
 		}))
 
