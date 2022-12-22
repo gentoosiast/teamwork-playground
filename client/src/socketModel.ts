@@ -1,7 +1,8 @@
 import { Dispatch } from "react";
+import { emptyState } from "../../interface/fieldGenerator";
 import { Cell } from "../../interface/IField";
 import { IMessage } from "../../interface/IMessage";
-import { IRegData ,IOurField, IUser, IRoom} from "./dto";
+import { IRegData ,IOurField, IUser, IRoom, IShip} from "./dto";
 
 interface ISocketModel{
   setEnemyField: Dispatch<React.SetStateAction<Array<Array<Cell>>>>;
@@ -23,7 +24,7 @@ export class SocketModel {
     websocket.onmessage = (msg) => {
       const parsedMsg: IMessage = JSON.parse(msg.data);
       const parsedData = parsedMsg.data;
-      console.log('TYPE', parsedMsg.type)
+      console.log('TYPE', parsedMsg.type);        console.log('playerInd', this.playerIdx)
       switch (parsedMsg.type) {
         // case 'chat_message': {
         //   console.log(parsedMsg.data)
@@ -39,6 +40,7 @@ export class SocketModel {
         //   setMessages(msgList.reverse())
         //   break;
         // }
+
         case 'attack': {
           const {position, currentPlayer, status} = JSON.parse(parsedMsg.data)
           
@@ -66,10 +68,20 @@ export class SocketModel {
           setEnemyField(field)
           break;
         }
-        case 'join': {
-          console.log('join', JSON.parse(parsedMsg.data))
+        case 'start_game': {     
           setPage('gameField');
-          setOurField(JSON.parse(parsedMsg.data).ships);
+          const ships:IShip[] = JSON.parse(parsedMsg.data).ships;
+          const shipForClient = emptyState();
+          ships.forEach((ship) => {
+                for (let i = 0; i < ship.length; i += 1) {
+                  if (ship.direction === 0) {
+                    shipForClient[ship.position.y][ship.position.x + i] = Cell.Occupied;
+                  } else {
+                    shipForClient[ship.position.y + i][ship.position.x] = Cell.Occupied;
+                  }
+                }
+              });
+          setOurField(shipForClient);
           break;
         }
         case 'reg':{
@@ -130,7 +142,7 @@ export class SocketModel {
     const getField: IMessage = {
       type: 'get_field',
       data: '',
-      id: 0
+      id: this.playerIdx
     }
     this.webSocket.send(JSON.stringify(getField))
   }
@@ -190,12 +202,16 @@ export class SocketModel {
     }
     this.webSocket.send(JSON.stringify(request))
   }
-  startGame(gameId: number){
+  startGame(gameId: number, ships: IShip[]){
     const request: IMessage = {
-      type: 'start_game',
-      data: JSON.stringify({user: this.user,gameId}),
+      type: 'add_ships',
+      data: JSON.stringify({user: this.user,gameId, ships, indexPlayer: this.playerIdx}),
       id: 0
     }
     this.webSocket.send(JSON.stringify(request))
+  }
+
+  addShipsInGame(ships: IShip[]){
+
   }
 }

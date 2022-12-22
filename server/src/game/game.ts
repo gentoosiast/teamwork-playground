@@ -10,24 +10,14 @@ interface IClients{
     name: string,
   };
 
-  
-const ships = [
-    {
-      position: {x: 0, y: 0},
-      direction: 1,
-      length: 3
-    },
-    {
-      position: {x: 4, y: 4},
-      direction: 0,
-      length: 2
-    },
-    {
-      position: {x: 8, y: 8},
-      direction: 0,
-      length: 1
-    }
-  ];
+  export interface IShip {
+    position: {
+        x: number;
+        y: number;
+    };
+    direction: number;
+    length: number;
+}
 
   const field: Array<Array<Cell>> = emptyState();
 const field2: Array<Array<Cell>> = emptyState();
@@ -36,6 +26,7 @@ interface IPlayer {
     connection: connection;
     index: number;
     shipField: Array<Array<number>>;
+    ships: IShip[]
   }
 export class Game {
     users: IClients[]=[];
@@ -54,47 +45,47 @@ export class Game {
               c.connection.sendUTF(JSON.stringify(responseObj))
         })
     }
-    startGame(){      
-              const shipField: Array<Array<number>> = [];
-              for (let i = 0; i < 9; i += 1) {
-                const row = [];
-                for (let j = 0; j < 9; j += 1) {
-                  row.push(-1);
-                }
-                shipField.push(row);
-              }
-      
-              ships.forEach((ship, idx) => {
-                for (let i = 0; i < ship.length; i += 1) {
-                  if (ship.direction === 0) {
-                    shipField[ship.position.y][ship.position.x + i] = idx;
-                  } else {
-                    shipField[ship.position.y + i][ship.position.x] = idx;
-                  }
-                }
-              });
-              const shipForClient = emptyState();
-              ships.forEach((ship) => {
-                for (let i = 0; i < ship.length; i += 1) {
-                  if (ship.direction === 0) {
-                    shipForClient[ship.position.y][ship.position.x + i] = Cell.Occupied;
-                  } else {
-                    shipForClient[ship.position.y + i][ship.position.x] = Cell.Occupied;
-                  }
-                }
-              });
-              const responseObj: IMessage = {
-                type: "join",
-                data: JSON.stringify({ ships: shipForClient}),
-                id: 0
-              };
+    addShip(ships: IShip[], indexPlayer: number,client: connection){
+       const shipField: Array<Array<number>> = [];
+       for (let i = 0; i < 9; i += 1) {
+        const row = [];
+        for (let j = 0; j < 9; j += 1) {
+          row.push(-1);
+        }
+        shipField.push(row);
+      }
+       
+      ships.forEach((ship, idx) => {
+        for (let i = 0; i < ship.length; i += 1) {
+          if (ship.direction === 0) {
+            shipField[ship.position.y][ship.position.x + i] = idx;
+          } else {
+            shipField[ship.position.y + i][ship.position.x] = idx;
+          }
+        }
+      });
+     
+        const player = this.users.find(it=>it.connection===client);
+        if(player){
+           this.players.push({...player, shipField,index: indexPlayer,ships });
+        }
+        if(this.players.length>=2){
+          this.startGame()
+        }
+       
 
-              this.users.forEach((c, index)=>{
-                this.players.push({...c,shipField,index });
-                c.connection.sendUTF(JSON.stringify(responseObj))
-              }         ); 
-           
+    }
+    startGame(){      
+      this.players.forEach(player=>{
+        const responseObj: IMessage = {
+          type: "start_game",
+          data: JSON.stringify({ ships:player.ships }),
+          id: 0
+        };
+        player.connection.sendUTF(JSON.stringify(responseObj))
+      })
               
+      
     }
 
     attack(position: IVector, client: connection){
@@ -110,7 +101,7 @@ export class Game {
           this.currentPlayer = (this.currentPlayer + 1) % 2;
           return;
         }        
-        const ship = ships[shipIndex];
+        const ship = player.ships[shipIndex];
         let isKilled = true;
         for (let i = 0; i < ship.length; i += 1) {
             if (ship.direction === 0) {

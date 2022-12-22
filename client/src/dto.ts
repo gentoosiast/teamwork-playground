@@ -27,3 +27,12 @@ export interface IRegData{
     roomId:number,
     roomUsers: IUser[]
   }
+
+  export interface IShip {
+    position: {
+        x: number;
+        y: number;
+    };
+    direction: number;
+    length: number;
+}

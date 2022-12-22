@@ -16,23 +16,6 @@ interface IPlayer {
   shipField: Array<Array<number>>;
 }
 
-const ships = [
-  {
-    position: {x: 0, y: 0},
-    direction: 1,
-    length: 3
-  },
-  {
-    position: {x: 4, y: 4},
-    direction: 1,
-    length: 2
-  },
-  {
-    position: {x: 7, y: 7},
-    direction: 0,
-    length: 1
-  }
-];
 
 const server = http.createServer((req, res) =>
 {
@@ -190,12 +173,12 @@ websocket.on('request', (e) => {
         sendMessageRooms(rooms, clients);
         break;
       }
-      case 'start_game':{
+      case 'add_ships':{
         const data =JSON.parse(parsedMsg.data);
+        console.log('add Ship', data)
         const game = games.get(data.gameId )
-
         if(game){
-            game.startGame()
+            game.addShip(data.ships, data.indexPlayer, client )
         }
         break;
 
