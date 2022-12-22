@@ -67,7 +67,7 @@ export class Game {
      
         const player = this.users.find(it=>it.connection===client);
         if(player){
-           this.players.push({...player, shipField,index: indexPlayer,ships });
+           this.players.push({...player, shipField,index: indexPlayer,ships }); 
         }
         if(this.players.length>=2){
           this.startGame()
@@ -94,23 +94,24 @@ export class Game {
         if (player?.index !== this.currentPlayer) {
           return;
         }
-        const shipIndex = this.players[(this.currentPlayer + 1) % 2].shipField[position.y][position.x];
+        const shipIndex = this.players[(this.currentPlayer)].shipField[position.y][position.x];
+      
         this.changeField(position);
         if (shipIndex === -1) {
           this.sendMessage(position, 'miss');
           this.currentPlayer = (this.currentPlayer + 1) % 2;
           return;
         }        
-        const ship = player.ships[shipIndex];
+        const ship = this.players[(this.currentPlayer)].ships[shipIndex];
         let isKilled = true;
         for (let i = 0; i < ship.length; i += 1) {
             if (ship.direction === 0) {
-              if (fields[this.currentPlayer][ship.position.y][ship.position.x + i] === Cell.Empty) {
+              if (fields[(this.currentPlayer + 1) % 2][ship.position.y][ship.position.x + i] === Cell.Empty) {
                 isKilled = false;
                 break;
               }
           } else {
-              if (fields[this.currentPlayer][ship.position.y + i][ship.position.x] === Cell.Empty) {
+              if (fields[(this.currentPlayer + 1) % 2][ship.position.y + i][ship.position.x] === Cell.Empty) {
                   isKilled = false;
                   break;
               }
@@ -150,15 +151,6 @@ export class Game {
               this.sendMessage({y: ship.position.y+i, x:ship.position.x}, 'killed');
             }
           }
-          // for (let i = 0; i < ship.length; i += 1){
-          //   if (ship.direction === 0){
-          //     this.changeField({y: ship.position.y, x:ship.position.x + i}, 'killed');
-          //     this.sendMessage({y: ship.position.y, x:ship.position.x + i}, 'killed');
-          //   } else {
-          //     this.changeField({y: ship.position.y+i, x:ship.position.x }, 'killed');
-          //     this.sendMessage({y: ship.position.y+i, x:ship.position.x}, 'killed');
-          //   }
-          // }
 
         }
 
@@ -178,19 +170,19 @@ export class Game {
     changeField( position: IVector,status: string=''){
       switch (status){
         case 'miss':{
-          fields[this.currentPlayer][position.y][position.x] = Cell.Unavailable;
+          fields[(this.currentPlayer + 1) % 2][position.y][position.x] = Cell.Unavailable;
           break;
         }
         case 'killed':{
-          fields[this.currentPlayer][position.y][position.x] = Cell.Killed;
+          fields[(this.currentPlayer + 1) % 2][position.y][position.x] = Cell.Killed;
           break;
         }
         case 'shot':{
-          fields[this.currentPlayer][position.y][position.x] = Cell.Shot;
+          fields[(this.currentPlayer + 1) % 2][position.y][position.x] = Cell.Shot;
           break;
         }
         default:{
-          fields[this.currentPlayer][position.y][position.x] = Cell.Unavailable;
+          fields[(this.currentPlayer + 1) % 2][position.y][position.x] = Cell.Unavailable;
           break;
         }
       }
