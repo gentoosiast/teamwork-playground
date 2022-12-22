@@ -103,38 +103,79 @@ export class Game {
         if (player?.index !== this.currentPlayer) {
           return;
         }
-        fields[this.currentPlayer][position.y][position.x] = Cell.Unavailable
         const shipIndex = this.players[(this.currentPlayer + 1) % 2].shipField[position.y][position.x];
-        let status = 'miss';
-        let nextPlayer = this.currentPlayer;
+        this.changeField(position);
         if (shipIndex === -1) {
-          nextPlayer = (this.currentPlayer + 1) % 2;
-        } else {
-          const ship = ships[shipIndex];
-          let isKilled = true;
-          for (let i = 0; i < ship.length; i += 1) {
+          this.sendMessage(position, 'miss');
+          this.currentPlayer = (this.currentPlayer + 1) % 2;
+          return;
+        }        
+        const ship = ships[shipIndex];
+        let isKilled = true;
+        for (let i = 0; i < ship.length; i += 1) {
             if (ship.direction === 0) {
               if (fields[this.currentPlayer][ship.position.y][ship.position.x + i] === Cell.Empty) {
                 isKilled = false;
                 break;
               }
-            } else {
+          } else {
               if (fields[this.currentPlayer][ship.position.y + i][ship.position.x] === Cell.Empty) {
-                isKilled = false;
-                break;
+                  isKilled = false;
+                  break;
               }
+          }
+        }
+       // status = isKilled ? 'killed' : 'shot';
+        if(!isKilled){
+          this.changeField(position, 'shot');
+          this.sendMessage(position, 'shot');
+        } else{
+          for (let i = 0; i < ship.length; i += 1){
+            if (ship.direction === 0){
+              this.changeField({y: ship.position.y, x:ship.position.x + i}, 'killed');
+              this.sendMessage({y: ship.position.y, x:ship.position.x + i}, 'killed');
+            } else {
+              this.changeField({y: ship.position.y+i, x:ship.position.x }, 'killed');
+              this.sendMessage({y: ship.position.y+i, x:ship.position.x}, 'killed');
             }
           }
-          status = isKilled ? 'killed' : 'shot';
+          
         }
-        this.players.forEach((player) => {
-          const responseObj: IMessage = {
-            type: "attack",
-            data: JSON.stringify({position, currentPlayer:this.currentPlayer, status}),
-            id: 0
-          }
-          player.connection.sendUTF(JSON.stringify(responseObj))
-        });
-        this.currentPlayer = nextPlayer;
+
+        // this.changeField(position, status);
+        // this.sendMessage(position, status);
+
+    }
+
+    sendMessage(position: IVector,status: string ){
+      this.players.forEach((player) => {
+        const responseObj: IMessage = {
+          type: "attack",
+          data: JSON.stringify({position, currentPlayer:this.currentPlayer, status}),
+          id: 0
+        }
+        player.connection.sendUTF(JSON.stringify(responseObj))
+      });
+    }
+    
+    changeField( position: IVector,status: string=''){
+      switch (status){
+        case 'miss':{
+          fields[this.currentPlayer][position.y][position.x] = Cell.Unavailable;
+          break;
+        }
+        case 'killed':{
+          fields[this.currentPlayer][position.y][position.x] = Cell.Killed;
+          break;
+        }
+        case 'shot':{
+          fields[this.currentPlayer][position.y][position.x] = Cell.Shot;
+          break;
+        }
+        default:{
+          fields[this.currentPlayer][position.y][position.x] = Cell.Unavailable;
+          break;
+        }
+      }
     }
 }

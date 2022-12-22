@@ -135,8 +135,9 @@ websocket.on('request', (e) => {
         break;
       }
       case 'reg':{
-        const name = JSON.parse(parsedMsg.data).name
-        clients.push({connection: client, name: name,index:clients.length });
+        const name = JSON.parse(parsedMsg.data).name;
+        const newClient = {connection: client, name: name,index:clients.length }
+        clients.push(newClient);
 
         const responseObj: IMessage = {
           type: "reg",
@@ -145,15 +146,8 @@ websocket.on('request', (e) => {
         }
         client.sendUTF(JSON.stringify(responseObj))
         if(rooms.size ){
-          rooms.forEach(room=>{
-            const responseObj: IMessage = {
-              type: "create_room",
-              data: JSON.stringify({roomId: room.id, roomUsers: room.sendUsers()}),
-              id: 0
-            }
-           
-            client.sendUTF(JSON.stringify(responseObj))
-          })
+          sendMessageRooms(rooms, [newClient])
+         
         } 
         break; 
       }
@@ -174,16 +168,7 @@ websocket.on('request', (e) => {
         //   id: 0
         // }
         // clients.forEach((c) => c.connection.sendUTF(JSON.stringify(responseObj)));
-        const roomsInfo = [];
-        for (const value of rooms.values()) {
-          roomsInfo.push({roomId: value.id, roomUsers: value.sendUsers()});
-        }
-        const responseObj: IMessage = {
-          type: "update_room",
-          data: JSON.stringify(roomsInfo),
-          id: 0
-        }
-        clients.forEach((c) => c.connection.sendUTF(JSON.stringify(responseObj)));
+        sendMessageRooms(rooms, clients)
         break;
       } 
       case 'add_user_to_room':{
@@ -196,34 +181,19 @@ websocket.on('request', (e) => {
         }
         rooms.forEach(it=>it.removeUser(user.connection))
         room.addUser(user.connection, user.index,user.name)
-        const roomsInfo = [];
-        for (const value of rooms.values()) {
-          roomsInfo.push({roomId: value.id, roomUsers: value.sendUsers()});
-        }
-        const responseObj: IMessage = {
-          type: "update_room",
-          data: JSON.stringify(roomsInfo),
-          id: 0
-        }
-        clients.forEach((c) => c.connection.sendUTF(JSON.stringify(responseObj)));
+        
         if(room.users.length>=2){
          const idGame = Math.floor(Math.random()*100)+''
-         games.set(idGame, new Game(room.users, idGame) );
-        
-          // room.users.forEach((c, ind)=>{
-          //   const responseObj: IMessage = {
-          //     type: "create_game",
-          //     data: JSON.stringify({roomUsers: room.sendUsers(), idGame, idPlayer:ind }),
-          //     id: 0
-          //   }
-          //   c.connection.sendUTF(JSON.stringify(responseObj))
-          // });
+          games.set(idGame, new Game(room.users, idGame) );
+          rooms.delete(room.id)
         }
+        sendMessageRooms(rooms, clients);
         break;
       }
       case 'start_game':{
         const data =JSON.parse(parsedMsg.data);
         const game = games.get(data.gameId )
+
         if(game){
             game.startGame()
         }
@@ -256,3 +226,15 @@ websocket.on('request', (e) => {
   })
 })
 
+const sendMessageRooms = (rooms: Map<string, Room>, clients:IClients[])=>{
+  const roomsInfo = [];
+        for (const value of rooms.values()) {
+          roomsInfo.push({roomId: value.id, roomUsers: value.sendUsers()});
+        }
+        const responseObj: IMessage = {
+          type: "update_room",
+          data: JSON.stringify(roomsInfo),
+          id: 0
+        }
+        clients.forEach((c) => c.connection.sendUTF(JSON.stringify(responseObj)));
+}
