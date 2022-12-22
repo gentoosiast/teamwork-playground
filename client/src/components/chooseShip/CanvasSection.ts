@@ -114,7 +114,9 @@ export class CanvasSection extends Control {
 		console.log("------")
 		this.prevPosX = x
 		this.prevPosY = y
+
 		this.canvasSection.node.removeEventListener('mousemove', this.moveHandlerBinded)
+		this.canvasSection.node.removeEventListener('mouseup',this.stopMoveShip(ship,x,y))
 		ship.shipCells = []
 		for (let i = 0; i <= ShipsSizes[ship.shipType as keyof typeof ShipsSizes]; i++) {
 			ship.shipCells.push({x, y: y + i})
@@ -131,7 +133,6 @@ export class CanvasSection extends Control {
 			//this.canvasSection.node.addEventListener('mouseleave', ()=>this.stopMoveShip(currentShip,x,y))
 			// 	console.log('change')
 			// 	currentShip.shipCells=[]
-
 			//todo redraw in matrix
 			///if position from corner dons allow
 		}
@@ -171,11 +172,9 @@ export class CanvasSection extends Control {
 	}
 
 	getCurrentShip(x: number, y: number) {
-return this.shipsOnCanvas.find(el => el.shipCells.find(cell => {
+		return this.shipsOnCanvas.find(el => el.shipCells.find(cell => {
 			return cell.x === x && cell.y === y
 		}))
-
-		//	return current[current.length - 1]
 	}
 
 	public getCursorPosition(event: MouseEvent, node: HTMLElement) {
