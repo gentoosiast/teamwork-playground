@@ -19,11 +19,11 @@ const ships = [
     },
     {
       position: {x: 4, y: 4},
-      direction: 1,
+      direction: 0,
       length: 2
     },
     {
-      position: {x: 7, y: 7},
+      position: {x: 8, y: 8},
       direction: 0,
       length: 1
     }
@@ -125,25 +125,51 @@ export class Game {
               }
           }
         }
-       // status = isKilled ? 'killed' : 'shot';
+       
         if(!isKilled){
           this.changeField(position, 'shot');
           this.sendMessage(position, 'shot');
         } else{
-          for (let i = 0; i < ship.length; i += 1){
-            if (ship.direction === 0){
+          const height = fields[this.currentPlayer].length;
+          const width = fields[this.currentPlayer][0].length;
+          if (ship.direction === 0){
+            for (let i =-1; i < ship.length+1; i += 1){
+              for (let j =-1; j < 2; j += 1){
+                if(ship.position.y+j>=0&&ship.position.y+j<height&&ship.position.x + i>=0&&ship.position.x + i<width){
+                   this.changeField({y: ship.position.y+j, x:ship.position.x + i}, 'miss');
+                  this.sendMessage({y: ship.position.y+j, x:ship.position.x + i}, 'miss');
+                }                
+              }             
+            }
+            for (let i = 0; i < ship.length; i += 1){
               this.changeField({y: ship.position.y, x:ship.position.x + i}, 'killed');
               this.sendMessage({y: ship.position.y, x:ship.position.x + i}, 'killed');
-            } else {
+            }
+          } else {
+            for (let i =-1; i < ship.length+1; i += 1){
+              for (let j =-1; j < 2; j += 1){
+                if(ship.position.y+i>=0&&ship.position.y+i<height&&ship.position.x + j>=0&&ship.position.x + j<width){
+                  this.changeField({y: ship.position.y+i, x:ship.position.x + j}, 'miss');
+                  this.sendMessage({y: ship.position.y+i, x:ship.position.x + j}, 'miss');
+                }            
+              }             
+            }
+            for (let i = 0; i < ship.length; i += 1){
               this.changeField({y: ship.position.y+i, x:ship.position.x }, 'killed');
               this.sendMessage({y: ship.position.y+i, x:ship.position.x}, 'killed');
             }
           }
-          
-        }
+          // for (let i = 0; i < ship.length; i += 1){
+          //   if (ship.direction === 0){
+          //     this.changeField({y: ship.position.y, x:ship.position.x + i}, 'killed');
+          //     this.sendMessage({y: ship.position.y, x:ship.position.x + i}, 'killed');
+          //   } else {
+          //     this.changeField({y: ship.position.y+i, x:ship.position.x }, 'killed');
+          //     this.sendMessage({y: ship.position.y+i, x:ship.position.x}, 'killed');
+          //   }
+          // }
 
-        // this.changeField(position, status);
-        // this.sendMessage(position, status);
+        }
 
     }
 
