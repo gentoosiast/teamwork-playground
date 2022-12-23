@@ -28,7 +28,7 @@ export class CanvasSection extends Control {
 	private cellsInRow: number;
 	private mouseUpDebounce: boolean;
 
-	constructor(parentNode: HTMLElement, ships: Record<string, number>) {
+	constructor(parentNode: HTMLElement, ships: Record<string, number>, activeShip?: string) {
 		super(parentNode);
 		this.parentNode = parentNode
 		this.canvasSection = new Control(parentNode, 'canvas', 'canvas')
@@ -44,39 +44,54 @@ export class CanvasSection extends Control {
 		this.shipsOnCanvas = []
 		this.boardMatrix = []
 		this.ctx = this.canvasSection.node.getContext('2d')
-		this.canvasSection.node.addEventListener('mousedown', this.mouseDownHandlerBinded)
-		this.canvasSection.node.ondragover = (e) => {
-			e.preventDefault()
-		}
-		this.canvasSection.node.ondrop = (e) => {
-			const {x: xC, y: yC} = this.getCursorPosition(e, this.canvasSection.node)
-			//console.log(x,y,'CPOS')
-			const eventData = e.dataTransfer.getData('el')
-			const shipWidth = this.inPixels(ShipsSizes[eventData as keyof typeof ShipsSizes])
-			const shipHeight = this.inPixels(1)
-			const shipCells: { x: number, y: number }[] = []
+		//this.canvasSection.node.addEventListener('mousedown', this.mouseDownHandlerBinded)
 
-			for (let i = 0; i < ShipsSizes[eventData as keyof typeof ShipsSizes]; i++) {
-				shipCells.push({x: xC, y: yC + i})
-				this.boardMatrix[yC][xC] = 1
-				//todo add closest cells
-			}
-			this.createImage('./public/assets/ship.png', shipWidth, shipHeight, (image) => {
-				const imageObj: tShipCanvas = {
-					xC, yC, rotate: false, image,
-					width: shipWidth, height: shipHeight,
-					shipCells,
-					xPx: this.inPixels(xC),
-					yPx: this.inPixels(yC),
-					shipType: eventData
-				}
-				this.shipsOnCanvas.push(imageObj)
-				//todo boardMatrix fillcells
-				this.drawShip(image, this.inPixels(xC), this.inPixels(yC), imageObj.width, imageObj.height)
-			})
-		}
+	//	this.canvasSection.node.onmousemove = (e) => {
+		//	const {x: xC, y: yC} = this.getCursorPosition(e, this.canvasSection.node)
+
+//todo need to hash
+
+			//	const shipWidth = this.inPixels(ShipsSizes[eventData as keyof typeof ShipsSizes])
+			//	const shipHeight = this.inPixels(1)
+			//	const shipCells: { x: number, y: number }[] = []
+
+			// for (let i = 0; i < ShipsSizes[eventData as keyof typeof ShipsSizes]; i++) {
+			// 	shipCells.push({x: xC, y: yC + i})
+			// 	this.boardMatrix[yC][xC] = 1
+			// 	//todo add closest cells
+			// }
+			// this.createImage('./public/assets/ship.png', shipWidth, shipHeight, (image) => {
+			// 	const imageObj: tShipCanvas = {
+			// 		xC, yC, rotate: false, image,
+			// 		width: shipWidth, height: shipHeight,
+			// 		shipCells,
+			// 		xPx: this.inPixels(xC),
+			// 		yPx: this.inPixels(yC),
+			// 		shipType: eventData
+			// 	}
+			// 	this.shipsOnCanvas.push(imageObj)
+			// 	//todo boardMatrix fillcells
+			// 	this.drawShip(image, this.inPixels(xC), this.inPixels(yC), imageObj.width, imageObj.height)
+			// })
+		//}
 		this.createEmptyMatrix()
-		this.drawScene()
+		this.boardMatrix.forEach((row, rI) => {
+			row.forEach((cell, cI) => {
+				this.ctx.fillStyle = cell === 0 ? "green" : 'red';
+				this.ctx.strokeStyle = 'red';
+				this.ctx.stroke()
+				this.ctx.fillRect((rI * this.cellSize) + 1, (cI * this.cellSize) + 1, this.cellSize - 2, this.cellSize - 2);
+
+			})
+		})
+		//this.drawScene()
+	}
+
+	addActiveShip(activeShip: string) {
+			this.canvasSection.node.onmousemove = (e) => {
+			const {x: xC, y: yC} = this.getCursorPosition(e, this.canvasSection.node)
+			console.log(xC,yC,'^^',activeShip)
+			}
 	}
 
 	inPixels(indx: number) {
@@ -116,7 +131,7 @@ export class CanvasSection extends Control {
 		this.prevPosY = y
 
 		this.canvasSection.node.removeEventListener('mousemove', this.moveHandlerBinded)
-		this.canvasSection.node.removeEventListener('mouseup',this.stopMoveShip(ship,x,y))
+		//	this.canvasSection.node.removeEventListener('mouseup',this.stopMoveShip(ship,x,y))
 		ship.shipCells = []
 		for (let i = 0; i <= ShipsSizes[ship.shipType as keyof typeof ShipsSizes]; i++) {
 			ship.shipCells.push({x, y: y + i})
@@ -130,13 +145,7 @@ export class CanvasSection extends Control {
 			currentShip.xPx = this.inPixels(x)
 			currentShip.yPx = this.inPixels(y)
 			this.canvasSection.node.addEventListener('mouseup', () => this.stopMoveShip(currentShip, x, y))
-			//this.canvasSection.node.addEventListener('mouseleave', ()=>this.stopMoveShip(currentShip,x,y))
-			// 	console.log('change')
-			// 	currentShip.shipCells=[]
-			//todo redraw in matrix
-			///if position from corner dons allow
 		}
-		//console.log(currentShip.yPx,currentShip.xPx,'^^^^^')
 		this.drawScene()
 	}
 
@@ -151,25 +160,25 @@ export class CanvasSection extends Control {
 		this.shipsOnCanvas.forEach(ship => {
 			this.ctx.drawImage(ship.image, ship.xPx, ship.yPx, ship.width, ship.height)
 		})
-		this.drawMesh()
+		//this.drawMesh()
 	}
 
-	drawLine(x1: number, y1: number, x2: number, y2: number) {
-		this.ctx.beginPath()
-		this.ctx.moveTo(x1, y1)
-		this.ctx.strokeStyle = 'darkred'
-		this.ctx.lineTo(x2, y2)
-		this.ctx.stroke()
-	}
+	// drawLine(x1: number, y1: number, x2: number, y2: number) {
+	// 	this.ctx.beginPath()
+	// 	this.ctx.moveTo(x1, y1)
+	// 	this.ctx.strokeStyle = 'darkred'
+	// 	this.ctx.lineTo(x2, y2)
+	// 	this.ctx.stroke()
+	// }
 
-	drawMesh() {
-		for (let i = 0; i < this.canvasWidth; i += this.cellSize) {
-			this.drawLine(i, 0, i, this.canvasHeight)
-		}
-		for (let i = 0; i < this.canvasHeight; i += this.cellSize) {
-			this.drawLine(0, i, this.canvasWidth, i)
-		}
-	}
+	// drawMesh() {
+	// 	for (let i = 0; i < this.canvasWidth; i += this.cellSize) {
+	// 		this.drawLine(i, 0, i, this.canvasHeight)
+	// 	}
+	// 	for (let i = 0; i < this.canvasHeight; i += this.cellSize) {
+	// 		this.drawLine(0, i, this.canvasWidth, i)
+	// 	}
+	// }
 
 	getCurrentShip(x: number, y: number) {
 		return this.shipsOnCanvas.find(el => el.shipCells.find(cell => {
