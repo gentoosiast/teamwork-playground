@@ -3,7 +3,8 @@ import {ShipsSizes} from "./ChooseComponent";
 
 type tShipCanvas = {
 	xC: number, yC: number,
-	rotate: false, image: HTMLImageElement,
+	rotate: false,
+	image: HTMLImageElement,
 	width: number, height: number,
 	//xPx: number, yPx: number,
 	//shipCells: { x: number, y: number }[],
@@ -28,8 +29,8 @@ export class CanvasSection extends Control {
 	private cellsInRow: number;
 	private mouseUpDebounce: boolean;
 	private activeShip: string;
-	private moveBinded: (e:MouseEvent) => void;
-	private clickBinded: ()=>void;
+	private moveBinded: (e: MouseEvent) => void;
+	private clickBinded: () => void;
 
 	constructor(parentNode: HTMLElement, ships: Record<string, number>, activeShip?: string) {
 		super(parentNode);
@@ -42,8 +43,8 @@ export class CanvasSection extends Control {
 		this.prevPosX
 		this.prevPosX
 		this.mouseUpDebounce = false
-		this.moveBinded=this.onMove.bind(this)
-		this.clickBinded=this.onClick.bind(this)
+		this.moveBinded = this.onMove.bind(this)
+		this.clickBinded = this.onClick.bind(this)
 		this.shipsOnCanvas = []
 		this.boardMatrix = []
 		this.ctx = this.canvasSection.node.getContext('2d')
@@ -55,29 +56,30 @@ export class CanvasSection extends Control {
 
 	clearCells(activeShip: string) {
 		if (!this.prevPosX && !this.prevPosY) return
+		console.log("CLEARcells")
 		this.fillCells(activeShip, 99)
 	}
 
 	fillCells(activeShip: string, value: number) {
-		const cells=[]
+		const cells = []
 		for (let i = 0; i < ShipsSizes[activeShip as keyof typeof ShipsSizes]; i++) {
-			if(this.boardMatrix[this.prevPosX + i][this.prevPosY])cells.push("+")
+			if (this.boardMatrix[this.prevPosX + i][this.prevPosY]) cells.push("+")
 		}
-		if(cells.length===ShipsSizes[activeShip as keyof typeof ShipsSizes]){
-			for(let i=0;i<cells.length;i++){
-				this.boardMatrix[this.prevPosX + i][this.prevPosY]=value
+		if (cells.length === ShipsSizes[activeShip as keyof typeof ShipsSizes]) {
+			for (let i = 0; i < cells.length; i++) {
+				this.boardMatrix[this.prevPosX + i][this.prevPosY] = value
 			}
 		}
 	}
 
-	onClick(){
-		this.canvasSection.node.removeEventListener('mousemove',this.moveBinded)
-		this.canvasSection.node.removeEventListener('click',this.clickBinded)
+	onClick() {
+		this.canvasSection.node.removeEventListener('mousemove', this.moveBinded)
+		this.canvasSection.node.removeEventListener('click', this.clickBinded)
 		this.createImage('./public/assets/ship.png',
 			this.cellSize * ShipsSizes[this.activeShip as keyof typeof ShipsSizes], this.cellSize,
 			(image) => {
 				const imageObj: tShipCanvas = {
-					xC:this.prevPosX, yC:this.prevPosY, rotate: false, image,
+					xC: this.prevPosX, yC: this.prevPosY, rotate: false, image,
 					width: this.cellSize * ShipsSizes[this.activeShip as keyof typeof ShipsSizes],
 					height: this.cellSize,
 					//shipCells,
@@ -90,20 +92,28 @@ export class CanvasSection extends Control {
 			})
 
 	}
+
+	isOnBoard(x: number, y: number) {
+		return (x + ShipsSizes[this.activeShip as keyof typeof ShipsSizes]) <= this.boardMatrix.length
+			&& y < this.boardMatrix.length && y >= 0 && x >= 0
+	}
+
 	onMove(e: MouseEvent) {
 		const {x: xC, y: yC} = this.getCursorPosition(e, this.canvasSection.node)
 		if (this.prevPosX && this.prevPosY && this.prevPosX === xC && this.prevPosY === yC) return
-		this.clearCells(this.activeShip)
-		this.prevPosX = xC
-		this.prevPosY = yC
-		this.fillCells(this.activeShip, 1)
-		this.drawScene()
-		this.canvasSection.node.addEventListener('click', this.clickBinded)
+		if (this.isOnBoard(xC, yC)) {
+			this.clearCells(this.activeShip)
+			this.prevPosX = xC
+			this.prevPosY = yC
+			this.fillCells(this.activeShip, 1)
+			this.drawScene()
+			this.canvasSection.node.addEventListener('click', this.clickBinded)
+		}
 	}
 
 	addActiveShip(activeShip: string) {
 		this.activeShip = activeShip
-		this.canvasSection.node?.addEventListener('mousemove',this.moveBinded)
+		this.canvasSection.node?.addEventListener('mousemove', this.moveBinded)
 	}
 
 	inPixels(indx: number) {
@@ -138,7 +148,7 @@ export class CanvasSection extends Control {
 		//this.ctx.fillStyle = 'orange'
 		//	this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight)
 		this.shipsOnCanvas.forEach(ship => {
-		//	console.log("SHIP", ship)
+			//	console.log("SHIP", ship)
 			this.ctx.drawImage(ship.image, this.inPixels(ship.xC), this.inPixels(ship.yC), ship.width, ship.height)
 		})
 		//this.drawMesh()

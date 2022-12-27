@@ -24,7 +24,7 @@ export class ShipsSection extends Control {
 				this.onAddShip(ship[0])
 			}
 			shipItem.node.appendChild(image)
-
+//todo add button rundom ships
 			const shipCount = new Control(this.node, 'span', '', ''+ship[1])
 			this.shipsCountBlock.push({
 				type: ship[0],
