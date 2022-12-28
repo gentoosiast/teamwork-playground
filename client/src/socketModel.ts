@@ -12,13 +12,14 @@ interface ISocketModel{
   setUserData: Dispatch<React.SetStateAction<IUser>>
   setRoom: Dispatch<React.SetStateAction<IRoom[]>>
   setIdGame: Dispatch<React.SetStateAction<number>>
+  setCurrentPlayer: Dispatch<React.SetStateAction<boolean>>
 }
 export class SocketModel {
   webSocket: WebSocket;
   playerIdx: number = -1;
   rooms: []=[]
   user:IUser;
-  constructor({ setEnemyField, setOurField, setPlayerIdx, setPage,setUserData,setRoom,setIdGame}:ISocketModel) {
+  constructor({ setEnemyField, setOurField, setPlayerIdx, setPage,setUserData,setRoom,setIdGame,setCurrentPlayer}:ISocketModel) {
     const websocket = new WebSocket('ws://localhost:3000')
     this.webSocket = websocket;
     websocket.onmessage = (msg) => {
@@ -60,6 +61,8 @@ export class SocketModel {
             console.log(arr)
             return arr;
           })
+          const turn = currentPlayer !== this.playerIdx;
+          setCurrentPlayer(turn)
           break;
         }
         case 'get_field': {
@@ -82,6 +85,8 @@ export class SocketModel {
                 }
               });
           setOurField(shipForClient);
+          const currentPlayer = JSON.parse(parsedMsg.data).currentPlayerIndex === this.playerIdx;
+          setCurrentPlayer(currentPlayer)
           break;
         }
         case 'reg':{
@@ -142,7 +147,7 @@ export class SocketModel {
     const getField: IMessage = {
       type: 'get_field',
       data: '',
-      id: this.playerIdx
+      id: 0
     }
     this.webSocket.send(JSON.stringify(getField))
   }
@@ -163,7 +168,7 @@ export class SocketModel {
   attack(x: number, y: number,gameId:number) {
     const request: IMessage = {
       type: 'attack',
-      data: JSON.stringify({ x, y ,gameId}),
+      data: JSON.stringify({ x, y ,gameId, indexPlayer: this.playerIdx}),
       id: 0
     }
     this.webSocket.send(JSON.stringify(request))

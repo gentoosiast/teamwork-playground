@@ -69,6 +69,7 @@ export function RequestServer() {
   const [ourField, setOurField] = useState<Array<Array<Cell>>>(emptyState());
   const [content, setContent]=useState(null);
   const [page, setPage]=useState('reg');
+  const [isCurrentPlayer, setCurrentPlayer] = useState(false)
   
 
   useEffect(()=>{
@@ -82,15 +83,15 @@ export function RequestServer() {
     }
     if(page==='gameField'){
       setContent(<>
-      <GameField onAttack={(x, y) => {
+      <GameField isCurrentPlayer={isCurrentPlayer} onAttack={(x, y) => {
         socket.attack(x, y, idGame);
       }} enemyField={enemyField} ourField={ourField}></GameField>
        <div>player index: {playerIdx}</div>
       </>);
     }
-  },[page,rooms, enemyField, ourField])
+  },[page,rooms, enemyField, ourField,isCurrentPlayer])
   useEffect(() => {
-    const webSocket = new SocketModel({ setEnemyField, setOurField, setPlayerIdx,  setPage,setUserData,setRoom,setIdGame});
+    const webSocket = new SocketModel({ setEnemyField, setOurField, setPlayerIdx,  setPage,setUserData,setRoom,setIdGame,setCurrentPlayer});
     setSocket(webSocket);
     setContent(<Registration socket={webSocket}/>);
 

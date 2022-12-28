@@ -25,6 +25,7 @@ interface IGameFieldProps {
   onAttack: (x: number, y: number) => void;
   enemyField: Array<Array<Cell>>;
   ourField: Array<Array<Cell>>;
+  isCurrentPlayer: boolean
 }
 
 export function EnemyField(props: IEnemyFieldProps) {
@@ -72,6 +73,7 @@ export function GameField(props: IGameFieldProps) {
   console.log("GIMEFIELD OURR", props.ourField)
   return (
     <div>
+      <p>{props.isCurrentPlayer?'Your Turn':'Next player goes'}</p>
       <OurField field = {props.ourField}></OurField>
       <EnemyField onAttack={props.onAttack} field={props.enemyField}></EnemyField>
     </div>
