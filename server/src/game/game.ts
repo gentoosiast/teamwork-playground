@@ -3,8 +3,24 @@ import { emptyState } from "../../../interface/fieldGenerator";
 import { Cell } from "../../../interface/IField";
 import { IMessage } from "../../../interface/IMessage";
 import { IVector } from "../../../interface/IVector";
+import { BotController } from "./botController";
+import { IPlayerController } from "./IPlayerController";
 import { PlayerController } from "./playerController";
-
+const botShip =[ {
+  position: {x: 0, y: 0},
+  direction: 1,
+  length: 3
+},
+{
+  position: {x: 4, y: 4},
+  direction: 1,
+  length: 2
+},
+{
+  position: {x: 7, y: 7},
+  direction: 0,
+  length: 1
+}]
 interface IClients{
     connection: connection,
     index: number,
@@ -33,14 +49,14 @@ export class Game {
     users: IClients[]=[];
     id:string;
     players: IPlayer[]=[];
-    playerControllers= new Map<number, PlayerController>()
+    playerControllers= new Map<number, IPlayerController>()
     currentPlayer =0;
     size=0;
     constructor(users:IClients[],id: string){
         this.users = users;
         this.id=id;
         this.users.forEach((c,ind)=>{
-          const player = new PlayerController(ind,c.connection, (position, status, isChangeCurrent)=> this.sendMessage(position, status,isChangeCurrent), );
+          const player = new PlayerController(ind, (position, status, isChangeCurrent)=> this.sendMessage(position, status,isChangeCurrent), c.connection);
           this.playerControllers.set(ind,player);
           const responseObj: IMessage = {
                 type: "create_game",
@@ -50,7 +66,7 @@ export class Game {
               c.connection.sendUTF(JSON.stringify(responseObj))
         })
     }
-    addShip(ships: IShip[], indexPlayer: number,client: connection){
+    addShip(ships: IShip[], indexPlayer: number){
       const player =this.playerControllers.get(indexPlayer );
       
       player?.addOurShips(ships);
@@ -106,13 +122,20 @@ export class Game {
               
       
     // }
+    startSingleGame(){
+      this.playerControllers.set(1, new BotController(1,(position, status, isChangeCurrent)=> this.sendMessage(position, status,isChangeCurrent)));
+      this.addShip(botShip,1);
 
+
+
+    }
     attack(position: IVector, indexPlayer: number){
       if(this.currentPlayer!==indexPlayer){
         return;
       }
       const player = this.playerControllers.get(indexPlayer);
       player?.attack(position);
+      
         // const player =this.players.find((player) => player.connection === client);
         // console.log("DEBUG: currentPlayer, player.index", this.currentPlayer, player?.index);
         // if (player?.index !== this.currentPlayer) {
@@ -192,6 +215,8 @@ export class Game {
       }); 
       if(isChangeCurrent){
         this.currentPlayer = (this.currentPlayer + 1) % 2;
+        const player = this.playerControllers.get(this.currentPlayer);
+        player?.nextRound();
       }
     
     }

@@ -28,7 +28,7 @@ const Room = ({socket,rooms,user}:IRoomComponent)=>{
     return(<>
     <p>Hello, {user.name}</p>
         <button onClick={()=>socket.createRoom()}>Create Room</button>
-        <button>Add to Room</button>   
+        <button onClick={()=>socket.singlePlay()}>Play with Bot</button>   
         {roomsComp}
     </>)
 }

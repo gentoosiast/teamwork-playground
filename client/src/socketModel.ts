@@ -219,4 +219,12 @@ export class SocketModel {
   addShipsInGame(ships: IShip[]){
 
   }
+  singlePlay(){
+    const request: IMessage = {
+      type: 'single_play',
+      data: '',
+      id: 0
+    }
+    this.webSocket.send(JSON.stringify(request))
+  }
 }

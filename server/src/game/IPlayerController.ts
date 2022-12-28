@@ -7,7 +7,6 @@ import { IShip } from "./game";
 
 export class IPlayerController{
     id: number;
-    client: connection;
     ships: IShip[] = [];
     shipField:Array<Array<number>> = [];
     field: Array<Array<Cell>> = emptyState();
@@ -15,23 +14,13 @@ export class IPlayerController{
     sendMessage: (position: IVector,status: string, isChangeCurrent?: boolean)=>void;
     ourShips: IShip[]=[];
     
-    constructor(id: number, client: connection, sendMessage: (position: IVector,status: string, isChangeCurrent: boolean)=>void){
+    constructor(id: number, sendMessage: (position: IVector,status: string, isChangeCurrent: boolean)=>void){
         this.id = id;
-        this.client = client;
         this.sendMessage = (position,status, isChangeCurrent=false)=>{
             sendMessage(position,status,isChangeCurrent)
         }
     }
-
-    startGame(){
-        const responseObj: IMessage = {
-            type: "start_game",
-            data: JSON.stringify({ ships:this.ourShips, currentPlayerIndex:0 }),
-            id: 0
-        };
-        this.client.sendUTF(JSON.stringify(responseObj))
-
-    }
+    startGame(){}
     nextRound(){
         console.log()
     }
@@ -57,6 +46,7 @@ export class IPlayerController{
            }
          }
        });
+       console.log(this.shipField)
     }
     
     checkShip(position: IVector){
@@ -66,13 +56,16 @@ export class IPlayerController{
 
     }
     attack(position: IVector){
-        const shipIndex = this.shipField[position.y][position.x];
-      
+       
+      if(this.enemyField[position.y][position.x ] !== Cell.Empty){
+          return 'again';
+        } 
+       const shipIndex = this.shipField[position.y][position.x];
         this.changeField(position);
         if (shipIndex === -1) {
-          this.sendMessage(position, 'miss', true);
+          this.sendMessage(position, 'miss', true);         
           return;
-        }        
+        }       
         const ship =this.ships[shipIndex];
         let isKilled = true;
         for (let i = 0; i < ship.length; i += 1) {
@@ -124,7 +117,7 @@ export class IPlayerController{
           }
 
         }
-
+        return;
     }      
       changeField( position: IVector,status: string=''){
         switch (status){
