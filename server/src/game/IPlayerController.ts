@@ -56,9 +56,8 @@ export class IPlayerController{
 
     }
     attack(position: IVector){
-       
       if(this.enemyField[position.y][position.x ] !== Cell.Empty){
-          return 'again';
+          return;
         } 
        const shipIndex = this.shipField[position.y][position.x];
         this.changeField(position);
@@ -117,7 +116,6 @@ export class IPlayerController{
           }
 
         }
-        return;
     }      
       changeField( position: IVector,status: string=''){
         switch (status){
