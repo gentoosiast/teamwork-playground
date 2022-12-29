@@ -12,7 +12,7 @@ const ships = [[
       length: 3
     },
     {
-      position: {x: 4, y: 4},
+      position: {x: 0, y: 4},
       direction: 1,
       length: 2
     },
@@ -71,7 +71,7 @@ const ships = [[
     }
   ]];
 const ChooseShip=({socket, gameId}:IChooseShip)=>{
-    const rand = Math.floor(Math.random()*3)
+    const rand = 0//Math.floor(Math.random()*3)
     console.log(rand)
     return (<>
         Тут людина розставляє свої кораблики, де вони будуть. Потім всі дані по кліку летять на сервер

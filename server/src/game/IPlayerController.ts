@@ -43,8 +43,13 @@ export class IPlayerController{
          }
        });
     }
+
+    checkEmpty(position: IVector){
+      return this.enemyField[position.y][position.x ] === Cell.Empty;
+    }
+
     attack(position: IVector){
-      if(this.enemyField[position.y][position.x ] !== Cell.Empty){
+      if(!this.checkEmpty(position)){
           return;
         } 
        const shipIndex = this.shipField[position.y][position.x];
@@ -62,7 +67,8 @@ export class IPlayerController{
         } else{
           this.killShip(ship);
         }
-    }      
+    }   
+    
     
     killShip(ship: IShip){
       const height = this.enemyField.length;
