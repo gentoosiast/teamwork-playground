@@ -25,7 +25,6 @@ export class SocketModel {
     websocket.onmessage = (msg) => {
       const parsedMsg: IMessage = JSON.parse(msg.data);
       const parsedData = parsedMsg.data;
-      console.log('TYPE', parsedMsg.type);        console.log('playerInd', this.playerIdx)
       switch (parsedMsg.type) {
         // case 'chat_message': {
         //   console.log(parsedMsg.data)
@@ -41,11 +40,14 @@ export class SocketModel {
         //   setMessages(msgList.reverse())
         //   break;
         // }
-
+        case 'turn':{
+          const {currentPlayer} = JSON.parse(parsedMsg.data);
+          setCurrentPlayer(currentPlayer=== this.playerIdx)
+          break;
+        }
         case 'attack': {
           const {position, currentPlayer, status} = JSON.parse(parsedMsg.data)
           
-          console.log('ATTACK', position, currentPlayer, status)
           const setField = [setEnemyField, setOurField][(currentPlayer + this.playerIdx) % 2]
           setField((last:Array<Array<number>>) => {
             const arr = last.map((row, y) => {
@@ -58,11 +60,8 @@ export class SocketModel {
                 return position.x === x && position.y === y ? Cell.Unavailable : cell;
               })
             })
-            console.log(arr)
             return arr;
           })
-          const turn = currentPlayer !== this.playerIdx;
-          setCurrentPlayer(turn)
           break;
         }
         case 'get_field': {

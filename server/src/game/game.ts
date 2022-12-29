@@ -56,14 +56,9 @@ export class Game {
         this.users = users;
         this.id=id;
         this.users.forEach((c,ind)=>{
-          const player = new PlayerController(ind, (position, status, isChangeCurrent)=> this.sendMessage(position, status,isChangeCurrent), c.connection);
+          const player = new PlayerController(ind, (position, status, isChangeCurrent)=> this.sendMessageAttack(position, status,isChangeCurrent), c.connection);
           this.playerControllers.set(ind,player);
-          const responseObj: IMessage = {
-                type: "create_game",
-                data: JSON.stringify({idGame: id, idPlayer:ind }),
-                id: 0
-              }
-              c.connection.sendUTF(JSON.stringify(responseObj))
+          this.sendMessage(c.connection, "create_game",JSON.stringify({idGame: id, idPlayer:ind }));
         })
     }
     addShip(ships: IShip[], indexPlayer: number){
@@ -123,7 +118,7 @@ export class Game {
       
     // }
     startSingleGame(){
-      this.playerControllers.set(1, new BotController(1,(position, status, isChangeCurrent)=> this.sendMessage(position, status,isChangeCurrent)));
+      this.playerControllers.set(1, new BotController(1,(position, status, isChangeCurrent)=> this.sendMessageAttack(position, status,isChangeCurrent)));
       this.addShip(botShip,1);
 
 
@@ -204,21 +199,29 @@ export class Game {
 
     }
 
-    sendMessage(position: IVector,status: string ,isChangeCurrent:boolean=false){
+    sendMessageAttack(position: IVector,status: string ,isChangeCurrent:boolean=false){
       this.users.forEach((user) => {
-        const responseObj: IMessage = {
-          type: "attack",
-          data: JSON.stringify({position, currentPlayer:this.currentPlayer, status}),
-          id: 0
-        }
-        user.connection.sendUTF(JSON.stringify(responseObj))
-      }); 
+        this.sendMessage(user.connection, 'attack', JSON.stringify({position, currentPlayer:this.currentPlayer, status}));
+      });
+      
       if(isChangeCurrent){
         this.currentPlayer = (this.currentPlayer + 1) % 2;
         const player = this.playerControllers.get(this.currentPlayer);
         player?.nextRound();
       }
+      this.users.forEach((user) => {
+        this.sendMessage(user.connection, 'turn', JSON.stringify( {currentPlayer:this.currentPlayer}));
+      });
     
+    }
+    sendMessage(client: connection, mes: string, data: string){   
+        const responseObj: IMessage = {
+          type: mes,
+          data,
+          id: 0
+        }
+        client.sendUTF(JSON.stringify(responseObj))
+
     }
     
     // changeField( position: IVector,status: string=''){

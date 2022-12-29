@@ -69,8 +69,6 @@ export function OurField(props: IOurFieldProps) {
 }
 
 export function GameField(props: IGameFieldProps) {
-  console.log('GIMEFIELD ENEMY', props.enemyField)
-  console.log("GIMEFIELD OURR", props.ourField)
   return (
     <div>
       <p>{props.isCurrentPlayer?'Your Turn':'Next player goes'}</p>
