@@ -1,11 +1,8 @@
 import http from "http";
-import { IMessage } from "../interface/IMessage";
-import { IOurField, IEnemyField, Cell } from '../interface/IField';
-import { emptyState } from '../interface/fieldGenerator'
-import { IVector } from '../interface/IVector';
+import { IMessage, Cell} from "./src/dto";
+import { emptyState } from './src/utils/fieldGenerator'
 import * as WebSocket from "websocket";
 import { DataBase } from "./src/database/db";
-import { json } from "body-parser";
 import Room from "./src/room/room";
 import { Game } from "./src/game/game";
 const db = new DataBase();
@@ -36,10 +33,8 @@ const server = http.createServer((req, res) =>
     });
 
     queryParams[0].val = queryParams[0].val.replace('%40', '@');
-    console.log(endpoint, queryParams);
     if (db.checkUser(queryParams[0].val)) {
       db.getNewUser(queryParams[0].val, queryParams[1].val);
-      console.log(db.getDatabase());
     } else console.log('You are already registered');
   }
   res.end("recieved");
@@ -75,7 +70,6 @@ websocket.on('request', (e) => {
   console.log('connect');
 
   client.on('message', (msg) => {
-    console.log(msg)
     if (msg.type != 'utf8') return;
     const parsedMsg: IMessage = JSON.parse(msg.utf8Data)
     switch (parsedMsg.type) {
@@ -155,7 +149,6 @@ websocket.on('request', (e) => {
         break;
       } 
       case 'add_user_to_room':{
-        console.log(parsedMsg.data)
         const data =JSON.parse(parsedMsg.data);
         const room = rooms.get(data.indexRoom);
         const user = clients.find(it=>it.connection===client)

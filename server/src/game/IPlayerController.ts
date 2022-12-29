@@ -1,9 +1,5 @@
-import { connection } from "websocket";
-import { emptyState } from "../../../interface/fieldGenerator";
-import { Cell } from "../../../interface/IField";
-import { IMessage } from "../../../interface/IMessage";
-import { IVector } from "../../../interface/IVector";
-import { IShip } from "./game";
+import { emptyState } from "../utils/fieldGenerator";
+import { IShip, IVector, Cell } from "../dto";
 
 export class IPlayerController{
     id: number;
@@ -21,12 +17,12 @@ export class IPlayerController{
         }
     }
     startGame(){}
-    nextRound(){
-        console.log()
-    }
+    nextRound(){}
+
     addOurShips(ships: IShip[]){
         this.ourShips = ships;
     }
+
     addEnemyShips(ships: IShip[]){
         this.ships = ships;
         
@@ -46,7 +42,6 @@ export class IPlayerController{
            }
          }
        });
-       console.log(this.shipField)
     }
     attack(position: IVector){
       if(this.enemyField[position.y][position.x ] !== Cell.Empty){
@@ -100,6 +95,7 @@ export class IPlayerController{
         }
       }
     }
+
     checkShip(ship: IShip){
       let isKilled = true;
       for (let i = 0; i < ship.length; i += 1) {
@@ -118,7 +114,7 @@ export class IPlayerController{
       return isKilled;
     }
 
-      changeField( position: IVector,status: string=''){
+    changeField( position: IVector,status: string=''){
         switch (status){
           case 'miss':{
             this.enemyField[position.y][position.x] = Cell.Unavailable;

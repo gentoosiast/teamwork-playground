@@ -1,9 +1,5 @@
 import { connection } from "websocket";
-import { emptyState } from "../../../interface/fieldGenerator";
-import { Cell } from "../../../interface/IField";
-import { IMessage } from "../../../interface/IMessage";
-import { IVector } from "../../../interface/IVector";
-import { IShip } from "./game";
+import { IVector, IMessage } from "../dto";
 import { IPlayerController } from "./IPlayerController";
 
 export class PlayerController extends IPlayerController{

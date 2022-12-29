@@ -8,7 +8,6 @@ interface IRoomComponent {
     user:IUser
 }
 const Room = ({socket,rooms,user}:IRoomComponent)=>{
-    console.log(user, rooms)
     const handlerClick =(ind: number)=>{
         socket.addUserToRoom(ind)
     }

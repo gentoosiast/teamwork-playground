@@ -36,3 +36,8 @@ export interface IRegData{
     direction: number;
     length: number;
 }
+export interface IMessage {
+  type: string,
+  data: string,
+  id: number
+}

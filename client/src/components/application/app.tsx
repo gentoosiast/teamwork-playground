@@ -1,12 +1,9 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { IMessage } from "../../../../interface/IMessage"
-import { IVector } from '../../../../interface/IVector';
 import { GameField } from '../gameField/game';
 import Registration from '../registration/registration';
-import { emptyState } from '../../../../interface/fieldGenerator';
-import { Cell } from "../../../../interface/IField";
+import { emptyState } from '../../utils/fieldGenerator';
 import { SocketModel } from "../../socketModel";
-import {IRegData, IRoom, IUser} from '../../dto'
+import {IRoom, IUser,Cell} from '../../dto'
 import Room from '../room/room';
 import ChooseShip from '../chooseShip/chooseShip';
 import ChooseComponent from "../chooseShip/ChooseComponent";
@@ -73,9 +70,7 @@ export function RequestServer() {
   
 
   useEffect(()=>{
-    console.log(rooms)
     if(page==='room'){
-      console.log('regUser', socket)
       setContent(<Room rooms={rooms} socket={socket} user={user}/>);
     }
     if(page==='chooseShip'){

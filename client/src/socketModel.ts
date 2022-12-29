@@ -1,8 +1,6 @@
 import { Dispatch } from "react";
-import { emptyState } from "../../interface/fieldGenerator";
-import { Cell } from "../../interface/IField";
-import { IMessage } from "../../interface/IMessage";
-import { IRegData ,IOurField, IUser, IRoom, IShip} from "./dto";
+import { emptyState } from "./utils/fieldGenerator";
+import { IRegData ,IOurField, IUser, IRoom, IShip,IMessage,Cell} from "./dto";
 
 interface ISocketModel{
   setEnemyField: Dispatch<React.SetStateAction<Array<Array<Cell>>>>;
@@ -27,7 +25,7 @@ export class SocketModel {
       const parsedData = parsedMsg.data;
       switch (parsedMsg.type) {
         // case 'chat_message': {
-        //   console.log(parsedMsg.data)
+
         //   setMessages((last) => {
         //     return [parsedMsg.data, ...last]
         //   })
@@ -66,7 +64,6 @@ export class SocketModel {
         }
         case 'get_field': {
           const field = JSON.parse(parsedMsg.data)
-          console.log(field)
           setEnemyField(field)
           break;
         }
@@ -102,7 +99,6 @@ export class SocketModel {
         case 'create_game':{
           //idPlayer
           const data = JSON.parse(parsedData)
-          console.log('create_game', data)
           setIdGame(data.idGame);
           setPlayerIdx(data.idPlayer);
           this.playerIdx = data.idPlayer;

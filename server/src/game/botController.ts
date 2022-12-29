@@ -1,5 +1,4 @@
-import { Cell } from "../../../interface/IField";
-import { IVector } from "../../../interface/IVector";
+import { IVector, Cell } from "../dto";
 import { IPlayerController } from "./IPlayerController";
 
 

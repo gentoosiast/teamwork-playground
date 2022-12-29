@@ -1,4 +1,4 @@
-import { Cell } from './IField';
+import { Cell } from '../dto';
 
 export function emptyState() {
   const initialState: Cell[][] = [];
