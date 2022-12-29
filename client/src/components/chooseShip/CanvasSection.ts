@@ -60,7 +60,6 @@ export class CanvasSection extends Control {
 
 	clearCells(activeShip: string) {
 		if (!this.prevPosX && !this.prevPosY) return
-		console.log("CLEARcells")
 		this.fillCells(activeShip, 99)
 	}
 
@@ -124,6 +123,7 @@ export class CanvasSection extends Control {
 				? sAr.push(this.intersectionData.has(`${this.prevPosY}-${this.prevPosX+i}`))
 				: sAr.push(this.intersectionData.has(`${this.prevPosY+i}-${this.prevPosX}`))
 		}
+		//console.log(sAr)
 		return sAr.some(e=>e)
 	//	return this.intersectionData.has(`${this.prevPosY}-${this.prevPosX}`)
 	}
@@ -140,9 +140,9 @@ export class CanvasSection extends Control {
 			this.clearCells(this.activeShip)
 			this.prevPosX = xC
 			this.prevPosY = yC
-			console.log('ISSS---',this.isIntersection(this.prevPosX, this.prevPosY, ShipsSizes[this.activeShip as keyof typeof ShipsSizes])
-			)
-			if (this.intersectionData.has(`${this.prevPosY}-${this.prevPosX}`)) {
+			const isIntersect=this.isIntersection(this.prevPosX, this.prevPosY, ShipsSizes[this.activeShip as keyof typeof ShipsSizes])
+
+			if (isIntersect) {
 				this.fillCells(this.activeShip, 2)
 			} else {
 				this.fillCells(this.activeShip, 1)
