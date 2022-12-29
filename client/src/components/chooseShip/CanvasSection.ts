@@ -3,7 +3,7 @@ import {ShipsSizes} from "./ChooseComponent";
 
 type tShipCanvas = {
 	xC: number, yC: number,
-	rotate: false,
+	rotate: boolean,
 	image: HTMLImageElement,
 	width: number, height: number,
 	//xPx: number, yPx: number,
@@ -16,13 +16,9 @@ export class CanvasSection extends Control {
 	private ctx: CanvasRenderingContext2D;
 	private prevPosX: number;
 	private prevPosY: number;
-	private mouseDownHandlerBinded: () => void;
-	private moveHandlerBinded: () => void;
 	private parentNode: HTMLElement;
 	private canvasWidth: number;
 	private canvasHeight: number;
-	public garlandCoordinates: { y: number; x: number[] }[];
-	onDroppedShip: (toyIndex: string) => void
 	private shipsOnCanvas: tShipCanvas[];
 	private cellSize: number;
 	private boardMatrix: number[][];
@@ -38,6 +34,7 @@ export class CanvasSection extends Control {
 	private circleSteps: { x: number; y: number }[];
 	private boardMatrixBlockedCell: number;
 	private isCurrentIntersect: boolean = false;
+	private rotateShipBinded: any;
 
 	constructor(parentNode: HTMLElement, ships: Record<string, number>, activeShip?: string) {
 		super(parentNode);
@@ -53,6 +50,7 @@ export class CanvasSection extends Control {
 		this.mouseUpDebounce = false
 		this.moveBinded = this.onMove.bind(this)
 		this.clickBinded = this.onClick.bind(this)
+		this.rotateShipBinded = this.rotateShip.bind(this)
 		this.shipsOnCanvas = []
 		this.boardMatrix = []
 		this.boardMatrixEmptyValue = 99
@@ -73,16 +71,27 @@ export class CanvasSection extends Control {
 		if (!this.prevPosX && !this.prevPosY) return
 		this.fillCells(activeShip, this.boardMatrixEmptyValue)
 	}
+//todo fillShipArea in t-l-corner
 
 	fillCells(activeShip: string, value: number) {
 		const cells = []
 		for (let i = 0; i < ShipsSizes[activeShip as keyof typeof ShipsSizes]; i++) {
-			if (this.boardMatrix[this.prevPosY][this.prevPosX + i]) cells.push("+")
+			if (this.isReversed) {
+				console.log(this.boardMatrix[this.prevPosY + i][this.prevPosX],'--',this.prevPosY,'-',this.prevPosX)
+				if (this.boardMatrix[this.prevPosY + i][this.prevPosX]) cells.push("+")
+			} else {
+				if (this.boardMatrix[this.prevPosY][this.prevPosX + i]) cells.push("+")
+			}
 		}
 		if (cells.length === ShipsSizes[activeShip as keyof typeof ShipsSizes]) {
 			for (let i = 0; i < cells.length; i++) {
-				if (this.boardMatrix[this.prevPosY][this.prevPosX + i] === this.boardMatrixBlockedCell) return
-				this.boardMatrix[this.prevPosY][this.prevPosX + i] = value
+				if (!this.isReversed) {
+					if (this.boardMatrix[this.prevPosY][this.prevPosX + i] === this.boardMatrixBlockedCell) return
+					this.boardMatrix[this.prevPosY][this.prevPosX + i] = value
+				} else {
+					if (this.boardMatrix[this.prevPosY + i][this.prevPosX] === this.boardMatrixBlockedCell) return
+					this.boardMatrix[this.prevPosY + i][this.prevPosX] = value
+				}
 			}
 		}
 	}
@@ -104,14 +113,14 @@ export class CanvasSection extends Control {
 		if (this.isCurrentIntersect) return
 		this.canvasSection.node.removeEventListener('mousemove', this.moveBinded)
 		this.canvasSection.node.removeEventListener('click', this.clickBinded)
-		document.body.removeEventListener('keyup', this.rotateShip)
+		document.body.removeEventListener('keyup', this.rotateShipBinded)
 		this.createImage('./public/assets/ship.png',
 			this.cellSize * ShipsSizes[this.activeShip as keyof typeof ShipsSizes], this.cellSize,
 			(image) => {
 				const imageObj: tShipCanvas = {
-					xC: this.prevPosX, yC: this.prevPosY, rotate: false, image,
-					width: this.cellSize * ShipsSizes[this.activeShip as keyof typeof ShipsSizes],
-					height: this.cellSize,
+					xC: this.prevPosX, yC: this.prevPosY, rotate: this.isReversed, image,
+					width: this.cellSize * (!this.isReversed ? ShipsSizes[this.activeShip as keyof typeof ShipsSizes] : 1),
+					height: this.cellSize * (this.isReversed ? ShipsSizes[this.activeShip as keyof typeof ShipsSizes] : 1),
 					//shipCells,
 					//xPx: this.inPixels(xC),
 					//	yPx: this.inPixels(yC),
@@ -166,16 +175,19 @@ export class CanvasSection extends Control {
 	}
 
 	rotateShip(e: KeyboardEvent) {
-		const keyName = e.key;
-		console.log(e.key, e.code, e.keyCode)
+		const keyName = e.code;
+		//console.log(e.code, e.keyCode)
 		if (keyName === 'Space') {
+			this.clearCells(this.activeShip)
 			this.isReversed = !this.isReversed
+			this.fillCells(this.activeShip, this.boardMatrixFullValue)
+			this.drawScene()
 		}
 	}
 
 	addActiveShip(activeShip: string) {
 		this.activeShip = activeShip
-		document.body.addEventListener('keyup', this.rotateShip)
+		document.body.addEventListener('keyup', this.rotateShipBinded)
 		this.canvasSection.node?.addEventListener('mousemove', this.moveBinded)
 	}
 
@@ -198,6 +210,7 @@ export class CanvasSection extends Control {
 	}
 
 	drawScene() {
+		console.log(this.isReversed, '%')
 		this.boardMatrix.forEach((row, rI) => {
 			row.forEach((cell, cI) => {
 				this.ctx.fillStyle = cell === 5 ? "olive" : cell === 2 ? "red" : cell === 99 ? "green" : 'darkGreen';
