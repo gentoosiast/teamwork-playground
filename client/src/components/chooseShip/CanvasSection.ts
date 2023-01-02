@@ -35,9 +35,11 @@ export class CanvasSection extends Control {
 	private boardMatrixBlockedCell: number;
 	private isCurrentIntersect: boolean = false;
 	private rotateShipBinded: any;
+	private onAddShip: (ship:string)=>void;
 
-	constructor(parentNode: HTMLElement, ships: Record<string, number>, activeShip?: string) {
+	constructor(parentNode: HTMLElement,onAddShip:(ship:string)=>void) {
 		super(parentNode);
+		this.onAddShip=onAddShip
 		this.parentNode = parentNode
 		this.canvasSection = new Control(parentNode, 'canvas', 'canvas')
 		this.cellSize = 30
@@ -71,16 +73,16 @@ export class CanvasSection extends Control {
 		if (!this.prevPosX && !this.prevPosY) return
 		this.fillCells(activeShip, this.boardMatrixEmptyValue)
 	}
+
 //todo fillShipArea in t-l-corner
 
 	fillCells(activeShip: string, value: number) {
 		const cells = []
 		for (let i = 0; i < ShipsSizes[activeShip as keyof typeof ShipsSizes]; i++) {
 			if (this.isReversed) {
-				console.log(this.boardMatrix[this.prevPosY + i][this.prevPosX],'--',this.prevPosY,'-',this.prevPosX)
-				if (this.boardMatrix[this.prevPosY + i][this.prevPosX]) cells.push("+")
+				if (this.prevPosY + i < this.cellsInRow && this.prevPosX < this.cellsInRow) cells.push("+")
 			} else {
-				if (this.boardMatrix[this.prevPosY][this.prevPosX + i]) cells.push("+")
+				if (this.prevPosY < this.cellsInRow && this.prevPosX + i < this.cellsInRow) cells.push("+")
 			}
 		}
 		if (cells.length === ShipsSizes[activeShip as keyof typeof ShipsSizes]) {
@@ -89,7 +91,8 @@ export class CanvasSection extends Control {
 					if (this.boardMatrix[this.prevPosY][this.prevPosX + i] === this.boardMatrixBlockedCell) return
 					this.boardMatrix[this.prevPosY][this.prevPosX + i] = value
 				} else {
-					if (this.boardMatrix[this.prevPosY + i][this.prevPosX] === this.boardMatrixBlockedCell) return
+					if (
+						this.boardMatrix[this.prevPosY + i][this.prevPosX] === this.boardMatrixBlockedCell) return
 					this.boardMatrix[this.prevPosY + i][this.prevPosX] = value
 				}
 			}
@@ -106,7 +109,6 @@ export class CanvasSection extends Control {
 				this.intersectionData.add(`${y + i}-${x}`)
 			}
 		}
-		console.log(this.intersectionData, 'INT')
 	}
 
 	onClick() {
@@ -127,10 +129,11 @@ export class CanvasSection extends Control {
 					//	shipType: eventData
 				}
 				this.shipsOnCanvas.push(imageObj)
-				this.addToIntersection(this.prevPosX, this.prevPosY, ShipsSizes[this.activeShip as keyof typeof ShipsSizes], false)
+				this.addToIntersection(this.prevPosX, this.prevPosY, ShipsSizes[this.activeShip as keyof typeof ShipsSizes], this.isReversed)
 				this.clearCells(this.activeShip)
 				this.fillShipArea(this.prevPosX, this.prevPosY, ShipsSizes[this.activeShip as keyof typeof ShipsSizes])
 				this.drawScene()
+				this.onAddShip(this.activeShip)
 			})
 
 	}
@@ -142,14 +145,19 @@ export class CanvasSection extends Control {
 				? sAr.push(this.intersectionData.has(`${this.prevPosY}-${this.prevPosX + i}`))
 				: sAr.push(this.intersectionData.has(`${this.prevPosY + i}-${this.prevPosX}`))
 		}
-		//console.log(sAr)
 		return sAr.some(e => e)
 		//	return this.intersectionData.has(`${this.prevPosY}-${this.prevPosX}`)
 	}
 
 	isOnBoard(x: number, y: number) {
-		return (x + ShipsSizes[this.activeShip as keyof typeof ShipsSizes]) <= this.boardMatrix.length
-			&& y < this.boardMatrix.length && y >= 0 && x >= 0
+		if (!this.isReversed) {
+			return (x + ShipsSizes[this.activeShip as keyof typeof ShipsSizes]) <= this.boardMatrix.length
+				&& y < this.boardMatrix.length && y >= 0 && x >= 0
+		} else {
+			return (y + ShipsSizes[this.activeShip as keyof typeof ShipsSizes]) <= this.boardMatrix.length
+				&& x < this.boardMatrix.length && y >= 0 && x >= 0
+		}
+
 	}
 
 	onMove(e: MouseEvent) {
@@ -176,7 +184,6 @@ export class CanvasSection extends Control {
 
 	rotateShip(e: KeyboardEvent) {
 		const keyName = e.code;
-		//console.log(e.code, e.keyCode)
 		if (keyName === 'Space') {
 			this.clearCells(this.activeShip)
 			this.isReversed = !this.isReversed
@@ -210,7 +217,6 @@ export class CanvasSection extends Control {
 	}
 
 	drawScene() {
-		console.log(this.isReversed, '%')
 		this.boardMatrix.forEach((row, rI) => {
 			row.forEach((cell, cI) => {
 				this.ctx.fillStyle = cell === 5 ? "olive" : cell === 2 ? "red" : cell === 99 ? "green" : 'darkGreen';
@@ -223,7 +229,6 @@ export class CanvasSection extends Control {
 		//this.ctx.fillStyle = 'orange'
 		//	this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight)
 		this.shipsOnCanvas.forEach(ship => {
-			//	console.log("SHIP", ship)
 			this.ctx.drawImage(ship.image, this.inPixels(ship.xC), this.inPixels(ship.yC), ship.width, ship.height)
 		})
 		//this.drawMesh()
@@ -246,21 +251,22 @@ export class CanvasSection extends Control {
 			callback(image)
 		}
 	}
-
 	private fillShipArea(x: number, y: number, size: number) {
 		for (let i = 0; i < size; i++) {
 			if (!this.isReversed) {
 				this.boardMatrix[y][x + i] = this.boardMatrixBlockedCell
 				this.circleSteps.forEach(stp => {
-					if (!this.boardMatrix[y + stp.y][x + i + stp.x]) return
+					if (y + stp.y<0||y + stp.y>=this.boardMatrix.length
+						|| x + i + stp.x<0 || x + i + stp.x>=this.boardMatrix.length) return
 					this.boardMatrix[y + stp.y][x + i + stp.x] = this.boardMatrixBlockedCell
 					this.intersectionData.add(`${y + stp.y}-${x + i + stp.x}`)
 				})
 			} else {
 				this.boardMatrix[y + i][x] = this.boardMatrixBlockedCell
 				this.circleSteps.forEach(stp => {
-					if (!this.boardMatrix[y + i + stp.y][x + stp.x])
-						(this.boardMatrix[y + i + stp.y][x + stp.x] = this.boardMatrixBlockedCell)
+					if (y + i + stp.y<0|| x + stp.x<0
+						||y + i + stp.y>=this.boardMatrix.length || x + stp.x>=this.boardMatrix.length) return
+					this.boardMatrix[y + i + stp.y][x + stp.x] = this.boardMatrixBlockedCell
 					this.intersectionData.add(`${y + i + stp.y}-${x + stp.x}`)
 				})
 			}

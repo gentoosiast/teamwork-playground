@@ -1,6 +1,7 @@
 import React, {useEffect, useRef, useState} from "react";
-import {ShipsSection} from "./ShipsSection";
+//import {ShipsSection} from "./ShipsSection";
 import CanvasSection from "./CanvasSection";
+import ShipsSection from "./ShipsSection";
 
 export enum ShipsCount {
 	huge = 1,
@@ -16,9 +17,6 @@ export enum ShipsSizes {
 	huge
 }
 
-//todo add the other color under dragged ship
-//todo draw cells
-//
 const ChooseComponent = () => {
 	const [ships, setShips] = useState({
 		huge: ShipsCount["huge"],
@@ -33,18 +31,21 @@ const ChooseComponent = () => {
 	useEffect(() => {
 		canvSection?.addActiveShip(activeShip)
 	}, [activeShip])
+
 	useEffect(() => {
-		const shipsSection = new ShipsSection(shipsRef.current, ships)
-		shipsSection.onAddShip = (shipType) => {
-			setActiveShip(shipType)
-		}
-		setCanvSection(new CanvasSection(shipsRef.current, ships))
+		const canvas = new CanvasSection(shipsRef.current, (ship) => {
+			setShips({...ships, [ship]: ships[ship as keyof typeof ships] - 1})
+			setActiveShip(null)
+		})
+		setCanvSection(canvas)
 	}, [])
 	return (
 		<>
 			<div ref={shipsRef}>
 				<h5>Расставьте корабли</h5>
-
+				<ShipsSection ships={ships} onAddActiveShip={(type: string) => {
+					setActiveShip(type)
+				}}/>
 			</div>
 			<canvas ref={canvasRef}/>
 		</>
