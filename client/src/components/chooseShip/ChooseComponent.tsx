@@ -30,7 +30,10 @@ const ChooseComponent = () => {
 	const [activeShip, setActiveShip] = useState<string>(null)
 	useEffect(() => {
 		canvSection?.addActiveShip(activeShip)
-		console.log("ACTIVESHIP", activeShip)
+		// @ts-ignore
+		if (Object.entries(ships.current).every(e => e[1] === 0)) {
+			console.log("START GAME")
+		}
 	}, [activeShip])
 	useEffect(() => {
 		const canvas = new CanvasSection(shipsRef.current, (ship) => {
@@ -46,6 +49,7 @@ const ChooseComponent = () => {
 		<>
 			<div ref={shipsRef}>
 				<h5>Расставьте корабли</h5>
+				<button onClick={()=>canvSection.onAutoShips(ships.current)}>Расставить автоматически</button>
 				<ShipsSection ships={ships.current} onAddActiveShip={(type: string) => {
 					if (type === activeShip) {
 						setActiveShip('')
