@@ -105,6 +105,14 @@ export class SocketModel {
           setPage('chooseShip');
           break;
         }
+        case 'finish':{
+          const {winPlayer} = JSON.parse(parsedData);
+          if(winPlayer===this.playerIdx){
+            console.log('YOU WIN');
+          }else{
+            console.log('YOU LOSER')
+          }
+        }
         default:
           break;
       }

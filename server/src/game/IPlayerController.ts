@@ -7,13 +7,18 @@ export class IPlayerController{
     shipField:Array<Array<number>> = [];
     field: Array<Array<Cell>> = emptyState();
     enemyField: Array<Array<Cell>> = emptyState();
+    demeges = 0;
     sendMessage: (position: IVector,status: string, isChangeCurrent?: boolean)=>void;
+    finishGame: (winPlayer: number)=>void;
     ourShips: IShip[]=[];
     
-    constructor(id: number, sendMessage: (position: IVector,status: string, isChangeCurrent: boolean)=>void){
+    constructor(id: number, sendMessage: (position: IVector,status: string, isChangeCurrent: boolean)=>void, finishGame:(winPlayer:number)=>void){
         this.id = id;
         this.sendMessage = (position,status, isChangeCurrent=false)=>{
             sendMessage(position,status,isChangeCurrent)
+        }
+        this.finishGame = (winPlayer:number)=>{
+          finishGame(winPlayer)
         }
     }
     startGame(){}
@@ -67,10 +72,14 @@ export class IPlayerController{
         } else{
           this.killShip(ship);
         }
+        if(this.demeges===3){
+          this.finishGame(this.id);
+        }
     }   
     
     
     killShip(ship: IShip){
+      this.demeges++;
       const height = this.enemyField.length;
       const width =  this.enemyField[0].length;
       if (ship.direction === 0){

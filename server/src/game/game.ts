@@ -30,7 +30,7 @@ export class Game {
         this.users = users;
         this.id=id;
         this.users.forEach((c,ind)=>{
-          const player = new PlayerController(ind, (position, status, isChangeCurrent)=> this.sendMessageAttack(position, status,isChangeCurrent), c.connection);
+          const player = new PlayerController(ind, (position, status, isChangeCurrent)=> this.sendMessageAttack(position, status,isChangeCurrent),(id)=>this.finishGame(id), c.connection);
           this.playerControllers.set(ind,player);
           this.sendMessage(c.connection, "create_game",JSON.stringify({idGame: id, idPlayer:ind }));
         })
@@ -50,7 +50,7 @@ export class Game {
     }
 
     startSingleGame(){
-      this.playerControllers.set(1, new BotController(1,(position, status, isChangeCurrent)=> this.sendMessageAttack(position, status,isChangeCurrent)));
+      this.playerControllers.set(1, new BotController(1,(position, status, isChangeCurrent)=> this.sendMessageAttack(position, status,isChangeCurrent), (id)=>this.finishGame(id)));
       this.addShip(botShip,1);
     }
 
@@ -62,12 +62,18 @@ export class Game {
       player?.attack(position);
     }
 
-    sendMessageAttack(position: IVector,status: string ,isChangeCurrent:boolean=false){
+    finishGame(winPlayer: number){
+      this.users.forEach((user) => {
+        this.sendMessage(user.connection, 'finish',JSON.stringify({winPlayer: winPlayer}));
+      });
+    }
+
+    sendMessageAttack(position: IVector,status: string ,isChangeCurrentPlayer:boolean=false){
       this.users.forEach((user) => {
         this.sendMessage(user.connection, 'attack', JSON.stringify({position, currentPlayer:this.currentPlayer, status}));
       });
       
-      if(isChangeCurrent){
+      if(isChangeCurrentPlayer){
         this.currentPlayer = (this.currentPlayer + 1) % 2;
         const player = this.playerControllers.get(this.currentPlayer);
         player?.nextRound();

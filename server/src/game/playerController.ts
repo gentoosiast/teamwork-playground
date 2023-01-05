@@ -5,8 +5,8 @@ import { IPlayerController } from "./IPlayerController";
 export class PlayerController extends IPlayerController{
     client: connection;
     
-    constructor(id: number, sendMessage: (position: IVector,status: string, isChangeCurrent: boolean)=>void,client: connection){
-        super(id, sendMessage);
+    constructor(id: number, sendMessage: (position: IVector,status: string, isChangeCurrent: boolean)=>void,finishGame:(winPlayer:number)=>void, client: connection){
+        super(id, sendMessage,finishGame);
         this.client= client;
     }
     startGame(){
