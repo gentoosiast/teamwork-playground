@@ -5,6 +5,7 @@ import { emptyState } from '../../utils/fieldGenerator';
 import { SocketModel } from "../../socketModel";
 import {IRoom, IUser,Cell} from '../../dto'
 import Room from '../room/room';
+import FinishPage from '../finishPage/finishPage';
 import ChooseShip from '../chooseShip/chooseShip';
 import ChooseComponent from "../chooseShip/ChooseComponent";
 
@@ -83,6 +84,9 @@ export function RequestServer() {
       }} enemyField={enemyField} ourField={ourField}></GameField>
        <div>player index: {playerIdx}</div>
       </>);
+    }
+    if(page==='finishGame'){
+      setContent(<FinishPage winner={isCurrentPlayer}/>)
     }
   },[page,rooms, enemyField, ourField,isCurrentPlayer])
   useEffect(() => {

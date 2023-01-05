@@ -106,12 +106,10 @@ export class SocketModel {
           break;
         }
         case 'finish':{
-          const {winPlayer} = JSON.parse(parsedData);
-          if(winPlayer===this.playerIdx){
-            console.log('YOU WIN');
-          }else{
-            console.log('YOU LOSER')
-          }
+          const {winPlayer} = JSON.parse(parsedData);   
+            setCurrentPlayer(winPlayer===this.playerIdx)
+            setPage('finishGame')
+            break;
         }
         default:
           break;
