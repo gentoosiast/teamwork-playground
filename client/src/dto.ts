@@ -23,6 +23,15 @@ export interface IRegData{
     index: number;
   }
 
+  export interface IUserInitialData{
+    data: {
+      name: string,
+      index: number,
+      currentPlayer: boolean,
+      winner: number,
+    },
+  }
+
   export interface IRoom{
     roomId:number,
     roomUsers: IUser[]
@@ -41,3 +50,5 @@ export interface IMessage {
   data: string,
   id: number
 }
+import store from "./store/store";
+export type AppDispatch = typeof store.dispatch;

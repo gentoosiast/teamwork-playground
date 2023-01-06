@@ -1,7 +1,8 @@
 import { Dispatch } from "react";
 import { emptyState } from "./utils/fieldGenerator";
-import { IRegData ,IOurField, IUser, IRoom, IShip,IMessage,Cell} from "./dto";
-
+import { IRegData ,IOurField, IUser, IRoom, IShip,IMessage,Cell,AppDispatch} from "./dto";
+import { useDispatch, useSelector } from "react-redux";
+import {addUserData} from './reducer/userReducer';
 interface ISocketModel{
   setEnemyField: Dispatch<React.SetStateAction<Array<Array<Cell>>>>;
   setOurField: Dispatch<React.SetStateAction<Array<Array<Cell>>>>;
@@ -11,6 +12,10 @@ interface ISocketModel{
   setRoom: Dispatch<React.SetStateAction<IRoom[]>>
   setIdGame: Dispatch<React.SetStateAction<number>>
   setCurrentPlayer: Dispatch<React.SetStateAction<boolean>>
+}
+interface IUserData {
+  name: string,
+  index: number,
 }
 export class SocketModel {
   webSocket: WebSocket;
@@ -87,6 +92,7 @@ export class SocketModel {
         }
         case 'reg':{
           this.user = JSON.parse(parsedData);
+         // dispatch(addUserData({name: this.user.name, index: this.user.index }))
           setUserData(this.user)
           setPage('room');
         break;  

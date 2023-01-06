@@ -1,6 +1,11 @@
 import { SocketModel } from '../../socketModel';
 import React from 'react';
-import { IRoom, IUser } from '../../dto';
+import { IRoom, IUser,IUserInitialData } from '../../dto';
+import { useSelector } from 'react-redux';
+
+interface IUserStore {
+    userData: IUserInitialData;
+}
 
 interface IRoomComponent {
     socket:SocketModel,
@@ -23,9 +28,9 @@ const Room = ({socket,rooms,user}:IRoomComponent)=>{
             )
         })}
     </>);
-   
+   //const userName = useSelector( (state: IUserStore) => state.userData.data.name);
     return(<>
-    <p>Hello, {user.name}</p>
+    <p>Hello, {8}</p>
         <button onClick={()=>socket.createRoom()}>Create Room</button>
         <button onClick={()=>socket.singlePlay()}>Play with Bot</button>   
         {roomsComp}

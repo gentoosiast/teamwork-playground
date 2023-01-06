@@ -37,6 +37,8 @@
     "webpack-dev-server": "^4.11.1"
   },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.9.1",
+    "@types/react-redux": "^7.1.25",
     "@types/react-router": "^5.1.19",
     "@types/react-router-dom": "^5.3.3",
     "abbrev": "^1.1.1",
@@ -391,6 +393,7 @@
     "randombytes": "^2.1.0",
     "range-parser": "^1.2.1",
     "raw-body": "^2.5.1",
+    "react-redux": "^8.0.5",
     "react-router": "^6.4.3",
     "react-router-dom": "^6.4.3",
     "read-cmd-shim": "^3.0.1",

@@ -71,7 +71,8 @@ websocket.on('request', (e) => {
 
   client.on('message', (msg) => {
     if (msg.type != 'utf8') return;
-    const parsedMsg: IMessage = JSON.parse(msg.utf8Data)
+    const parsedMsg: IMessage = JSON.parse(msg.utf8Data);
+    
     switch (parsedMsg.type) {
       // case 'chat_message': {
       //   messages.push(parsedMsg.data)
