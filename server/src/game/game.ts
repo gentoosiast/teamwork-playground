@@ -37,6 +37,7 @@ export class Game {
     }
 
     addShip(ships: IShip[], indexPlayer: number){
+      console.log('addShip', ships, indexPlayer)
       const player =this.playerControllers.get(indexPlayer );
       
       player?.addOurShips(ships);
@@ -47,6 +48,7 @@ export class Game {
       if(this.size>=2){
         this.playerControllers.forEach(player=>player.startGame())
       } 
+      
     }
 
     startSingleGame(){

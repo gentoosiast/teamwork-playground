@@ -2,20 +2,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IUserInitialData} from "../dto";
 
 
-const initialState:IUserInitialData = {
-  data: {
-    name: '',
-    index: -1,
-    currentPlayer: false,
-    winner: -1,
-    idGames: []
-  },
+const initialState = {
+  page: 'reg'
 };
 
 ///const dispatch = useDispatch<AppDispatch>();
-interface IUserEmail {
-  email: string;
-}
 
 
 
@@ -31,10 +22,7 @@ interface IUserEmail {
 //     throw new Error("false data");
 //   }
 // );
-interface IUserData {
-    name: string,
-    index: number,
-}
+
 
 // export const changeHabbitsInput = createAsyncThunk(
 //   "changeHabbitsInput",
@@ -49,29 +37,17 @@ interface IUserData {
 //   }
 // );
 //addNewHabbit
-interface IUserName{
-  name: string
-}
-interface IUserIndex{
-  index: number
-}
-interface IIdGame {
-  idGame: number
+interface IPage {
+    page: string
 }
 
-const userReduser = createSlice({
-  name: "userData",
+const pageReduser = createSlice({
+  name: "pages",
   initialState,
   reducers: {
-    addUserName(state, action: PayloadAction<IUserName>) {
-        state.data.name = action.payload.name;
+    changePage(state, action: PayloadAction<IPage>) {
+        state.page = action.payload.page;
     },
-    addUserIndex(state, action: PayloadAction<IUserIndex>) {
-      state.data.index = action.payload.index;
-    },
-    addIdGame(state, action: PayloadAction<IIdGame>) {
-      state.data.idGames.push(action.payload.idGame);
-  },
     },
     // builder.addCase(changeHabbitsInput.fulfilled, (state, action) => {
     //   state.data = action.payload.data;
@@ -87,8 +63,8 @@ const userReduser = createSlice({
     //   });
 });
 
-const { actions, reducer } = userReduser;
+const { actions, reducer } = pageReduser;
 
-export const {addUserName,addUserIndex,addIdGame } = actions;
+export const {changePage} = actions;
 
 export default reducer;

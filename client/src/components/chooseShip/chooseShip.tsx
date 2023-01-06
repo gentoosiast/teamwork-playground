@@ -1,9 +1,10 @@
 import React, {useState} from 'react';
-import { IUser } from '../../dto';
+import { useSelector } from 'react-redux';
+import { IUserInitialData } from '../../dto';
+
 import { SocketModel } from '../../socketModel';
 interface IChooseShip{
     socket:SocketModel
-    gameId: number
 }
 const ships = [[
     {
@@ -70,12 +71,18 @@ const ships = [[
       length: 1
     }
   ]];
-const ChooseShip=({socket, gameId}:IChooseShip)=>{
+
+interface IUserStore {
+    userData: IUserInitialData;
+}
+
+const ChooseShip=({socket}:IChooseShip)=>{
     const rand = 0//Math.floor(Math.random()*3)
+    const idGame = useSelector((state: IUserStore) => state.userData.data.idGames)
     console.log(rand)
     return (<>
         Тут людина розставляє свої кораблики, де вони будуть. Потім всі дані по кліку летять на сервер
-            <button onClick={()=>socket.startGame( gameId,ships[rand])}>Start game</button> 
+            <button onClick={()=>socket.startGame( idGame[idGame.length-1],ships[rand])}>Start game</button> 
         </>)
 }
 

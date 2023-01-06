@@ -1,7 +1,8 @@
 import './game.css';
 import React, { useEffect, useState } from "react";
-import { Cell } from '../../dto'
-
+import { Cell, IUserInitialData } from '../../dto'
+import { SocketModel } from "../../socketModel";
+import { useSelector } from 'react-redux';
 type FieldState = Cell[][];
 const styleMap = {
   [Cell.Empty]: '',
@@ -12,7 +13,7 @@ const styleMap = {
 };
 
 interface IEnemyFieldProps {
-  onAttack: (x: number, y: number) => void;
+  socket:SocketModel;
   field: Array<Array<Cell>>;
 }
 
@@ -21,13 +22,15 @@ interface IOurFieldProps {
 }
 
 interface IGameFieldProps {
-  onAttack: (x: number, y: number) => void;
+  socket:SocketModel;
   enemyField: Array<Array<Cell>>;
+  
   ourField: Array<Array<Cell>>;
   isCurrentPlayer: boolean
 }
 
 export function EnemyField(props: IEnemyFieldProps) {
+  const idGame = useSelector((state: IUserStore) => state.userData.data.idGames)
   return (
     <div className="field">
       {props.field.map((row, y) => {
@@ -36,7 +39,7 @@ export function EnemyField(props: IEnemyFieldProps) {
             {row.map((cell, x) => {
               return (
                 <div className={"cell" + (` ${styleMap[cell]}`)} key={x} onClick={() => {
-                  props.onAttack(x, y);
+                  props.socket.attack(x, y, idGame[idGame.length-1]);
                 }}></div>
               );
             })}
@@ -66,13 +69,15 @@ export function OurField(props: IOurFieldProps) {
     </div>
   );
 }
-
+interface IUserStore {
+  userData: IUserInitialData;
+}
 export function GameField(props: IGameFieldProps) {
   return (
     <div>
       <p>{props.isCurrentPlayer?'Your Turn':'Next player goes'}</p>
       <OurField field = {props.ourField}></OurField>
-      <EnemyField onAttack={props.onAttack} field={props.enemyField}></EnemyField>
+      <EnemyField socket={props.socket} field={props.enemyField}></EnemyField>
     </div>
   );
 }

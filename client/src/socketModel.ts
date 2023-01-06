@@ -1,33 +1,29 @@
 import { Dispatch } from "react";
 import { emptyState } from "./utils/fieldGenerator";
-import { IRegData ,IOurField, IUser, IRoom, IShip,IMessage,Cell,AppDispatch} from "./dto";
+import { IRegData ,IOurField, IUser, IRoom, IShip,IMessage,Cell,IUserInitialData} from "./dto";
 import { useDispatch, useSelector } from "react-redux";
-import {addUserData} from './reducer/userReducer';
+import {addUserName,addUserIndex,addIdGame} from './reducer/userReducer';
+import { changePage } from './reducer/pagesReduser';
 interface ISocketModel{
   setEnemyField: Dispatch<React.SetStateAction<Array<Array<Cell>>>>;
   setOurField: Dispatch<React.SetStateAction<Array<Array<Cell>>>>;
-  setPlayerIdx: Dispatch<React.SetStateAction<number>>;
-  setPage:(page: string)=>void;
-  setUserData: Dispatch<React.SetStateAction<IUser>>
   setRoom: Dispatch<React.SetStateAction<IRoom[]>>
-  setIdGame: Dispatch<React.SetStateAction<number>>
   setCurrentPlayer: Dispatch<React.SetStateAction<boolean>>
+  dispatch: any
 }
-interface IUserData {
-  name: string,
-  index: number,
-}
+
 export class SocketModel {
   webSocket: WebSocket;
   playerIdx: number = -1;
   rooms: []=[]
   user:IUser;
-  constructor({ setEnemyField, setOurField, setPlayerIdx, setPage,setUserData,setRoom,setIdGame,setCurrentPlayer}:ISocketModel) {
+  constructor({ setEnemyField, setOurField, setRoom,setCurrentPlayer,dispatch}:ISocketModel) {
     const websocket = new WebSocket('ws://localhost:3000')
     this.webSocket = websocket;
     websocket.onmessage = (msg) => {
       const parsedMsg: IMessage = JSON.parse(msg.data);
       const parsedData = parsedMsg.data;
+      console.log(parsedMsg)
       switch (parsedMsg.type) {
         // case 'chat_message': {
 
@@ -73,7 +69,7 @@ export class SocketModel {
           break;
         }
         case 'start_game': {     
-          setPage('gameField');
+          dispatch(changePage({page:'gameField'}))
           const ships:IShip[] = JSON.parse(parsedMsg.data).ships;
           const shipForClient = emptyState();
           ships.forEach((ship) => {
@@ -92,9 +88,9 @@ export class SocketModel {
         }
         case 'reg':{
           this.user = JSON.parse(parsedData);
-         // dispatch(addUserData({name: this.user.name, index: this.user.index }))
-          setUserData(this.user)
-          setPage('room');
+          dispatch(addUserName({name: this.user.name}))
+          dispatch(changePage({page:'room'}))
+          
         break;  
         }
         case 'update_room':{
@@ -104,17 +100,19 @@ export class SocketModel {
         }
         case 'create_game':{
           //idPlayer
-          const data = JSON.parse(parsedData)
-          setIdGame(data.idGame);
-          setPlayerIdx(data.idPlayer);
+          const data = JSON.parse(parsedData)                 
           this.playerIdx = data.idPlayer;
-          setPage('chooseShip');
+          dispatch(addUserIndex({index: data.idPlayer}))
+          dispatch(addIdGame({idGame:data.idGame }))
+          dispatch(changePage({page:'chooseShip'}))
+          
           break;
         }
         case 'finish':{
           const {winPlayer} = JSON.parse(parsedData);   
-            setCurrentPlayer(winPlayer===this.playerIdx)
-            setPage('finishGame')
+            setCurrentPlayer(winPlayer===this.playerIdx);
+            dispatch(changePage({page:'finishGame'}))
+  
             break;
         }
         default:

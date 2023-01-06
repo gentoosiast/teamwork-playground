@@ -2,6 +2,7 @@
 
 import { configureStore } from "@reduxjs/toolkit";
 import userData from '../reducer/userReducer';
+import pages from '../reducer/pagesReduser';
 //import { typeDataForCanvasChart } from "../dto";
 
 // export type stateType = {
@@ -9,7 +10,7 @@ import userData from '../reducer/userReducer';
 //   canvasDataChart: { data: typeDataForCanvasChart };
 // };
 const store = configureStore({
-  reducer: { /*reduser*/ userData },
+  reducer: { /*reduser*/ userData,pages },
   //middleware: (getDefaultMiddleware) => getDefaultMiddleware(),
 });
 export default store;

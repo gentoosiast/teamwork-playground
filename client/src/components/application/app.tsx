@@ -3,11 +3,12 @@ import { GameField } from '../gameField/game';
 import Registration from '../registration/registration';
 import { emptyState } from '../../utils/fieldGenerator';
 import { SocketModel } from "../../socketModel";
-import {IRoom, IUser,Cell} from '../../dto'
+import {IRoom, IUser,Cell,AppDispatch} from '../../dto'
 import Room from '../room/room';
 import FinishPage from '../finishPage/finishPage';
 import ChooseShip from '../chooseShip/chooseShip';
 import ChooseComponent from "../chooseShip/ChooseComponent";
+import { useDispatch, useSelector } from "react-redux";
 
 interface IAppProps {
   onClick: () => void;
@@ -55,43 +56,42 @@ export const App = () => {
 //     </div>
 //   );
 // }
-
+interface IPage {
+  pages: {
+    page: string;
+  }
+}
 
 export function RequestServer() {
   const [socket, setSocket] = useState<SocketModel>(null);
-  const [playerIdx, setPlayerIdx] = useState(-1);
-  const [user, setUserData]=useState<IUser>({name:'', index:-1});
   const [rooms, setRoom] = useState<IRoom[]>([])
-  const [idGame, setIdGame] = useState(-1);
   const [enemyField, setEnemyField] = useState<Array<Array<Cell>>>(emptyState());
   const [ourField, setOurField] = useState<Array<Array<Cell>>>(emptyState());
   const [content, setContent]=useState(null);
-  const [page, setPage]=useState('reg');
+  //const [page, setPage]=useState('reg');
   const [isCurrentPlayer, setCurrentPlayer] = useState(false)
-  
+  const dispatch = useDispatch<AppDispatch>();
+  const page = useSelector( (state: IPage) => state.pages.page);
 
   useEffect(()=>{
-    // if(page==='room'){
-    //   setContent(<Room rooms={rooms} socket={socket} user={user}/>);
-    // }
-    // if(page==='chooseShip'){
-    //   setContent(<ChooseShip socket={socket} gameId={idGame}/>);
-    // }
-    // if(page==='gameField'){
-    //   setContent(<>
-    //   <GameField isCurrentPlayer={isCurrentPlayer} onAttack={(x, y) => {
-    //     socket.attack(x, y, idGame);
-    //   }} enemyField={enemyField} ourField={ourField}></GameField>
-    //    <div>player index: {playerIdx}</div>
-    //   </>);
-    // }
-    // if(page==='finishGame'){
-    //   setContent(<FinishPage winner={isCurrentPlayer}/>)
-    // }
+    if(page==='room'){
+      setContent(<Room rooms={rooms} socket={socket}/>);
+    }
+    if(page==='chooseShip'){
+      setContent(<ChooseShip socket={socket}/>);
+    }
+    if(page==='gameField'){
+      setContent(<>
+      <GameField isCurrentPlayer={isCurrentPlayer} socket={socket} enemyField={enemyField} ourField={ourField}></GameField>
+      </>);
+    }
+    if(page==='finishGame'){
+      setContent(<FinishPage winner={isCurrentPlayer}/>)
+    }
   },[page,rooms, enemyField, ourField,isCurrentPlayer]);
   
   useEffect(() => {
-    const webSocket = new SocketModel({ setEnemyField, setOurField, setPlayerIdx,  setPage,setUserData,setRoom,setIdGame,setCurrentPlayer});
+    const webSocket = new SocketModel({ setEnemyField, setOurField, setRoom,setCurrentPlayer, dispatch});
     setSocket(webSocket);
     setContent(<Registration socket={webSocket}/>);
 
