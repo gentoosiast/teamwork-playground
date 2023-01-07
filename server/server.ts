@@ -2,10 +2,8 @@ import http from "http";
 import { IMessage, Cell} from "./src/dto";
 import { emptyState } from './src/utils/fieldGenerator'
 import * as WebSocket from "websocket";
-import { DataBase } from "./src/database/db";
 import Room from "./src/room/room";
 import { Game } from "./src/game/game";
-const db = new DataBase();
 
 interface IPlayer {
   connection: WebSocket.connection;
@@ -24,18 +22,6 @@ const server = http.createServer((req, res) =>
   const reqData = req.url?.split("?");
   if (!reqData) {
     throw new Error("Empty request data");
-  }
-  const endpoint = reqData[0];
-  if (reqData.length > 1) {
-    const queryParams = reqData[1].split("&").map((el) => {
-      const [key, val] = el.split("=");
-      return { key, val };
-    });
-
-    queryParams[0].val = queryParams[0].val.replace('%40', '@');
-    if (db.checkUser(queryParams[0].val)) {
-      db.getNewUser(queryParams[0].val, queryParams[1].val);
-    } else console.log('You are already registered');
   }
   res.end("recieved");
 });
