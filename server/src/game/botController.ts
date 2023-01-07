@@ -6,13 +6,12 @@ interface IAction {
   killed: IVector[];
 }
 
-
 export class BotController extends IPlayerController{
   action: IAction = {
     status: "", 
     killed:[]
   }
-  chekedShipMatrix = [{x:-1, y: 0},{x:0,y:-1},{x:0,y:1},{x:1,y:0}];
+  chekedShipMatrix:IVector[] = [{x:-1, y: 0},{x:1,y:0},{x:0,y:1},{x:0,y:-1}];
 
   nextRound(): void {
       console.log(this.action)
@@ -20,8 +19,19 @@ export class BotController extends IPlayerController{
         const possiblePositions:IVector[]= [];
         const height = this.enemyField.length;
         const width =  this.enemyField[0].length; 
+        let checkedMatrix:IVector[] = [];
+        if(this.action.killed.length<=1){
+          checkedMatrix=this.chekedShipMatrix;
+        }else{
+          const direction = this.action.killed[0].x-this.action.killed[1].x;
+          if(direction){
+            checkedMatrix=this.chekedShipMatrix.slice(0,2)
+          }else{
+            checkedMatrix=this.chekedShipMatrix.slice(2)
+          }
+        }
         this.action.killed.forEach(item=>{
-          this.chekedShipMatrix.forEach(matrix=>{
+          checkedMatrix.forEach(matrix=>{
             if(item.x+matrix.x>=0
               &&item.x+matrix.x<height
               &&item.y+matrix.y>=0
@@ -34,15 +44,12 @@ export class BotController extends IPlayerController{
         console.log('possiblePositions',possiblePositions)
         if(possiblePositions.length){
           this.attack(possiblePositions[Math.floor(Math.random()*possiblePositions.length)])
-        }
-       
+        }       
         return;
       }
         const x = Math.floor(Math.random()*9);
         const y = Math.floor(Math.random()*9) ;
         this.attack({x,y})
-
-       
     }
 
     attack(position: IVector){

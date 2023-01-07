@@ -8,14 +8,14 @@ interface IChooseShip{
 }
 const ships = [[
     {
-      position: {x: 0, y: 0},
-      direction: 1,
-      length: 3
+      position: {x: 0, y: 2},
+      direction: 0,
+      length: 4
     },
     {
-      position: {x: 0, y: 4},
+      position: {x: 2, y: 4},
       direction: 1,
-      length: 2
+      length: 4
     },
     {
       position: {x: 7, y: 7},
@@ -77,7 +77,7 @@ interface IUserStore {
 }
 
 const ChooseShip=({socket}:IChooseShip)=>{
-    const rand = Math.floor(Math.random()*3)
+    const rand = 0//Math.floor(Math.random()*3)
     const idGame = useSelector((state: IUserStore) => state.userData.idGames)
     console.log(rand)
     return (<>
