@@ -26,7 +26,6 @@ interface IGameFieldProps {
   enemyField: Array<Array<Cell>>;
   
   ourField: Array<Array<Cell>>;
-  isCurrentPlayer: boolean
 }
 
 export function EnemyField(props: IEnemyFieldProps) {
@@ -73,9 +72,10 @@ interface IUserStore {
   userData: IUserInitialData;
 }
 export function GameField(props: IGameFieldProps) {
+  const currentPlayer = useSelector((state: IUserStore) => state.userData.data.isCurrentPlayer)
   return (
     <div>
-      <p>{props.isCurrentPlayer?'Your Turn':'Next player goes'}</p>
+      <p>{currentPlayer?'Your Turn':'Next player goes'}</p>
       <OurField field = {props.ourField}></OurField>
       <EnemyField socket={props.socket} field={props.enemyField}></EnemyField>
     </div>

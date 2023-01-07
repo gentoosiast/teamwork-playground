@@ -10,15 +10,7 @@ import ChooseShip from '../chooseShip/chooseShip';
 import ChooseComponent from "../chooseShip/ChooseComponent";
 import { useDispatch, useSelector } from "react-redux";
 
-interface IAppProps {
-  onClick: () => void;
-  text: string;
-}
 
-interface ICheckBoxProps {
-  onClick: (checked: boolean) => void;
-  text: string;
-}
 
 export const App = () => {
 
@@ -69,7 +61,6 @@ export function RequestServer() {
   const [ourField, setOurField] = useState<Array<Array<Cell>>>(emptyState());
   const [content, setContent]=useState(null);
   //const [page, setPage]=useState('reg');
-  const [isCurrentPlayer, setCurrentPlayer] = useState(false)
   const dispatch = useDispatch<AppDispatch>();
   const page = useSelector( (state: IPage) => state.pages.page);
 
@@ -82,16 +73,16 @@ export function RequestServer() {
     }
     if(page==='gameField'){
       setContent(<>
-      <GameField isCurrentPlayer={isCurrentPlayer} socket={socket} enemyField={enemyField} ourField={ourField}></GameField>
+      <GameField socket={socket} enemyField={enemyField} ourField={ourField}></GameField>
       </>);
     }
     if(page==='finishGame'){
-      setContent(<FinishPage winner={isCurrentPlayer}/>)
+      setContent(<FinishPage/>)
     }
-  },[page,rooms, enemyField, ourField,isCurrentPlayer]);
+  },[page,rooms, enemyField, ourField]);
   
   useEffect(() => {
-    const webSocket = new SocketModel({ setEnemyField, setOurField, setRoom,setCurrentPlayer, dispatch});
+    const webSocket = new SocketModel({ setEnemyField, setOurField, setRoom, dispatch});
     setSocket(webSocket);
     setContent(<Registration socket={webSocket}/>);
 

@@ -1,9 +1,12 @@
 import React from "react";
-interface IFinishGame{
-    winner: boolean
-}
-const FinishPage=({winner}:IFinishGame)=>{
+import { useSelector } from "react-redux";
+import { IUserInitialData } from "../../dto";
 
+interface IUserStore {
+    userData: IUserInitialData;
+  }
+const FinishPage=()=>{
+    const winner = useSelector((state: IUserStore) => state.userData.data.winner)
     return (<p>
         {winner?'You Winner':'You loser'}
         </p>)

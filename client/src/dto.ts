@@ -27,7 +27,7 @@ export interface IRegData{
     data: {
       name: string,
       index: number,
-      currentPlayer: boolean,
+      isCurrentPlayer: boolean,
       winner: number,
       idGames:number[],
     },

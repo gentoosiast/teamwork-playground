@@ -6,7 +6,7 @@ const initialState:IUserInitialData = {
   data: {
     name: '',
     index: -1,
-    currentPlayer: false,
+    isCurrentPlayer: false,
     winner: -1,
     idGames: []
   },
@@ -58,6 +58,9 @@ interface IUserIndex{
 interface IIdGame {
   idGame: number
 }
+interface ICurrentPlayer{
+  isCurrentPlayer: boolean
+}
 
 const userReduser = createSlice({
   name: "userData",
@@ -71,8 +74,11 @@ const userReduser = createSlice({
     },
     addIdGame(state, action: PayloadAction<IIdGame>) {
       state.data.idGames.push(action.payload.idGame);
-  },
     },
+    changeCurrentPlayer(state, action: PayloadAction<ICurrentPlayer>){
+      state.data.isCurrentPlayer=action.payload.isCurrentPlayer;
+    }
+  },
     // builder.addCase(changeHabbitsInput.fulfilled, (state, action) => {
     //   state.data = action.payload.data;
     // }),
@@ -89,6 +95,6 @@ const userReduser = createSlice({
 
 const { actions, reducer } = userReduser;
 
-export const {addUserName,addUserIndex,addIdGame } = actions;
+export const {addUserName,addUserIndex,addIdGame,changeCurrentPlayer } = actions;
 
 export default reducer;

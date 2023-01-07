@@ -2,13 +2,12 @@ import { Dispatch } from "react";
 import { emptyState } from "./utils/fieldGenerator";
 import { IRegData ,IOurField, IUser, IRoom, IShip,IMessage,Cell,IUserInitialData} from "./dto";
 import { useDispatch, useSelector } from "react-redux";
-import {addUserName,addUserIndex,addIdGame} from './reducer/userReducer';
+import {addUserName,addUserIndex,addIdGame,changeCurrentPlayer} from './reducer/userReducer';
 import { changePage } from './reducer/pagesReduser';
 interface ISocketModel{
   setEnemyField: Dispatch<React.SetStateAction<Array<Array<Cell>>>>;
   setOurField: Dispatch<React.SetStateAction<Array<Array<Cell>>>>;
   setRoom: Dispatch<React.SetStateAction<IRoom[]>>
-  setCurrentPlayer: Dispatch<React.SetStateAction<boolean>>
   dispatch: any
 }
 
@@ -17,7 +16,7 @@ export class SocketModel {
   playerIdx: number = -1;
   rooms: []=[]
   user:IUser;
-  constructor({ setEnemyField, setOurField, setRoom,setCurrentPlayer,dispatch}:ISocketModel) {
+  constructor({ setEnemyField, setOurField, setRoom,dispatch}:ISocketModel) {
     const websocket = new WebSocket('ws://localhost:3000')
     this.webSocket = websocket;
     websocket.onmessage = (msg) => {
@@ -41,7 +40,7 @@ export class SocketModel {
         // }
         case 'turn':{
           const {currentPlayer} = JSON.parse(parsedMsg.data);
-          setCurrentPlayer(currentPlayer=== this.playerIdx)
+          dispatch(changeCurrentPlayer({isCurrentPlayer: currentPlayer=== this.playerIdx}))
           break;
         }
         case 'attack': {
@@ -82,8 +81,8 @@ export class SocketModel {
                 }
               });
           setOurField(shipForClient);
-          const currentPlayer = JSON.parse(parsedMsg.data).currentPlayerIndex === this.playerIdx;
-          setCurrentPlayer(currentPlayer)
+          const currentPlayer = JSON.parse(parsedMsg.data).currentPlayerIndex ;
+          dispatch(changeCurrentPlayer({isCurrentPlayer: currentPlayer=== this.playerIdx}))
           break;
         }
         case 'reg':{
@@ -110,7 +109,7 @@ export class SocketModel {
         }
         case 'finish':{
           const {winPlayer} = JSON.parse(parsedData);   
-            setCurrentPlayer(winPlayer===this.playerIdx);
+            dispatch(changeCurrentPlayer({isCurrentPlayer: winPlayer===this.playerIdx}))
             dispatch(changePage({page:'finishGame'}))
   
             break;
