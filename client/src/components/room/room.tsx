@@ -1,6 +1,6 @@
 import { SocketModel } from '../../socketModel';
 import React from 'react';
-import { IRoom,IUserInitialData } from '../../dto';
+import { IRoom,IRoomsInitialState,IUserInitialData } from '../../dto';
 import { useSelector } from 'react-redux';
 
 interface IUserStore {
@@ -9,12 +9,15 @@ interface IUserStore {
 
 interface IRoomComponent {
     socket:SocketModel,
-    rooms: IRoom[],
 }
-const Room = ({socket,rooms}:IRoomComponent)=>{
+interface IRoomsStore {
+    roomsData: IRoomsInitialState;
+  }
+const Room = ({socket}:IRoomComponent)=>{
     const handlerClick =(ind: number)=>{
         socket.addUserToRoom(ind)
     }
+    const rooms = useSelector((state: IRoomsStore) => state.roomsData.data)
     const roomsComp = !rooms.length?'emptyRooms':
     (<><h2>Rooms</h2>
         {rooms.map((it,ind)=>{
@@ -27,7 +30,7 @@ const Room = ({socket,rooms}:IRoomComponent)=>{
             )
         })}
     </>);
-   const userName = useSelector( (state: IUserStore) => state.userData.data.name);
+   const userName = useSelector( (state: IUserStore) => state.userData.name);
     return(<>
     <p>Hello, {userName}</p>
         <button onClick={()=>socket.createRoom()}>Create Room</button>

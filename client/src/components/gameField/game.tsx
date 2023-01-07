@@ -29,7 +29,7 @@ interface IGameFieldProps {
 }
 
 export function EnemyField(props: IEnemyFieldProps) {
-  const idGame = useSelector((state: IUserStore) => state.userData.data.idGames)
+  const idGame = useSelector((state: IUserStore) => state.userData.idGames)
   return (
     <div className="field">
       {props.field.map((row, y) => {
@@ -72,7 +72,7 @@ interface IUserStore {
   userData: IUserInitialData;
 }
 export function GameField(props: IGameFieldProps) {
-  const currentPlayer = useSelector((state: IUserStore) => state.userData.data.isCurrentPlayer)
+  const currentPlayer = useSelector((state: IUserStore) => state.userData.isCurrentPlayer)
   return (
     <div>
       <p>{currentPlayer?'Your Turn':'Next player goes'}</p>

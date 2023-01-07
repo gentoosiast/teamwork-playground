@@ -78,7 +78,7 @@ interface IUserStore {
 
 const ChooseShip=({socket}:IChooseShip)=>{
     const rand = 0//Math.floor(Math.random()*3)
-    const idGame = useSelector((state: IUserStore) => state.userData.data.idGames)
+    const idGame = useSelector((state: IUserStore) => state.userData.idGames)
     console.log(rand)
     return (<>
         Тут людина розставляє свої кораблики, де вони будуть. Потім всі дані по кліку летять на сервер

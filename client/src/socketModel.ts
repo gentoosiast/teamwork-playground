@@ -2,11 +2,11 @@ import { Dispatch } from "react";
 import { emptyState } from "./utils/fieldGenerator";
 import { IRegData , IUser, IRoom, IShip,IMessage,Cell} from "./dto";
 import {addUserName,addUserIndex,addIdGame,changeCurrentPlayer,setWinner} from './reducer/userReducer';
+import { setRooms } from "./reducer/roomsReducer";
 import { changePage } from './reducer/pagesReduser';
 interface ISocketModel{
   setEnemyField: Dispatch<React.SetStateAction<Array<Array<Cell>>>>;
   setOurField: Dispatch<React.SetStateAction<Array<Array<Cell>>>>;
-  setRoom: Dispatch<React.SetStateAction<IRoom[]>>
   dispatch: any
 }
 
@@ -15,7 +15,7 @@ export class SocketModel {
   playerIdx: number = -1;
   rooms: []=[]
   user:IUser;
-  constructor({ setEnemyField, setOurField, setRoom,dispatch}:ISocketModel) {
+  constructor({ setEnemyField, setOurField, dispatch}:ISocketModel) {
     const websocket = new WebSocket('ws://localhost:3000')
     this.webSocket = websocket;
     websocket.onmessage = (msg) => {
@@ -69,7 +69,7 @@ export class SocketModel {
         case 'start_game': {     
           dispatch(changePage({page:'gameField'}))
           dispatch(setWinner({winner:false}));
-          const {ships,currentPlayer} = JSON.parse(parsedMsg.data);
+          const {ships,currentPlayerIndex} = JSON.parse(parsedMsg.data);
           const shipForClient = emptyState();
           ships.forEach((ship:IShip) => {
                 for (let i = 0; i < ship.length; i += 1) {
@@ -81,7 +81,7 @@ export class SocketModel {
                 }
               });
           setOurField(shipForClient);
-          dispatch(changeCurrentPlayer({isCurrentPlayer: currentPlayer=== this.playerIdx}))
+          dispatch(changeCurrentPlayer({isCurrentPlayer: currentPlayerIndex=== this.playerIdx}))
           break;
         }
         case 'reg':{
@@ -92,8 +92,8 @@ export class SocketModel {
         break;  
         }
         case 'update_room':{
-          const content = JSON.parse(parsedData);
-          setRoom(content)
+          const content:IRoom[] = JSON.parse(parsedData);
+          dispatch(setRooms({data:content}))
           break;
         }
         case 'create_game':{

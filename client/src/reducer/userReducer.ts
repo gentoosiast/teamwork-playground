@@ -2,13 +2,11 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IUserInitialData} from "../dto";
 
 const initialState:IUserInitialData = {
-  data: {
     name: '',
     index: -1,
     isCurrentPlayer: false,
     winner: false,
     idGames: []
-  },
 };
 
 interface IUserName{
@@ -32,19 +30,19 @@ const userReduser = createSlice({
   initialState,
   reducers: {
     addUserName(state, action: PayloadAction<IUserName>) {
-        state.data.name = action.payload.name;
+        state.name = action.payload.name;
     },
     addUserIndex(state, action: PayloadAction<IUserIndex>) {
-      state.data.index = action.payload.index;
+      state.index = action.payload.index;
     },
     addIdGame(state, action: PayloadAction<IIdGame>) {
-      state.data.idGames.push(action.payload.idGame);
+      state.idGames.push(action.payload.idGame);
     },
     changeCurrentPlayer(state, action: PayloadAction<ICurrentPlayer>){
-      state.data.isCurrentPlayer=action.payload.isCurrentPlayer;
+      state.isCurrentPlayer=action.payload.isCurrentPlayer;
     },
     setWinner(state, action: PayloadAction<IWinner>){
-      state.data.winner=action.payload.winner;
+      state.winner=action.payload.winner;
     }
   },
 });

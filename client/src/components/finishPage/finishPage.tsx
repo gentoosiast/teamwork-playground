@@ -6,7 +6,7 @@ interface IUserStore {
     userData: IUserInitialData;
   }
 const FinishPage=()=>{
-    const winner = useSelector((state: IUserStore) => state.userData.data.winner)
+    const winner = useSelector((state: IUserStore) => state.userData.winner)
     return (<p>
         {winner?'You Winner':'You loser'}
         </p>)

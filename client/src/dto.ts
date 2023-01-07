@@ -24,19 +24,21 @@ export interface IRegData{
   }
 
   export interface IUserInitialData{
-    data: {
       name: string,
       index: number,
       isCurrentPlayer: boolean,
       winner: boolean,
       idGames:number[],
-    },
   }
 
   export interface IRoom{
     roomId:number,
     roomUsers: IUser[]
   }
+  export interface IRoomsInitialState{
+    data: IRoom[];
+  }
+
 
   export interface IShip {
     position: {

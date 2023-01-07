@@ -55,7 +55,6 @@ interface IPage {
 
 export function RequestServer() {
   const [socket, setSocket] = useState<SocketModel>(null);
-  const [rooms, setRoom] = useState<IRoom[]>([])
   const [enemyField, setEnemyField] = useState<Array<Array<Cell>>>(emptyState());
   const [ourField, setOurField] = useState<Array<Array<Cell>>>(emptyState());
   const [content, setContent]=useState(null);
@@ -64,7 +63,7 @@ export function RequestServer() {
 
   useEffect(()=>{
     if(page==='room'){
-      setContent(<Room rooms={rooms} socket={socket}/>);
+      setContent(<Room socket={socket}/>);
     }
     if(page==='chooseShip'){
       setContent(<ChooseShip socket={socket}/>);
@@ -77,10 +76,10 @@ export function RequestServer() {
     if(page==='finishGame'){
       setContent(<FinishPage/>)
     }
-  },[page,rooms, enemyField, ourField]);
+  },[page, enemyField, ourField]);
   
   useEffect(() => {
-    const webSocket = new SocketModel({ setEnemyField, setOurField, setRoom, dispatch});
+    const webSocket = new SocketModel({ setEnemyField, setOurField, dispatch});
     setSocket(webSocket);
     setContent(<Registration socket={webSocket}/>);
 
