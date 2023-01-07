@@ -48,7 +48,7 @@ export const App = () => {
 //   );
 // }
 interface IPage {
-  pages: {
+  pagesData: {
     page: string;
   }
 }
@@ -57,7 +57,7 @@ export function RequestServer() {
   const [socket, setSocket] = useState<SocketModel>(null);
   const [content, setContent]=useState(null);
   const dispatch = useDispatch<AppDispatch>();
-  const page = useSelector( (state: IPage) => state.pages.page);
+  const page = useSelector( (state: IPage) => state.pagesData.page);
 
   useEffect(()=>{
     if(page==='room'){

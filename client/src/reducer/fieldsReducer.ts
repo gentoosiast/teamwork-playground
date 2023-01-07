@@ -7,54 +7,43 @@ const initialState:IFieldsInitialState = {
 };
 
 interface IField {
-    field: Cell[][]
+    field: Cell[][],
 }
 interface IChangeField{
     position: IVector,
-    status: string
+    status: string,
+    player: 'enemyField'|'ourField';
 }
 
 const fieldsReducer = createSlice({
   name: "fieldsData",
   initialState,
   reducers: {
-    addOurField(state, action: PayloadAction<IField>) {
-        state.ourField = action.payload.field;
+    addField(state, action: PayloadAction<IField>) {  
+        state.ourField= action.payload.field;
     },
-    addEnemyField(state, action: PayloadAction<IField>) {
-        state.enemyField = action.payload.field;
-    },
-    changeOurField(state, action: PayloadAction<IChangeField>) {
-        const arr = state.ourField.slice().map((row, y) => {
+    changeField(state, action: PayloadAction<IChangeField>) {
+        const {player,position,status} = action.payload
+        if(!state[player]){
+            state[player]=emptyState();
+        } 
+        const arr = state[player].slice().map((row, y) => {
             return row.map((cell, x) => {
-              if (action.payload.status === 'killed') {
-                return action.payload.position.x === x && action.payload.position.y === y ? Cell.Killed : cell;
-              } else if (action.payload.status === 'shot') {
-                return action.payload.position.x === x && action.payload.position.y === y ? Cell.Shot : cell;
-              }
-              return action.payload.position.x === x && action.payload.position.y === y ? Cell.Unavailable : cell;
+                if (status === 'killed') {
+                    return position.x === x && position.y === y ? Cell.Killed : cell;
+                } else if (status === 'shot') {
+                    return position.x === x &&position.y === y ? Cell.Shot : cell;
+                }
+                return position.x === x && position.y === y ? Cell.Unavailable : cell;
             })
-          })
-        state.ourField = arr;
-    },
-    changeEnemyField(state, action: PayloadAction<IChangeField>) {
-        const arr = state.enemyField.slice().map((row, y) => {
-            return row.map((cell, x) => {
-              if (action.payload.status === 'killed') {
-                return action.payload.position.x === x && action.payload.position.y === y ? Cell.Killed : cell;
-              } else if (action.payload.status === 'shot') {
-                return action.payload.position.x === x && action.payload.position.y === y ? Cell.Shot : cell;
-              }
-              return action.payload.position.x === x && action.payload.position.y === y ? Cell.Unavailable : cell;
-            })
-          })
-        state.enemyField = arr;
+        })
+        state[player] = arr;
     },
   },
 });
 
 const { actions, reducer } = fieldsReducer;
 
-export const {changeOurField, changeEnemyField,addOurField,addEnemyField} = actions;
+export const {changeField,addField} = actions;
 
 export default reducer;

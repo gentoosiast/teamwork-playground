@@ -9,7 +9,7 @@ interface IPage {
 }
 
 const pageReduser = createSlice({
-  name: "pages",
+  name: "pagesData",
   initialState,
   reducers: {
     changePage(state, action: PayloadAction<IPage>) {

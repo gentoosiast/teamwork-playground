@@ -1,12 +1,12 @@
 import { Dispatch } from "react";
 import { emptyState } from "./utils/fieldGenerator";
-import { IRegData , IUser, IRoom, IShip,IMessage,Cell} from "./dto";
+import { IRegData , IUser, IRoom, IShip,IMessage,Cell, AppDispatch} from "./dto";
 import {addUserName,addUserIndex,addIdGame,changeCurrentPlayer,setWinner} from './reducer/userReducer';
 import { setRooms } from "./reducer/roomsReducer";
 import { changePage } from './reducer/pagesReduser';
-import {changeOurField, changeEnemyField,addOurField,addEnemyField} from './reducer/fieldsReducer';
+import {changeField,addField} from './reducer/fieldsReducer';
 interface ISocketModel{
-  dispatch: any
+  dispatch: AppDispatch
 }
 
 export class SocketModel {
@@ -41,14 +41,8 @@ export class SocketModel {
         }
         case 'attack': {
           const {position, currentPlayer, status} = JSON.parse(parsedMsg.data)
-          
-          const setField = [changeEnemyField, changeOurField][(currentPlayer + this.playerIdx) % 2]
-          dispatch(setField({position, status}))
-          break;
-        }
-        case 'get_field': {
-          const field = JSON.parse(parsedMsg.data)
-          dispatch(addEnemyField({field}));
+          const player = this.playerIdx=== currentPlayer?'enemyField':'ourField';
+          dispatch(changeField({position, status, player}))
           break;
         }
         case 'start_game': {     
@@ -65,7 +59,7 @@ export class SocketModel {
                   }
                 }
               });
-          dispatch(addOurField({field:shipForClient}));
+          dispatch(addField({field:shipForClient}));
           dispatch(changeCurrentPlayer({isCurrentPlayer: currentPlayerIndex=== this.playerIdx}))
           break;
         }
