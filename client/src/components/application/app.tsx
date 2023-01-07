@@ -1,13 +1,12 @@
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { GameField } from '../gameField/game';
 import Registration from '../registration/registration';
 import { emptyState } from '../../utils/fieldGenerator';
 import { SocketModel } from "../../socketModel";
-import {IRoom, IUser,Cell,AppDispatch} from '../../dto'
+import {IRoom, Cell,AppDispatch} from '../../dto'
 import Room from '../room/room';
 import FinishPage from '../finishPage/finishPage';
 import ChooseShip from '../chooseShip/chooseShip';
-import ChooseComponent from "../chooseShip/ChooseComponent";
 import { useDispatch, useSelector } from "react-redux";
 
 
@@ -60,7 +59,6 @@ export function RequestServer() {
   const [enemyField, setEnemyField] = useState<Array<Array<Cell>>>(emptyState());
   const [ourField, setOurField] = useState<Array<Array<Cell>>>(emptyState());
   const [content, setContent]=useState(null);
-  //const [page, setPage]=useState('reg');
   const dispatch = useDispatch<AppDispatch>();
   const page = useSelector( (state: IPage) => state.pages.page);
 

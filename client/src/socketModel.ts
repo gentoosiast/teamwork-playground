@@ -1,8 +1,7 @@
 import { Dispatch } from "react";
 import { emptyState } from "./utils/fieldGenerator";
-import { IRegData ,IOurField, IUser, IRoom, IShip,IMessage,Cell,IUserInitialData} from "./dto";
-import { useDispatch, useSelector } from "react-redux";
-import {addUserName,addUserIndex,addIdGame,changeCurrentPlayer} from './reducer/userReducer';
+import { IRegData , IUser, IRoom, IShip,IMessage,Cell} from "./dto";
+import {addUserName,addUserIndex,addIdGame,changeCurrentPlayer,setWinner} from './reducer/userReducer';
 import { changePage } from './reducer/pagesReduser';
 interface ISocketModel{
   setEnemyField: Dispatch<React.SetStateAction<Array<Array<Cell>>>>;
@@ -69,9 +68,10 @@ export class SocketModel {
         }
         case 'start_game': {     
           dispatch(changePage({page:'gameField'}))
-          const ships:IShip[] = JSON.parse(parsedMsg.data).ships;
+          dispatch(setWinner({winner:false}));
+          const {ships,currentPlayer} = JSON.parse(parsedMsg.data);
           const shipForClient = emptyState();
-          ships.forEach((ship) => {
+          ships.forEach((ship:IShip) => {
                 for (let i = 0; i < ship.length; i += 1) {
                   if (ship.direction === 0) {
                     shipForClient[ship.position.y][ship.position.x + i] = Cell.Occupied;
@@ -81,7 +81,6 @@ export class SocketModel {
                 }
               });
           setOurField(shipForClient);
-          const currentPlayer = JSON.parse(parsedMsg.data).currentPlayerIndex ;
           dispatch(changeCurrentPlayer({isCurrentPlayer: currentPlayer=== this.playerIdx}))
           break;
         }
@@ -99,17 +98,17 @@ export class SocketModel {
         }
         case 'create_game':{
           //idPlayer
-          const data = JSON.parse(parsedData)                 
-          this.playerIdx = data.idPlayer;
-          dispatch(addUserIndex({index: data.idPlayer}))
-          dispatch(addIdGame({idGame:data.idGame }))
+          const {idPlayer,idGame} = JSON.parse(parsedData)                 
+          this.playerIdx = idPlayer;
+          dispatch(addUserIndex({index: idPlayer}))
+          dispatch(addIdGame({idGame:idGame }))
           dispatch(changePage({page:'chooseShip'}))
           
           break;
         }
         case 'finish':{
           const {winPlayer} = JSON.parse(parsedData);   
-            dispatch(changeCurrentPlayer({isCurrentPlayer: winPlayer===this.playerIdx}))
+            dispatch(setWinner({winner: winPlayer===this.playerIdx}))
             dispatch(changePage({page:'finishGame'}))
   
             break;
