@@ -1,9 +1,8 @@
 import './game.css';
 import React, { useEffect, useState } from "react";
-import { Cell, IUserInitialData } from '../../dto'
+import { Cell, IFieldsInitialState, IUserInitialData } from '../../dto'
 import { SocketModel } from "../../socketModel";
 import { useSelector } from 'react-redux';
-type FieldState = Cell[][];
 const styleMap = {
   [Cell.Empty]: '',
   [Cell.Occupied]: 'cell_occupied',
@@ -12,27 +11,21 @@ const styleMap = {
   [Cell.Killed]: 'cell_killed'
 };
 
-interface IEnemyFieldProps {
-  socket:SocketModel;
-  field: Array<Array<Cell>>;
-}
-
-interface IOurFieldProps {
-  field: Array<Array<Cell>>;
-}
 
 interface IGameFieldProps {
   socket:SocketModel;
-  enemyField: Array<Array<Cell>>;
-  
-  ourField: Array<Array<Cell>>;
 }
 
-export function EnemyField(props: IEnemyFieldProps) {
+interface IFieldStore {
+  fieldsData: IFieldsInitialState;
+}
+
+export function EnemyField(props: IGameFieldProps) {
+  const enemyField = useSelector( (state: IFieldStore) => state.fieldsData.enemyField);
   const idGame = useSelector((state: IUserStore) => state.userData.idGames)
   return (
     <div className="field">
-      {props.field.map((row, y) => {
+      {enemyField.map((row, y) => {
         return (
           <div className="row" key={y}>
             {row.map((cell, x) => {
@@ -49,10 +42,11 @@ export function EnemyField(props: IEnemyFieldProps) {
   );
 }
 
-export function OurField(props: IOurFieldProps) {
+export function OurField() {
+  const ourField = useSelector( (state: IFieldStore) => state.fieldsData.ourField);
   return (
     <div className="field">
-      {props.field.map((row,i) => {
+      {ourField.map((row,i) => {
         return (
           <div className="row" key={i}>
             {
@@ -76,8 +70,8 @@ export function GameField(props: IGameFieldProps) {
   return (
     <div>
       <p>{currentPlayer?'Your Turn':'Next player goes'}</p>
-      <OurField field = {props.ourField}></OurField>
-      <EnemyField socket={props.socket} field={props.enemyField}></EnemyField>
+      <OurField></OurField>
+      <EnemyField socket={props.socket}></EnemyField>
     </div>
   );
 }

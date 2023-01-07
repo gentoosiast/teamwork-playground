@@ -77,7 +77,7 @@ interface IUserStore {
 }
 
 const ChooseShip=({socket}:IChooseShip)=>{
-    const rand = 0//Math.floor(Math.random()*3)
+    const rand = Math.floor(Math.random()*3)
     const idGame = useSelector((state: IUserStore) => state.userData.idGames)
     console.log(rand)
     return (<>

@@ -5,7 +5,7 @@ const initialState:IRoomsInitialState = {
    data:[]
 };
 
-const userReduser = createSlice({
+const roomsReducer = createSlice({
   name: "roomsData",
   initialState,
   reducers: {
@@ -16,7 +16,7 @@ const userReduser = createSlice({
   },
 });
 
-const { actions, reducer } = userReduser;
+const { actions, reducer } = roomsReducer;
 
 export const {setRooms } = actions;
 

@@ -38,13 +38,17 @@ export interface IRegData{
   export interface IRoomsInitialState{
     data: IRoom[];
   }
-
+export interface IFieldsInitialState {
+  enemyField: Cell[][],
+  ourField: Cell[][],
+}
+export interface IVector{
+  x: number;
+  y: number;
+}
 
   export interface IShip {
-    position: {
-        x: number;
-        y: number;
-    };
+    position: IVector
     direction: number;
     length: number;
 }

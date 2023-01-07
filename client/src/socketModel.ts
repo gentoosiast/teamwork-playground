@@ -4,18 +4,15 @@ import { IRegData , IUser, IRoom, IShip,IMessage,Cell} from "./dto";
 import {addUserName,addUserIndex,addIdGame,changeCurrentPlayer,setWinner} from './reducer/userReducer';
 import { setRooms } from "./reducer/roomsReducer";
 import { changePage } from './reducer/pagesReduser';
+import {changeOurField, changeEnemyField,addOurField,addEnemyField} from './reducer/fieldsReducer';
 interface ISocketModel{
-  setEnemyField: Dispatch<React.SetStateAction<Array<Array<Cell>>>>;
-  setOurField: Dispatch<React.SetStateAction<Array<Array<Cell>>>>;
   dispatch: any
 }
 
 export class SocketModel {
   webSocket: WebSocket;
   playerIdx: number = -1;
-  rooms: []=[]
-  user:IUser;
-  constructor({ setEnemyField, setOurField, dispatch}:ISocketModel) {
+  constructor({ dispatch}:ISocketModel) {
     const websocket = new WebSocket('ws://localhost:3000')
     this.webSocket = websocket;
     websocket.onmessage = (msg) => {
@@ -45,25 +42,13 @@ export class SocketModel {
         case 'attack': {
           const {position, currentPlayer, status} = JSON.parse(parsedMsg.data)
           
-          const setField = [setEnemyField, setOurField][(currentPlayer + this.playerIdx) % 2]
-          setField((last:Array<Array<number>>) => {
-            const arr = last.map((row, y) => {
-              return row.map((cell, x) => {
-                if (status === 'killed') {
-                  return position.x === x && position.y === y ? Cell.Killed : cell;
-                } else if (status === 'shot') {
-                  return position.x === x && position.y === y ? Cell.Shot : cell;
-                }
-                return position.x === x && position.y === y ? Cell.Unavailable : cell;
-              })
-            })
-            return arr;
-          })
+          const setField = [changeEnemyField, changeOurField][(currentPlayer + this.playerIdx) % 2]
+          dispatch(setField({position, status}))
           break;
         }
         case 'get_field': {
           const field = JSON.parse(parsedMsg.data)
-          setEnemyField(field)
+          dispatch(addEnemyField({field}));
           break;
         }
         case 'start_game': {     
@@ -80,13 +65,13 @@ export class SocketModel {
                   }
                 }
               });
-          setOurField(shipForClient);
+          dispatch(addOurField({field:shipForClient}));
           dispatch(changeCurrentPlayer({isCurrentPlayer: currentPlayerIndex=== this.playerIdx}))
           break;
         }
         case 'reg':{
-          this.user = JSON.parse(parsedData);
-          dispatch(addUserName({name: this.user.name}))
+          const {name} = JSON.parse(parsedData);
+          dispatch(addUserName({name: name}))
           dispatch(changePage({page:'room'}))
           
         break;  
@@ -205,7 +190,7 @@ export class SocketModel {
   addUserToRoom(indexRoom: number){
     const request: IMessage = {
       type: 'add_user_to_room',
-      data: JSON.stringify({user: this.user, indexRoom}),
+      data: JSON.stringify({ indexRoom}),
       id: 0
     }
     this.webSocket.send(JSON.stringify(request))
@@ -213,15 +198,12 @@ export class SocketModel {
   startGame(gameId: number, ships: IShip[]){
     const request: IMessage = {
       type: 'add_ships',
-      data: JSON.stringify({user: this.user,gameId, ships, indexPlayer: this.playerIdx}),
+      data: JSON.stringify({gameId, ships, indexPlayer: this.playerIdx}),
       id: 0
     }
     this.webSocket.send(JSON.stringify(request))
   }
 
-  addShipsInGame(ships: IShip[]){
-
-  }
   singlePlay(){
     const request: IMessage = {
       type: 'single_play',
