@@ -36,7 +36,7 @@ const ChooseComponent = () => {
 		}
 	}, [activeShip])
 	useEffect(() => {
-		const canvas = new CanvasSection(shipsRef.current, (ship) => {
+		const canvas = new CanvasSection(shipsRef.current,ships.current, (ship) => {
 			ships.current = {
 				...ships.current, [ship]: (ships.current[ship as keyof typeof ships.current] - 1)
 			}
@@ -49,7 +49,7 @@ const ChooseComponent = () => {
 		<>
 			<div ref={shipsRef}>
 				<h5>Расставьте корабли</h5>
-				<button onClick={()=>canvSection.onAutoShips(ships.current)}>Расставить автоматически</button>
+				<button onClick={()=>canvSection.autoPutShips()}>Расставить автоматически</button>
 				<ShipsSection ships={ships.current} onAddActiveShip={(type: string) => {
 					if (type === activeShip) {
 						setActiveShip('')
