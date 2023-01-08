@@ -37,6 +37,7 @@ const ChooseComponent = () => {
 	}, [activeShip])
 	useEffect(() => {
 		const canvas = new CanvasSection(shipsRef.current,ships.current, (ship) => {
+			//console.log("***")
 			ships.current = {
 				...ships.current, [ship]: (ships.current[ship as keyof typeof ships.current] - 1)
 			}

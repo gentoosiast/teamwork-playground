@@ -32,4 +32,9 @@ export default class ShipsController{
 	get shipsOnCanvas(){
 		return this._shipsOnCanvas
 	}
+
+	fromRandomData(type: string, isRotate: boolean) {
+		this.activeShip=type
+		this._isRotated=isRotate
+	}
 }
