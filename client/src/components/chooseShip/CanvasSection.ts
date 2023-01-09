@@ -18,8 +18,8 @@ export type tShipCanvas = {
 export class CanvasSection extends Control {
 	private canvasSection: Control<HTMLCanvasElement>;
 	private ctx: CanvasRenderingContext2D;
-	//private prevPosX: number;
-	//private prevPosY: number;
+	private prevPosX: number;
+	private prevPosY: number;
 	private parentNode: HTMLElement;
 	private canvasWidth: number;
 	private canvasHeight: number;
@@ -92,7 +92,9 @@ export class CanvasSection extends Control {
 		this.canvasSection.node.removeEventListener('mousemove', this.moveBinded)
 		this.canvasSection.node.removeEventListener('click', this.clickBinded)
 		document.body.removeEventListener('keyup', this.rotateShipBinded)
-		//this.createShipImage()
+		console.log('Click')
+		const axis =  !this.shipsController.isRotated? 'vertical' : 'horizont'
+		this.createShipImage(this.prevPosX, this.prevPosY,this.shipsController.activeShip,axis)
 	}
 
 	createShipImage(x:number,y:number,type:string,axis:string) {
@@ -142,24 +144,24 @@ export class CanvasSection extends Control {
 
 	onMove(e: MouseEvent) {
 		const {x: xC, y: yC} = this.getCursorPosition(e, this.canvasSection.node)
-		//if (this.prevPosX && this.prevPosY && this.prevPosX === xC && this.prevPosY === yC) return
-		// if (this.boardMatrix.isOnBoard(xC, yC)) {
-		// 	this.boardMatrix.clearCells(this.shipsController.activeShip, this.prevPosX, this.prevPosY)
-		// 	this.prevPosX = xC
-		// 	this.prevPosY = yC
-		// 	const isIntersect = this.isIntersection(this.prevPosX, this.prevPosY, ShipsSizes[this.shipsController.activeShip as keyof typeof ShipsSizes])
-		//
-		// 	if (isIntersect) {
-		// 		this.isCurrentIntersect = true
-		// 		this.boardMatrix.fillCells('hovered', this.prevPosX, this.prevPosY)
-		// 	} else {
-		// 		this.isCurrentIntersect = false
-		// 		this.boardMatrix.fillCells('occupate', this.prevPosX, this.prevPosY)
-		// 		this.canvasSection.node.addEventListener('click', this.clickBinded)
-		// 	}
-		// 	this.drawScene()
-		//
-		// }
+		if (this.prevPosX && this.prevPosY && this.prevPosX === xC && this.prevPosY === yC) return
+		if (this.boardMatrix.isOnBoard(xC, yC)) {
+			this.boardMatrix.clearCells(this.shipsController.activeShip, this.prevPosX, this.prevPosY)
+			this.prevPosX = xC
+			this.prevPosY = yC
+			const isIntersect = this.isIntersection(this.prevPosX, this.prevPosY, ShipsSizes[this.shipsController.activeShip as keyof typeof ShipsSizes])
+		
+			if (isIntersect) {
+				this.isCurrentIntersect = true
+				this.boardMatrix.fillCells('hovered', this.prevPosX, this.prevPosY)
+			} else {
+				this.isCurrentIntersect = false
+				this.boardMatrix.fillCells('occupate', this.prevPosX, this.prevPosY)
+				this.canvasSection.node.addEventListener('click', this.clickBinded)
+			}
+			this.drawScene()
+		
+		}
 	}
 
 	rotateShip(e: KeyboardEvent) {
