@@ -98,6 +98,6 @@ export default class BoardMatrix {
 		return this._cellSize
 	}
 	valueToCell(y:number,x:number,val:string){
-		this.boardMatrix[y][x]=val==='blocked'?this.boardMatrixBlockedCell:99
+		this.boardMatrix[y][x]=val==='blocked'?this.boardMatrixBlockedCell:val==='ship'?88:99
 	}
 }

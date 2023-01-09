@@ -100,6 +100,7 @@ export class EmptyAreas {
 		//console.log(rr,'elementsHasntInSet')
 		 const subs = this.arrToSubArr(rr)
 		 const longer = this.longerSub(subs)
+
 		objAxis.splice(idx,1,{id:el.id,data:this.arrToSubArr(rr),longer})
 		// el.data = this.arrToSubArr(rr)
 		// el.longer = longer
@@ -114,7 +115,8 @@ export class EmptyAreas {
 			this.apdateEmptyAreas(ax, d)
 		})
 
-		console.log(this.horizontalAreas,'ELNEWWW')
+		console.log(JSON.parse(JSON.stringify(this.horizontalAreas)),'horELNEWWW')
+		console.log(JSON.parse(JSON.stringify(this.horizontalAreas)),'vertELNEWWW')
 	}
 
 	occupateArea(areaCells: Set<any>) {

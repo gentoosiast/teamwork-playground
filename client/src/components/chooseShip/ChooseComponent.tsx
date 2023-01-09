@@ -53,8 +53,10 @@ const ChooseComponent = () => {
 				<button onClick={()=>canvSection.autoPutShips()}>Расставить автоматически</button>
 				<ShipsSection ships={ships.current} onAddActiveShip={(type: string) => {
 					if (type === activeShip) {
-						setActiveShip('')
-						setTimeout(() => setActiveShip(type), 0)
+						//setActiveShip('')
+					//	setTimeout(() =>
+							setActiveShip(type)
+					//		, 0)
 					} else {
 						setActiveShip(type)
 					}
