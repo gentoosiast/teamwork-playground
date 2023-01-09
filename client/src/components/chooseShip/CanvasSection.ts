@@ -61,16 +61,17 @@ export class CanvasSection extends Control {
 		]
 		this.boardMatrix.createEmptyMatrix()
 		this.drawScene()
-		this.randomShips = new RandomShips(this.boardMatrix.boardMatrix, this.ships)
-		this.randomShips.onGetCoordinates = (axis: string, type: string, randomItm: number, coords: number[]) => {
+		this.randomShips = new RandomShips(this.boardMatrix.boardMatrix)
+		this.randomShips.onGetCoordinates = (axis: string, type: string, y: number, x:number) => {
 			this.shipsController.fromRandomData(type, axis !== 'vertical')
-			this.prevPosX = axis !== 'vertical' ? randomItm : coords[0]
-			this.prevPosY = axis === 'vertical' ? randomItm : coords[0]
+			this.prevPosX = x
+			this.prevPosY = y
 			this.createShipImage()
 		}
 	}
 
 	autoPutShips() {
+		this.randomShips.actualShips(this.ships)
 		this.randomShips.putRandomShips()
 	}
 
@@ -98,19 +99,26 @@ export class CanvasSection extends Control {
 		this.createImage('./public/assets/ship.png',
 			this.boardMatrix.cellSize * this.shipsController.activeShipSize, this.boardMatrix.cellSize,
 			(image) => {
+			console.log("PrevX",this.prevPosX,'-----prevY',this.prevPosY)
 				const imageObj: tShipCanvas = {
 					xC: this.prevPosX, yC: this.prevPosY, rotate: this.shipsController.isRotated, image,
 					width: this.boardMatrix.cellSize * (!this.shipsController.isRotated ? this.shipsController.activeShipSize : 1),
 					height: this.boardMatrix.cellSize * (this.shipsController.isRotated ? this.shipsController.activeShipSize : 1),
 				}
-				//console.log(imageObj, 'ImageObject')
+
 				this.shipsController.addShipOnCanvas(imageObj)
 				this.addToIntersection(this.prevPosX, this.prevPosY, this.shipsController.activeShipSize, this.shipsController.isRotated)
 				this.boardMatrix.clearCells(this.shipsController.activeShip, this.prevPosX, this.prevPosY)
 				this.fillShipArea(this.prevPosX, this.prevPosY, this.shipsController.activeShipSize)
-				this.drawScene()
 				this.onAddShip(this.shipsController.activeShip)
+				this.apdatedShips()
+				this.drawScene()
 			})
+	}
+
+	apdatedShips() {
+		this.ships[this.shipsController.activeShip] -= 1
+
 	}
 
 	isIntersection(x: number, y: number, lngth: number) {
@@ -199,30 +207,30 @@ export class CanvasSection extends Control {
 	}
 
 	fillArea(y: number, x: number, val: string) {
-		const areaCells: Set<string> = new Set()
 		this.boardMatrix.valueToCell(y, x, 'blocked')
-		areaCells.add(`${y}-${x}`)
 		this.intersectionData.add(`${y}-${x}`)
-		return areaCells
+		return `${y}-${x}`
 	}
 
 	circleStepsFill(y: number, x: number, val: string) {
-		let set: Set<string> = new Set()
+		const pointsArr:string[]=[]
 		this.circleSteps.forEach(stp => {
 			if (y + stp.y < 0 || y + stp.y >= this.boardMatrix.matrixLength()
 				|| x + stp.x < 0 || x + stp.x >= this.boardMatrix.matrixLength()) return//y + stp.y, x + i + stp.x
-			set = this.fillArea(y + stp.y, x + stp.x, 'blocked')
+			pointsArr.push(this.fillArea(y + stp.y, x + stp.x, val))
 		})
-		return set
+		return pointsArr
 	}
 
 	private fillShipArea(x: number, y: number, size: number) {
-		let areaCells: Set<string> = new Set()
+		const areaCells:Set<string>=new Set()
 		for (let i = 0; i < size; i++) {
 			const xCoord = !this.shipsController.isRotated ? x + i : x
-			const yCoord = this.shipsController.isRotated ? y+i: y
-		//	this.boardMatrix.valueToCell(yCoord, xCoord, 'blocked')
-			this.circleStepsFill(yCoord,xCoord,'blocked')
+			const yCoord = this.shipsController.isRotated ? y + i : y
+			//	this.boardMatrix.valueToCell(yCoord, xCoord, 'blocked')
+			this.circleStepsFill(yCoord, xCoord, 'blocked').forEach(c=>{
+				areaCells.add(c)
+			})
 		}
 		this.randomShips.occupateCells(areaCells)
 	}

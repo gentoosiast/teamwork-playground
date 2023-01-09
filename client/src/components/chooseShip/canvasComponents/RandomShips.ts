@@ -7,16 +7,25 @@ export default class RandomShips {
 	private emptyAreas: EmptyAreas;
 	private generator: Generator<string, void, unknown>;
 	private intervalId: any;
-	onGetCoordinates:(axis:string,type:string,randomItm:number,coords:number[])=>void
-	constructor(matrix: number[][], ships: Record<string, number>) {
+	onGetCoordinates: (axis: string, type: string, y: number, x:number) => void
+	private isRandomActive: boolean;
+
+	constructor(matrix: number[][]) {
 		this.matrix = matrix
-		this.ships = ships
+		this.ships = null
+		this.isRandomActive=false
 		this.generator = this.genShipsToAuto()
-		this.emptyAreas = new EmptyAreas(matrix)
-		this.emptyAreas.onGetCoordinates=(axis:string,type:string,randomItm:number,coords:number[])=>{
-			this.onGetCoordinates(axis,type,randomItm,coords)
+		this.emptyAreas = new EmptyAreas()
+		this.emptyAreas.onGetCoordinates =
+			(axis: string, type: string, y: number, x: number) => {
+			this.onGetCoordinates(axis, type, y, x)
 		}
 	}
+
+	actualShips(ships: Record<string, number>) {
+		this.ships = ships
+	}
+
 	* genShipsToAuto() {
 		const y: string[] = []
 		Object.entries(this.ships).forEach(k => {
@@ -28,29 +37,29 @@ export default class RandomShips {
 			yield y[i]
 		}
 	}
-	interval(){
-		const val=this.generator.next().value
-		console.log(val,'VAL')
-		if(val){
-			const isRotate=!!Math.round(Math.random())
-			const shipSize=ShipsSizes[val as keyof typeof ShipsSizes]
-			this.emptyAreas.putShip(val,shipSize,isRotate)
-		}else{
+
+	interval() {
+		const val = this.generator.next().value
+		if (val) {
+			const isRotate = !!Math.round(Math.random())
+			const shipSize = ShipsSizes[val as keyof typeof ShipsSizes]
+			this.emptyAreas.putShip(val, shipSize, isRotate)
+		} else {
 			clearInterval(this.intervalId)
 		}
 	}
+
 	putRandomShips() {
-		this.intervalId=setInterval(()=> {
+		this.isRandomActive=true
+		this.emptyAreas.start(this.matrix)
 
-		  this.interval()
-		// // this.interval()
-		// // this.interval()
-		// // this.interval()
-
-				},1000)
+		//this.intervalId = setInterval(() => {
+			this.interval()
+		setTimeout(()=>this.interval(),500)
+		//}, 100)
 	}
 
 	occupateCells(areaCells: Set<string>) {
-		this.emptyAreas.occupateArea(areaCells)
+		this.isRandomActive && this.emptyAreas.occupateArea(areaCells)
 	}
 }
