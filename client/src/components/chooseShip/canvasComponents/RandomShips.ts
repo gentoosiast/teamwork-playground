@@ -6,14 +6,10 @@ export default class RandomShips {
 	private ships: Record<string, number>;
 	private emptyAreas: EmptyAreas;
 	private generator: Generator<string, void, unknown>;
-	private putShipBinded: any;
 	private intervalId: any;
 	onGetCoordinates:(axis:string,type:string,randomItm:number,coords:number[])=>void
 	constructor(matrix: number[][], ships: Record<string, number>) {
 		this.matrix = matrix
-//this.putShipBinded= this.putShip.bind(this)
-		//ShipSizes
-		//ShipsCount
 		this.ships = ships
 		this.generator = this.genShipsToAuto()
 		this.emptyAreas = new EmptyAreas(matrix)
@@ -32,10 +28,6 @@ export default class RandomShips {
 			yield y[i]
 		}
 	}
-
-	// putShip(shipSize:number,isRotate:boolean){
-	// 	this.emptyAreas.putShip(val,shipSize,isRotate)
-	// }
 	interval(){
 		const val=this.generator.next().value
 		console.log(val,'VAL')
