@@ -99,26 +99,29 @@ export class CanvasSection extends Control {
 		console.log(type,'SZZZZZ')
 		const activeShipSize=ShipsSizes[type as keyof typeof ShipsSizes]
 		const activeShip=type
-		const isRotate=axis!=='vertical'
+		const isRotate=axis!=='vertical';
+		//console.log(x,y, type, isRotate)
 		this.addToIntersection(x, y, activeShipSize, isRotate)
-		this.boardMatrix.clearCells(activeShip, x, y)
+		this.boardMatrix.clearCells(activeShip, x, y);
+		
 		this.fillShipArea(x, y, activeShipSize)
-// 		this.createImage('./public/assets/ship.png',
-// 			this.boardMatrix.cellSize * activeShipSize, this.boardMatrix.cellSize,
-// 			(image) => {
-// 			//console.log("PrevX",this.prevPosX,'-----prevY',this.prevPosY)
-// 				const imageObj: tShipCanvas = {
-// 					xC: x, yC: y, rotate: this.shipsController.isRotated, image,
-// 					width: this.boardMatrix.cellSize * (!isRotate? activeShipSize : 1),
-// 					height: this.boardMatrix.cellSize * (isRotate ? activeShipSize : 1),
-// 				}
+		console.log(JSON.parse(JSON.stringify(this.boardMatrix._boardMatrix)))
+		this.createImage('./public/assets/ship.png',
+			this.boardMatrix.cellSize * activeShipSize, this.boardMatrix.cellSize,
+			(image) => {
+			//console.log("PrevX",this.prevPosX,'-----prevY',this.prevPosY)
+				const imageObj: tShipCanvas = {
+					xC: x, yC: y, rotate: this.shipsController.isRotated, image,
+					width: this.boardMatrix.cellSize * (!isRotate? activeShipSize : 1),
+					height: this.boardMatrix.cellSize * (isRotate ? activeShipSize : 1),
+				}
 // //console.log("CRIMG")
-// 				console.log(activeShipSize,'------SZZZZZ')
-// 				this.shipsController.addShipOnCanvas(imageObj)
-// 				this.onAddShip(activeShip)
-// 				this.apdatedShips()
-// 				this.drawScene()
-// 			})
+				console.log(activeShipSize,'------SZZZZZ')
+				this.shipsController.addShipOnCanvas(imageObj)
+				this.onAddShip(activeShip)
+				this.apdatedShips()
+				this.drawScene()
+			})
 		this.drawScene()
 	}
 

@@ -57,13 +57,15 @@ export default class RandomShips {
 	putRandomShips() {
 		this.isRandomActive = true
 		this.emptyAreas.start(this.matrix)
-
+		// for(let i=0;i<8;i++){
+		// 	this.interval()
+		// }
 		//this.intervalId = setInterval(() => {
 		while (this.interval()){ console.log('1')}
-			// setTimeout(()=>this.interval(),500)
-			//	}, 100)
-			}
-
+		// 	// setTimeout(()=>this.interval(),500)
+		// 	//	}, 100)
+		// 	}
+	}
 	occupateCells(areaCells: Set<string>) {
 		this.isRandomActive && this.emptyAreas.occupateArea(areaCells)
 	}

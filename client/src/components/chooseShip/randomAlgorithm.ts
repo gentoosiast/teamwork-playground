@@ -116,7 +116,7 @@ export class EmptyAreas {
 		})
 
 		console.log(JSON.parse(JSON.stringify(this.horizontalAreas)),'horELNEWWW')
-		console.log(JSON.parse(JSON.stringify(this.horizontalAreas)),'vertELNEWWW')
+		console.log(JSON.parse(JSON.stringify(this.verticalAreas)),'vertELNEWWW')
 	}
 
 	occupateArea(areaCells: Set<any>) {
@@ -151,8 +151,10 @@ export class EmptyAreas {
 		//console.log(randomItm,'RANDitm')
 		const coords = suited[randomItm].data.find((el: []) => el.length >= size)
 		//e.log(coords)
-		const x = !isRotate ? randomItm : coords[Math.floor(Math.random() * (coords.length - size))]
-		const y = !isRotate ? coords[Math.floor(Math.random() * (coords.length - size))] : randomItm
+		console.log(JSON.parse(JSON.stringify({size,suited,randomItm,coords,axis} )))
+		const x = !isRotate ? suited[randomItm].id : coords[Math.floor(Math.random() * (coords.length - size))]
+		const y = !isRotate ? coords[Math.floor(Math.random() * (coords.length - size))] :  suited[randomItm].id;
+		console.log(x,y)
 		//	console.log('y-',y,'x-',x)
 		this.onGetCoordinates(axis, type, y, x)
 	}

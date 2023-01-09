@@ -2,7 +2,7 @@ import {ShipsSizes} from "../ChooseComponent";
 import ShipsController from "./ShipsController";
 
 export default class BoardMatrix {
-	private _boardMatrix: number[][];
+	_boardMatrix: number[][];
 	private shipsController: ShipsController;
 	private cellsInRow: number;
 	private _cellSize: number;
