@@ -64,9 +64,9 @@ export class CanvasSection extends Control {
 		this.randomShips = new RandomShips(this.boardMatrix.boardMatrix, this.ships)
 		this.randomShips.onGetCoordinates = (axis: string, type: string, randomItm: number, coords: number[]) => {
 			this.shipsController.fromRandomData(type, axis !== 'vertical')
-			this.prevPosX=axis !== 'vertical'?randomItm:coords[0]
-				this.prevPosY=axis === 'vertical'?randomItm:coords[0]
-					this.createShipImage()
+			this.prevPosX = axis !== 'vertical' ? randomItm : coords[0]
+			this.prevPosY = axis === 'vertical' ? randomItm : coords[0]
+			this.createShipImage()
 		}
 	}
 
@@ -198,32 +198,31 @@ export class CanvasSection extends Control {
 		}
 	}
 
-	private fillShipArea(x: number, y: number, size: number) {
+	fillArea(y: number, x: number, val: string) {
 		const areaCells: Set<string> = new Set()
-		for (let i = 0; i < size; i++) {
-			if (!this.shipsController.isRotated) {
-				this.boardMatrix.valueToCell(y, x + i, 'blocked')
-				this.circleSteps.forEach(stp => {
-					if (y + stp.y < 0 || y + stp.y >= this.boardMatrix.matrixLength()
-						|| x + i + stp.x < 0 || x + i + stp.x >= this.boardMatrix.matrixLength()) return
-					this.boardMatrix.valueToCell(y + stp.y, x + i + stp.x, 'blocked')
-					areaCells.add(`${y + stp.y}-${x + i + stp.x}`)
-					//this.boardMatrix.boardMatrix[y + stp.y][x + i + stp.x] = this.boardMatrixBlockedCell
-					this.intersectionData.add(`${y + stp.y}-${x + i + stp.x}`)
-				})
-			} else {
-				this.boardMatrix.valueToCell(y + i, x, 'blocked')
+		this.boardMatrix.valueToCell(y, x, 'blocked')
+		areaCells.add(`${y}-${x}`)
+		this.intersectionData.add(`${y}-${x}`)
+		return areaCells
+	}
 
-				//this.boardMatrix.boardMatrix[y + i][x] = this.boardMatrixBlockedCell
-				this.circleSteps.forEach(stp => {
-					if (y + i + stp.y < 0 || x + stp.x < 0
-						|| y + i + stp.y >= this.boardMatrix.matrixLength() || x + stp.x >= this.boardMatrix.matrixLength()) return
-					this.boardMatrix.valueToCell(y + i + stp.y, x + stp.x, 'blocked')
-					areaCells.add(`${y + i + stp.y}-${x + stp.x}`)
-					//this.boardMatrix.boardMatrix[y + i + stp.y][x + stp.x] = this.boardMatrixBlockedCell
-					this.intersectionData.add(`${y + i + stp.y}-${x + stp.x}`)
-				})
-			}
+	circleStepsFill(y: number, x: number, val: string) {
+		let set: Set<string> = new Set()
+		this.circleSteps.forEach(stp => {
+			if (y + stp.y < 0 || y + stp.y >= this.boardMatrix.matrixLength()
+				|| x + stp.x < 0 || x + stp.x >= this.boardMatrix.matrixLength()) return//y + stp.y, x + i + stp.x
+			set = this.fillArea(y + stp.y, x + stp.x, 'blocked')
+		})
+		return set
+	}
+
+	private fillShipArea(x: number, y: number, size: number) {
+		let areaCells: Set<string> = new Set()
+		for (let i = 0; i < size; i++) {
+			const xCoord = !this.shipsController.isRotated ? x + i : x
+			const yCoord = this.shipsController.isRotated ? y+i: y
+		//	this.boardMatrix.valueToCell(yCoord, xCoord, 'blocked')
+			this.circleStepsFill(yCoord,xCoord,'blocked')
 		}
 		this.randomShips.occupateCells(areaCells)
 	}
