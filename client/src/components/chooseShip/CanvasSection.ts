@@ -4,7 +4,9 @@ import BoardMatrix from "./canvasComponents/BoardMatrix";
 import ShipsController from "./canvasComponents/ShipsController";
 import RandomShips from "./canvasComponents/RandomShips";
 import {EmptyAreas} from "./randomAlgorithm";
-
+export const log=function(arg:any){
+console.log(JSON.parse(JSON.stringify(arg)))
+}
 export type tShipCanvas = {
 	xC: number, yC: number,
 	rotate: boolean,
@@ -71,6 +73,7 @@ export class CanvasSection extends Control {
 	}
 
 	autoPutShips() {
+		console.log(JSON.parse(JSON.stringify(this.boardMatrix.boardMatrix)),'MATRIX')
 		this.randomShips.actualShips(this.ships)
 		this.randomShips.putRandomShips()
 	}
@@ -93,12 +96,13 @@ export class CanvasSection extends Control {
 		this.canvasSection.node.removeEventListener('click', this.clickBinded)
 		document.body.removeEventListener('keyup', this.rotateShipBinded)
 		console.log('Click')
-		const axis =  !this.shipsController.isRotated? 'vertical' : 'horizont'
+		const axis =  this.shipsController.isRotated?  'horizont':'vertical'
+		console.log(axis,'axisClick')
 		this.createShipImage(this.prevPosX, this.prevPosY,this.shipsController.activeShip,axis)
 	}
 
 	createShipImage(x:number,y:number,type:string,axis:string) {
-		console.log(type,'SZZZZZ')
+		console.log('y-x',y,'--',x,'|||',type,'SZZZZZ')
 		const activeShipSize=ShipsSizes[type as keyof typeof ShipsSizes]
 		const activeShip=type
 		const isRotate=axis!=='vertical';
@@ -107,7 +111,7 @@ export class CanvasSection extends Control {
 		this.boardMatrix.clearCells(activeShip, x, y);
 		
 		this.fillShipArea(x, y, activeShipSize)
-		console.log(JSON.parse(JSON.stringify(this.boardMatrix._boardMatrix)))
+		//console.log(JSON.parse(JSON.stringify(this.boardMatrix._boardMatrix)))
 		this.createImage('./public/assets/ship.png',
 			this.boardMatrix.cellSize * activeShipSize, this.boardMatrix.cellSize,
 			(image) => {
@@ -160,7 +164,6 @@ export class CanvasSection extends Control {
 				this.canvasSection.node.addEventListener('click', this.clickBinded)
 			}
 			this.drawScene()
-		
 		}
 	}
 
