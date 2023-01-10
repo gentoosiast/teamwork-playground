@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import {IRegData} from '../../dto'
 import { SocketModel } from '../../socketModel';
 import Wrapper from '../styledComponents/wrapper';
-import {generalColor,fontSize} from '../../styleConst'
+import {backGroundColor,fontSize} from '../../styleConst'
 import Title from '../styledComponents/title';
 import SubTitle from '../styledComponents/subTitle';
 import {ButtonGeneral} from '../styledComponents/buttons'
@@ -16,9 +16,9 @@ interface IRegistratoon {
 const {fontMiddle, fontSmall} = fontSize
 
 const Content = styled.div`
-    background-color: #fffebf9d ;
+   background-color: ${backGroundColor};
     padding: 50px;
-    border-radius: 50px;
+    border-radius: 10px;
 `
 
 const InputContainer = styled.div`

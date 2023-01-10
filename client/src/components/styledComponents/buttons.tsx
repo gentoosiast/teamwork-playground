@@ -10,6 +10,10 @@ const BtnComponent = styled.button`
     color: white;  
     background-color:${generalColor};
     border: none;
+    transition: all 0.5s;
+    &:hover {
+        transform: scale(1.1);
+    }
 `
 
 const BtnGeneralComponent = styled(BtnComponent)`

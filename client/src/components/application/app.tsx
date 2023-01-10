@@ -38,6 +38,9 @@ export const App = () => {
     if(page==='finishGame'){
       setContent(<FinishPage/>)
     }
+    if(page==='reg'){
+      setContent(<Registration socket={socket}/>);
+    }
   },[page]);
   
   useEffect(() => {

@@ -2,7 +2,23 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IRoomsInitialState} from "../dto";
 
 const initialState:IRoomsInitialState = {
-   data:[]
+   data:[
+    // {
+    //   roomId:5,
+    //   roomUsers: [ {name: 'ddddd',
+    //   index: 8}]
+    // },
+    // {
+    //   roomId:5,
+    //   roomUsers: [ {name: 'ddddd',
+    //   index: 8}]
+    // }, {
+    //   roomId:5,
+    //   roomUsers: [ {name: 'ddddd',
+    //   index: 8}]
+    // },
+ 
+  ]
 };
 
 const roomsReducer = createSlice({
