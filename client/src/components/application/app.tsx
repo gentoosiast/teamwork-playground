@@ -9,7 +9,7 @@ import FinishPage from '../finishPage/finishPage';
 import ChooseShip from '../chooseShip/chooseShip';
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import BackGround from '../bg/background';
+import BackGround from '../styledComponents/background';
 
 interface IPage {
   pagesData: {
@@ -53,9 +53,9 @@ export const App = () => {
  
   
   return (
-    <>
+    <BackGround>
       {content}
-    </>  
+    </BackGround>  
   )
 }
 
