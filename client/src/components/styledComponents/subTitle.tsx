@@ -1,17 +1,19 @@
 import React from "react";
 import styled from "styled-components";
 import { fontSize } from '../../styleConst'
-
-const SubTitleComponent= styled.p`
-    margin-top: 20px;
+interface ISubTitleComponent{
+    textAlign?: string;
+}
+const SubTitleComponent= styled.p<ISubTitleComponent>`
     font-size: ${fontSize.fontMiddle[1080]};
-    text-align: center;
+    text-align: ${(props)=>props.textAlign};
 `
 interface ISubTitle{
-    children:string;
+    children:string|string[];
+    textAlign?: string;
 }
-const SubTitle = ({children}:ISubTitle)=>{
-    return (<SubTitleComponent>
+const SubTitle = ({children,textAlign}:ISubTitle)=>{
+    return (<SubTitleComponent textAlign={textAlign}>
         {children} 
     </SubTitleComponent>)
 }

@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import { useSelector } from 'react-redux';
 import { IUserInitialData } from '../../dto';
+import SubTitle from '../styledComponents/subTitle'
 
 import { SocketModel } from '../../socketModel';
 interface IChooseShip{
@@ -81,7 +82,7 @@ const ChooseShip=({socket}:IChooseShip)=>{
     const idGame = useSelector((state: IUserStore) => state.userData.idGames)
     console.log(rand)
     return (<>
-        Тут людина розставляє свої кораблики, де вони будуть. Потім всі дані по кліку летять на сервер
+        <SubTitle>Тут людина розставляє свої кораблики, де вони будуть. Потім всі дані по кліку летять на сервер</SubTitle>
             <button onClick={()=>socket.startGame( idGame[idGame.length-1],ships[rand])}>Start game</button> 
         </>)
 }

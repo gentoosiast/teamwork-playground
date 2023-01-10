@@ -3,7 +3,11 @@ import React from 'react';
 import { IRoom,IRoomsInitialState,IUserInitialData } from '../../dto';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import Wrapper from '../styledComponents/wrapper'
+
+import Title from '../styledComponents/title';
+import SubTitle from '../styledComponents/subTitle';
+import { ButtonRooms } from '../styledComponents/buttons';
+import RoomList from './roomList';
 
 interface IUserStore {
     userData: IUserInitialData;
@@ -15,33 +19,41 @@ interface IRoomComponent {
 interface IRoomsStore {
     roomsData: IRoomsInitialState;
   }
+const Wrapper = styled.div`
 
+`
+
+const Header = styled.div`
+    width: 100%;
+    height: 200px;
+    background-color: #fffebf9d ;
+`
+const HeaderContainer=styled.div`
+    margin: 0 100px;
+`
+const Main =styled.div`
+    margin: 50px 100px;
+    width:300px;
+    background-color: #fffebf ;
+    max-height: 400px;
+    overflow: auto;
+`
 const Room = ({socket}:IRoomComponent)=>{
-    const handlerClick =(ind: number)=>{
-        socket.addUserToRoom(ind)
-    }
-    const rooms = useSelector((state: IRoomsStore) => state.roomsData.data)
-    const roomsComp = !rooms.length?'emptyRooms':
-    (<><h2>Rooms</h2>
-        {rooms.map((it,ind)=>{
-            return(
-            <div key={ind}>
-                Rooom id={it.roomId}
-                Users: {it.roomUsers.map(i=>i.name).join()}
-                <button onClick={()=>handlerClick(it.roomId)}>add to Room</button>
-            </div>
-            )
-        })}
-    </>);
    const userName = useSelector( (state: IUserStore) => state.userData.name);
     return(<Wrapper>
-        <>
-            <p>Hello, {userName}</p>
-            <button onClick={()=>socket.createRoom()}>Create Room</button>
-            <button onClick={()=>socket.singlePlay()}>Play with Bot</button>   
-            {roomsComp}
-        </>
-        
+        <Header>
+            <HeaderContainer>
+                <SubTitle>Welcome to Battleship, {userName}</SubTitle>
+                <SubTitle>What game do you choose?</SubTitle>
+                <ButtonRooms onClick={()=>socket.createRoom()}>Create Room</ButtonRooms>
+                <ButtonRooms onClick={()=>socket.singlePlay()}>Play with Bot</ButtonRooms>  
+            </HeaderContainer>
+                       
+        </Header>
+        <Main>
+            <RoomList socket={socket}/>
+        </Main>
+       
     </Wrapper>)
 }
 

@@ -6,7 +6,7 @@ import Wrapper from '../styledComponents/wrapper';
 import {generalColor,fontSize} from '../../styleConst'
 import Title from '../styledComponents/title';
 import SubTitle from '../styledComponents/subTitle';
-import Button from '../styledComponents/button'
+import {ButtonGeneral} from '../styledComponents/buttons'
 import Input from '../styledComponents/input';
 import Error from '../styledComponents/errorForInput';
 
@@ -16,7 +16,7 @@ interface IRegistratoon {
 const {fontMiddle, fontSmall} = fontSize
 
 const Content = styled.div`
-    background-color: #fffea69d ;
+    background-color: #fffebf9d ;
     padding: 50px;
     border-radius: 50px;
 `
@@ -44,14 +44,14 @@ const Registration = ({socket}:IRegistratoon)=>{
     return (
         <Wrapper>
             <Content>
-                <Title>Battleship </Title>
-                <SubTitle>Please, write your name</SubTitle>
+                <Title textAlign={'center'}>Battleship</Title>
+                <SubTitle textAlign={'center'}>Please, write your name</SubTitle>
                 <form>
                     <InputContainer>
                         <Input handlerChange={handlerName} placeHolder="login" value={name}/>
                         {error?<Error>Minimum 5 characters</Error>:''}
                     </InputContainer>
-                    <Button onClick={handleClick}>Submit</Button> 
+                    <ButtonGeneral onClick={handleClick}>Submit</ButtonGeneral> 
                 </form>               
             </Content>            
         </Wrapper>  

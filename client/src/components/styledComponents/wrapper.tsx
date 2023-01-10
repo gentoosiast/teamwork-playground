@@ -9,7 +9,7 @@ const WrapperComponent= styled.div`
     height: 100%;
 `;
 interface IWrapper{
-    children:JSX.Element
+    children:JSX.Element;
 }
 const Wrapper = ({children}:IWrapper)=>{
     return (<WrapperComponent>
