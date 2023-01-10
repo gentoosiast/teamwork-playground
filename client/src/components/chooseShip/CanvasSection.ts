@@ -1,13 +1,20 @@
 import Control from "../../../common/controll";
 import {ShipsSizes} from "./ChooseComponent";
-
-type tShipCanvas = {
+import BoardMatrix from "./canvasComponents/BoardMatrix";
+import ShipsController from "./canvasComponents/ShipsController";
+import RandomShips from "./canvasComponents/RandomShips";
+import {EmptyAreas} from "./randomAlgorithm";
+export const log=function(arg:any){
+console.log(JSON.parse(JSON.stringify(arg)))
+}
+export type tShipCanvas = {
 	xC: number, yC: number,
-	rotate: false, image: HTMLImageElement,
+	rotate: boolean,
+	image: HTMLImageElement,
 	width: number, height: number,
-	xPx: number, yPx: number,
-	shipCells: { x: number, y: number }[],
-	shipType:string
+	//xPx: number, yPx: number,
+	//shipCells: { x: number, y: number }[],
+	//shipType: string
 }
 
 export class CanvasSection extends Control {
@@ -15,157 +22,184 @@ export class CanvasSection extends Control {
 	private ctx: CanvasRenderingContext2D;
 	private prevPosX: number;
 	private prevPosY: number;
-	private mouseDownHandlerBinded: () => void;
-	private moveHandlerBinded: () => void;
 	private parentNode: HTMLElement;
 	private canvasWidth: number;
 	private canvasHeight: number;
-	public garlandCoordinates: { y: number; x: number[] }[];
-	onDroppedShip: (toyIndex: string) => void
-	private shipsOnCanvas: tShipCanvas[];
-	private cellSize: number;
-	private boardMatrix: number[][];
-	private cellsInRow: number;
+	private mouseUpDebounce: boolean;
+	private moveBinded: (e: MouseEvent) => void;
+	private clickBinded: () => void;
+	private intersectionData: Set<string>;
+	private circleSteps: { x: number; y: number }[];
+	private isCurrentIntersect: boolean = false;
+	private rotateShipBinded: any;
+	private onAddShip: (ship: string) => void;
+	private boardMatrix: BoardMatrix;
+	private shipsController: ShipsController;
+	private ships: Record<string, number>;
+	private randomShips: RandomShips;
 
-	constructor(parentNode: HTMLElement, ships: Record<string, number>) {
+	constructor(parentNode: HTMLElement, ships: Record<string, number>, onAddShip: (ship: string) => void) {
 		super(parentNode);
+		this.shipsController = new ShipsController()
+		this.boardMatrix = new BoardMatrix(this.shipsController)
+		this.ships = ships
+		this.onAddShip = onAddShip
 		this.parentNode = parentNode
 		this.canvasSection = new Control(parentNode, 'canvas', 'canvas')
-		this.cellSize = 30
-		this.cellsInRow = 10
-		this.canvasSection.node.width = this.canvasWidth = this.cellSize * this.cellsInRow
-		this.canvasSection.node.height = this.canvasHeight = this.cellSize * this.cellsInRow
-		this.prevPosX
-		this.prevPosX
-		this.mouseDownHandlerBinded = this.mouseDownHandler.bind(this)
-		this.moveHandlerBinded = this.moveHandler.bind(this)
-		this.shipsOnCanvas = []
-		this.boardMatrix = []
+		this.canvasSection.node.width = this.canvasWidth = this.boardMatrix.boardWidth
+		this.canvasSection.node.height = this.canvasHeight = this.boardMatrix.boardWidth
+		//this.prevPosX
+		//this.prevPosX
+		this.mouseUpDebounce = false
+		this.moveBinded = this.onMove.bind(this)
+		this.clickBinded = this.onClick.bind(this)
+		this.rotateShipBinded = this.rotateShip.bind(this)
+		this.intersectionData = new Set()
 		this.ctx = this.canvasSection.node.getContext('2d')
-		this.canvasSection.node.addEventListener('mousedown', this.mouseDownHandlerBinded)
-		this.canvasSection.node.ondragover = (e) => {
-			e.preventDefault()
+		this.circleSteps = [
+			{x: 0, y: 1}, {x: 1, y: 1}, {x: -1, y: 1},
+			{x: 1, y: 0}, {x: -1, y: 0},
+			{x: 0, y: -1}, {x: 1, y: -1}, {x: -1, y: -1}
+		]
+		this.boardMatrix.createEmptyMatrix()
+		this.drawScene()
+		this.randomShips = new RandomShips(this.boardMatrix.boardMatrix)
+		this.randomShips.onGetCoordinates = (axis: string, type: string, y: number, x:number) => {
+			this.shipsController.fromRandomData(type, axis !== 'vertical')
+		//	this.prevPosX = x
+		//	this.prevPosY = y
+			this.createShipImage(x,y,type,axis)
 		}
-		this.canvasSection.node.ondrop = (e) => {
-			const {x: xC, y: yC} = this.getCursorPosition(e, this.canvasSection.node)
-			//console.log(x,y,'CPOS')
-			const eventData = e.dataTransfer.getData('el')
-			const shipWidth = this.inPixels(ShipsSizes[eventData as keyof typeof ShipsSizes])
-			const shipHeight = this.inPixels(1)
-			const shipCells: { x: number, y: number }[] = []
-			for (let i = 0; i < ShipsSizes[eventData as keyof typeof ShipsSizes]; i++) {
-				shipCells.push({x: xC, y: yC + i})
-				this.boardMatrix[yC][xC] = 1
-				//todo add closest cells
+	}
+
+	autoPutShips() {
+		console.log(JSON.parse(JSON.stringify(this.boardMatrix.boardMatrix)),'MATRIX')
+		this.randomShips.actualShips(this.ships)
+		this.randomShips.putRandomShips()
+	}
+
+	addToIntersection(x: number, y: number, lngth: number, rotate: boolean) {
+		if (!rotate) {
+			for (let i = 0; i < lngth; i++) {
+				this.intersectionData.add(`${y}-${x + i}`)
 			}
-			this.createImage('./public/assets/ship.png', shipWidth, shipHeight, (image) => {
+		} else {
+			for (let i = y; i < lngth; i++) {
+				this.intersectionData.add(`${y + i}-${x}`)
+			}
+		}
+	}
+
+	onClick() {
+		if (this.isCurrentIntersect) return
+		this.canvasSection.node.removeEventListener('mousemove', this.moveBinded)
+		this.canvasSection.node.removeEventListener('click', this.clickBinded)
+		document.body.removeEventListener('keyup', this.rotateShipBinded)
+		console.log('Click')
+		const axis =  this.shipsController.isRotated?  'horizont':'vertical'
+		console.log(axis,'axisClick')
+		this.createShipImage(this.prevPosX, this.prevPosY,this.shipsController.activeShip,axis)
+	}
+
+	createShipImage(x:number,y:number,type:string,axis:string) {
+		console.log('y-x',y,'--',x,'|||',type,'SZZZZZ')
+		const activeShipSize=ShipsSizes[type as keyof typeof ShipsSizes]
+		const activeShip=type
+		const isRotate=axis!=='vertical';
+		//console.log(x,y, type, isRotate)
+		this.addToIntersection(x, y, activeShipSize, isRotate)
+		this.boardMatrix.clearCells(activeShip, x, y);
+		
+		this.fillShipArea(x, y, activeShipSize)
+		//console.log(JSON.parse(JSON.stringify(this.boardMatrix._boardMatrix)))
+		this.createImage('./public/assets/ship.png',
+			this.boardMatrix.cellSize * activeShipSize, this.boardMatrix.cellSize,
+			(image) => {
+			//console.log("PrevX",this.prevPosX,'-----prevY',this.prevPosY)
 				const imageObj: tShipCanvas = {
-					xC, yC, rotate: false, image,
-					width: shipWidth, height: shipHeight,
-					shipCells,
-					xPx: this.inPixels(xC),
-					yPx: this.inPixels(yC),
-					shipType:eventData
+					xC: x, yC: y, rotate: this.shipsController.isRotated, image,
+					width: this.boardMatrix.cellSize * (!isRotate? activeShipSize : 1),
+					height: this.boardMatrix.cellSize * (isRotate ? activeShipSize : 1),
 				}
-				this.shipsOnCanvas.push(imageObj)
-				//todo boardMatrix fillcells
-				this.drawShip(image, this.inPixels(xC), this.inPixels(yC), imageObj.width, imageObj.height)
+// //console.log("CRIMG")
+				console.log(activeShipSize,'------SZZZZZ')
+				this.shipsController.addShipOnCanvas(imageObj)
+				this.onAddShip(activeShip)
+				this.apdatedShips()
+				this.drawScene()
 			})
-		}
-		this.createEmptyMatrix()
 		this.drawScene()
 	}
 
-	inPixels(indx: number) {
-		return indx * this.cellSize
+	apdatedShips() {
+		this.ships[this.shipsController.activeShip] -= 1
+
 	}
 
-	createEmptyMatrix() {
-		for (let i = 0; i < this.cellsInRow; i++) {
-			const row = []
-			for (let j = 0; j < this.cellsInRow; j++) {
-				row.push(0)
+	isIntersection(x: number, y: number, lngth: number) {
+		const sAr = []
+		for (let i = 0; i < lngth; i++) {
+			!this.shipsController.isRotated
+				? sAr.push(this.intersectionData.has(`${y}-${x + i}`))
+				: sAr.push(this.intersectionData.has(`${y + i}-${x}`))
+		}
+		return sAr.some(e => e)
+	}
+
+	onMove(e: MouseEvent) {
+		const {x: xC, y: yC} = this.getCursorPosition(e, this.canvasSection.node)
+		if (this.prevPosX && this.prevPosY && this.prevPosX === xC && this.prevPosY === yC) return
+		if (this.boardMatrix.isOnBoard(xC, yC)) {
+			this.boardMatrix.clearCells(this.shipsController.activeShip, this.prevPosX, this.prevPosY)
+			this.prevPosX = xC
+			this.prevPosY = yC
+			const isIntersect = this.isIntersection(this.prevPosX, this.prevPosY, ShipsSizes[this.shipsController.activeShip as keyof typeof ShipsSizes])
+		
+			if (isIntersect) {
+				this.isCurrentIntersect = true
+				this.boardMatrix.fillCells('hovered', this.prevPosX, this.prevPosY)
+			} else {
+				this.isCurrentIntersect = false
+				this.boardMatrix.fillCells('occupate', this.prevPosX, this.prevPosY)
+				this.canvasSection.node.addEventListener('click', this.clickBinded)
 			}
-			this.boardMatrix.push(row)
+			this.drawScene()
 		}
 	}
 
-	drawShip(image: HTMLImageElement, x: number, y: number, width: number, height: number) {
-		this.ctx.drawImage(image, x, y, width, height)
-	}
-
-	mouseDownHandler(e: MouseEvent) {
-		const {x, y} = this.getCursorPosition(e, this.canvasSection.node)
-		this.prevPosX = x
-		this.prevPosY = y
-		console.log(this.prevPosY, this.prevPosX)
-		this.canvasSection.node.addEventListener('mousemove', this.moveHandlerBinded)
-	}
-
-	isChangeCell(x: number, y: number) {
-		return this.prevPosX !== x || this.prevPosY !== y
-	}
-
-	moveHandler(e: MouseEvent) {
-		const {x, y} = this.getCursorPosition(e, this.canvasSection.node)
-
-		const currentShip = this.getCurrentShip(x, y)
-
-		currentShip.xPx = this.inPixels(x)
-		currentShip.yPx = this.inPixels(y)
-		if(this.isChangeCell(x,y)){
-		//	currentShip.shipCells=
-			currentShip.shipCells=[]
-			for (let i = 0; i < ShipsSizes[currentShip.shipType as keyof typeof ShipsSizes]; i++) {
-
-				currentShip.shipCells.push({x, y: y + i})
-			}
-				//todo redraw in matrix
-			///if position from corner dons allow
+	rotateShip(e: KeyboardEvent) {
+		const keyName = e.code;
+		if (keyName === 'Space') {
+			// this.boardMatrix.clearCells(this.shipsController.activeShip, this.prevPosX, this.prevPosY)
+			// this.shipsController.rotateShip()
+			// this.boardMatrix.fillCells('occupate', this.prevPosX, this.prevPosY)
+			this.drawScene()
 		}
-		//console.log(currentShip.yPx,currentShip.xPx,'^^^^^')
-		this.drawScene()
+	}
+
+	addActiveShip(activeShip: string) {
+		this.shipsController.activeShip = activeShip
+		document.body.addEventListener('keyup', this.rotateShipBinded)
+		this.canvasSection.node?.addEventListener('mousemove', this.moveBinded)
 	}
 
 	getCurrentCell(x: number, y: number) {
-		return {x: Math.floor(x / this.cellSize), y: Math.floor(y / this.cellSize)}
+		return {x: Math.floor(x / this.boardMatrix.cellSize), y: Math.floor(y / this.boardMatrix.cellSize)}
 	}
 
 	drawScene() {
-		this.ctx.clearRect(0, 0, this.canvasWidth, this.canvasHeight)
-		this.ctx.fillStyle = 'orange'
-		this.ctx.fillRect(0, 0, this.canvasWidth, this.canvasHeight)
-		this.shipsOnCanvas.forEach(ship => {
-			this.ctx.drawImage(ship.image, ship.xPx, ship.yPx, ship.width, ship.height)
+		this.boardMatrix.boardMatrix.forEach((row, rI) => {
+			row.forEach((cell, cI) => {
+				this.ctx.fillStyle = cell === 5 ? "olive" : cell === 2 ? "red" : cell === 99
+					? "green" :cell === 88?"blue": 'darkGreen';
+				this.ctx.strokeStyle = 'red';
+				this.ctx.stroke()
+				this.ctx.fillRect((this.boardMatrix.inPixels(cI)) + 1, (this.boardMatrix.inPixels(rI)) + 1, this.boardMatrix.cellSize - 2, this.boardMatrix.cellSize - 2);
+			})
 		})
-		this.drawMesh()
-	}
-
-	drawLine(x1: number, y1: number, x2: number, y2: number) {
-		this.ctx.beginPath()
-		this.ctx.moveTo(x1, y1)
-		this.ctx.strokeStyle = 'darkred'
-		this.ctx.lineTo(x2, y2)
-		this.ctx.stroke()
-	}
-
-	drawMesh() {
-		for (let i = 0; i < this.canvasWidth; i += this.cellSize) {
-			this.drawLine(i, 0, i, this.canvasHeight)
-		}
-		for (let i = 0; i < this.canvasHeight; i += this.cellSize) {
-			this.drawLine(0, i, this.canvasWidth, i)
-		}
-	}
-
-	getCurrentShip(x: number, y: number) {
-		return this.shipsOnCanvas.find(el => el.shipCells.find(cell => {
-			console.log(cell.x, '((', cell.y)
-			console.log('inpt', x, y)
-			return cell.x === x && cell.y === y
-		}))
-
-		//	return current[current.length - 1]
+		this.shipsController.shipsOnCanvas.forEach(ship => {
+			this.ctx.drawImage(ship.image, this.boardMatrix.inPixels(ship.xC), this.boardMatrix.inPixels(ship.yC), ship.width, ship.height)
+		})
 	}
 
 	public getCursorPosition(event: MouseEvent, node: HTMLElement) {
@@ -185,6 +219,37 @@ export class CanvasSection extends Control {
 			callback(image)
 		}
 	}
+
+	fillArea(y: number, x: number, val: string) {
+		this.boardMatrix.valueToCell(y, x, 'blocked')
+		this.intersectionData.add(`${y}-${x}`)
+		return `${y}-${x}`
+	}
+
+	circleStepsFill(y: number, x: number, val: string) {
+		const pointsArr:string[]=[]
+		this.circleSteps.forEach(stp => {
+			if (y + stp.y < 0 || y + stp.y >= this.boardMatrix.matrixLength()
+				|| x + stp.x < 0 || x + stp.x >= this.boardMatrix.matrixLength()) return//y + stp.y, x + i + stp.x
+			pointsArr.push(this.fillArea(y + stp.y, x + stp.x, val))
+		})
+		return pointsArr
+	}
+
+	private fillShipArea(x: number, y: number, size: number) {
+		const areaCells:Set<string>=new Set()
+		for (let i = 0; i < size; i++) {
+			const xCoord = !this.shipsController.isRotated ? x + i : x
+			const yCoord = this.shipsController.isRotated ? y + i : y
+
+			this.circleStepsFill(yCoord, xCoord, 'blocked').forEach(c=>{
+				areaCells.add(c)
+			})
+				this.boardMatrix.valueToCell(yCoord, xCoord, 'ship')
+		}
+		this.randomShips.occupateCells(areaCells)
+	}
 }
 
 export default CanvasSection
+//todo create iage
