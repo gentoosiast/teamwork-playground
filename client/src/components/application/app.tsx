@@ -25,7 +25,6 @@ export const App = () => {
       </button>
       <CheckBox onClick={() => { }} text="checkbox string" /> */}
       <RequestServer></RequestServer>
-
       {/* <RequestServer1></RequestServer1> */}
     </>
   );
@@ -79,8 +78,8 @@ export function RequestServer() {
   useEffect(() => {
     const webSocket = new SocketModel({dispatch});
     setSocket(webSocket);
-    setContent(<Registration socket={webSocket}/>);
-
+   // setContent(<Registration socket={webSocket}/>);
+    setContent(<ChooseShip socket={socket}/>);
     // return () => {
     //   webSocket.close();
     // }

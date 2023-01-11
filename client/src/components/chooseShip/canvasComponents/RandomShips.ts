@@ -1,5 +1,5 @@
-import {ShipsSizes} from "../ChooseComponent";
 import {EmptyAreas} from "../randomAlgorithm";
+import {ShipsSizes} from "../ChooseComponent";
 
 export default class RandomShips {
 	private matrix: number[][];

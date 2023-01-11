@@ -1,5 +1,5 @@
-import {ShipsSizes} from "../ChooseComponent";
 import {tShipCanvas} from "../CanvasSection";
+import {ShipsSizes} from "../ChooseComponent";
 
 export default class ShipsController{
 	private _activeShip: string;
