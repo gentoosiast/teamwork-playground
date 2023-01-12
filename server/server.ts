@@ -45,8 +45,6 @@ const fields = [field, field2];
 let currentPlayer = 0;
 
 const clients: Array<IClients> = [];
-const players: Array<IPlayer> = [];
-
 const rooms = new Map<string, Room>()
 const games =new Map<string, Game>()
 
@@ -88,16 +86,16 @@ websocket.on('request', (e) => {
         game?.attack({x: data.x, y: data.y}, data.indexPlayer )
         break;
       }
-      case 'get_field': {
-        // const field: IVector = JSON.parse(parsedMsg.data);
-        const responseObj: IMessage = {
-          type: "get_field",
-          data: JSON.stringify(field),
-          id: 0
-        }
-        clients.forEach((c) => c.connection.sendUTF(JSON.stringify(responseObj)));
-        break;
-      }
+      // case 'get_field': {
+      //   // const field: IVector = JSON.parse(parsedMsg.data);
+      //   const responseObj: IMessage = {
+      //     type: "get_field",
+      //     data: JSON.stringify(field),
+      //     id: 0
+      //   }
+      //   clients.forEach((c) => c.connection.sendUTF(JSON.stringify(responseObj)));
+      //   break;
+      // }
       case 'reg':{
         const name = JSON.parse(parsedMsg.data).name;
         const newClient = {connection: client, name: name,index:clients.length }
@@ -162,15 +160,13 @@ websocket.on('request', (e) => {
        game.startSingleGame();
         break;
       }
-      case 'add_ships':{
-        
+      case 'add_ships':{        
         const data =JSON.parse(parsedMsg.data);
         const game = games.get(data.gameId )
         if(game){
             game.addShip(data.ships, data.indexPlayer )
         }
         break;
-
       }
       // case 'join': {
       //   const shipField: Array<Array<number>> = [];
@@ -190,11 +186,8 @@ websocket.on('request', (e) => {
     }
   })
   client.on('close', () => {
+    console.log('CLOSE')
     clients.filter(it=> it.connection!==client);
-    const playerIdx = players.findIndex(player => client === player.connection);
-    if (playerIdx !== -1) {
-      players.splice(playerIdx, 1);
-    }
   })
 })
 

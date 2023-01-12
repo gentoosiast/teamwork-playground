@@ -125,83 +125,61 @@ export class SocketModel {
     }
   }
 
-  loadField() {
-    const getField: IMessage = {
-      type: 'get_field',
-      data: '',
-      id: 0
-    }
-    this.webSocket.send(JSON.stringify(getField))
-  }
+  // loadField() {
+  //   const getField: IMessage = {
+  //     type: 'get_field',
+  //     data: '',
+  //     id: 0
+  //   }
+  //   this.webSocket.send(JSON.stringify(getField))
+  // }
 
-  loadChatMessages() {
-    const request: IMessage = {
-      type: 'chat_history',
-      data: '',
-      id: 0
-    }
-    this.webSocket.send(JSON.stringify(request));
-  }
+  // loadChatMessages() {
+  //   const request: IMessage = {
+  //     type: 'chat_history',
+  //     data: '',
+  //     id: 0
+  //   }
+  //   this.webSocket.send(JSON.stringify(request));
+  // }
 
   close() {
     this.webSocket.close();
   }
 
   attack(x: number, y: number,gameId:number) {
-    const request: IMessage = {
-      type: 'attack',
-      data: JSON.stringify({ x, y ,gameId, indexPlayer: this.playerIdx}),
-      id: 0
-    }
-    this.webSocket.send(JSON.stringify(request))
+    this.sendMessage('attack', JSON.stringify({ x, y ,gameId, indexPlayer: this.playerIdx}))
   }
 
-  sendChatMessage(inputMsg: string) {
-    const request: IMessage = {
-      type: 'chat_message',
-      data: inputMsg,
-      id: 0
-    }
-    this.webSocket.send(JSON.stringify(request))
-  }
+  // sendChatMessage(inputMsg: string) {
+  //   const request: IMessage = {
+  //     type: 'chat_message',
+  //     data: inputMsg,
+  //     id: 0
+  //   }
+  //   this.webSocket.send(JSON.stringify(request));
+  // }
 
   reg(data:IRegData){
-    const request: IMessage = {
-      type: 'reg',
-      data: JSON.stringify(data),
-      id: 0
-    }
-    this.webSocket.send(JSON.stringify(request))
+    this.sendMessage('reg',JSON.stringify(data))
   }
   createRoom(){
-    const request: IMessage = {
-      type: 'create_room',
-      data: '',
-      id: 0
-    }
-    this.webSocket.send(JSON.stringify(request))
+    this.sendMessage('create_room','')
   }
   addUserToRoom(indexRoom: number){
-    const request: IMessage = {
-      type: 'add_user_to_room',
-      data: JSON.stringify({ indexRoom}),
-      id: 0
-    }
-    this.webSocket.send(JSON.stringify(request))
+    this.sendMessage('add_user_to_room', JSON.stringify({ indexRoom}))
   }
   startGame(gameId: number, ships: IShip[]){
-    const request: IMessage = {
-      type: 'add_ships',
-      data: JSON.stringify({gameId, ships, indexPlayer: this.playerIdx}),
-      id: 0
-    }
-    this.webSocket.send(JSON.stringify(request))
+    this.sendMessage('add_ships', JSON.stringify({gameId, ships, indexPlayer: this.playerIdx}))
   }
 
   singlePlay(){
+    this.sendMessage('single_play','')
+  }
+  sendMessage(type: string, message: string){
     const request: IMessage = {
-      type: 'single_play',
-      data: '',
+      type: type,
+      data: message,
       id: 0
     }
     this.webSocket.send(JSON.stringify(request))

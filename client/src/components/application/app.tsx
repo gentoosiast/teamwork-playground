@@ -42,7 +42,7 @@ export const App = () => {
     const webSocket = new SocketModel({dispatch});
     setSocket(webSocket);
     setContent(<Registration socket={webSocket}/>);
-   // setContent(<ChooseShip socket={socket}/>);
+    //setContent(<ChooseShip socket={socket}/>);
     // return () => {
     //   webSocket.close();
     // }
