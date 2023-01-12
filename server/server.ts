@@ -186,7 +186,11 @@ websocket.on('request', (e) => {
     }
   })
   client.on('close', () => {
-    console.log('CLOSE')
+    games.forEach(it=>{
+      if(it.isPlayer(client)){
+        it.disconnect(client)        
+      }
+    })
     clients.filter(it=> it.connection!==client);
   })
 })

@@ -24,7 +24,7 @@ export class Game {
     id:string;
     players: IPlayer[]=[];
     playerControllers= new Map<number, IPlayerController>()
-    currentPlayer =0;
+    currentPlayer = 0;
     size=0;
     constructor(users:IClients[],id: string){
         this.users = users;
@@ -36,6 +36,17 @@ export class Game {
         })
     }
 
+    isPlayer(connection:connection){
+      return this.users.find(it=>it.connection===connection);
+    }
+
+    disconnect(connection:connection){
+      this.users.forEach(it=>{
+        if(it.connection!==connection){
+          this.sendMessage(it.connection, 'diconnect', '');
+        }
+      })
+    }
     addShip(ships: IShip[], indexPlayer: number){
       console.log('addShip', ships, indexPlayer)
       const player =this.playerControllers.get(indexPlayer );
@@ -65,23 +76,23 @@ export class Game {
     }
 
     finishGame(winPlayer: number){
-      this.users.forEach((user) => {
-        this.sendMessage(user.connection, 'finish',JSON.stringify({winPlayer: winPlayer}));
-      });
+      this.sendMessageToAll('finish',JSON.stringify({winPlayer: winPlayer}))
     }
 
     sendMessageAttack(position: IVector,status: string ,isChangeCurrentPlayer:boolean=false){
-      this.users.forEach((user) => {
-        this.sendMessage(user.connection, 'attack', JSON.stringify({position, currentPlayer:this.currentPlayer, status}));
-      });
+      this.sendMessageToAll('attack', JSON.stringify({position, currentPlayer:this.currentPlayer, status}))
       
       if(isChangeCurrentPlayer){
         this.currentPlayer = (this.currentPlayer + 1) % 2;
         const player = this.playerControllers.get(this.currentPlayer);
         player?.nextRound();
       }
+      this.sendMessageToAll( 'turn', JSON.stringify( {currentPlayer:this.currentPlayer}))
+    }
+
+    sendMessageToAll(message: string, data: string){
       this.users.forEach((user) => {
-        this.sendMessage(user.connection, 'turn', JSON.stringify( {currentPlayer:this.currentPlayer}));
+        this.sendMessage(user.connection, message, data);
       });
     }
 
@@ -93,4 +104,5 @@ export class Game {
         }
         client.sendUTF(JSON.stringify(responseObj));
     }
+    
 }

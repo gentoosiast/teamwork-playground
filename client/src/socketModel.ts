@@ -92,6 +92,10 @@ export class SocketModel {
   
             break;
         }
+        case 'diconnect':{
+          dispatch(setWinner({winner: true}))
+          dispatch(changePage({page:'finishGame'}))
+        }
         default:
           break;
       }
