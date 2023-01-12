@@ -8,6 +8,7 @@ import Room from '../room/room';
 import FinishPage from '../finishPage/finishPage';
 import ChooseShip from '../chooseShip/chooseShip';
 import { useDispatch, useSelector } from "react-redux";
+import imageObj from "../../utils/Image";
 
 
 
@@ -78,8 +79,8 @@ export function RequestServer() {
   useEffect(() => {
     const webSocket = new SocketModel({dispatch});
     setSocket(webSocket);
-   // setContent(<Registration socket={webSocket}/>);
-    setContent(<ChooseShip socket={socket}/>);
+    setContent(<Registration socket={webSocket}/>);
+   // setContent(<ChooseShip socket={socket}/>);
     // return () => {
     //   webSocket.close();
     // }
