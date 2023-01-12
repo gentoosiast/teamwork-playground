@@ -1,5 +1,6 @@
 import React from 'react';
 import { IRoom,IRoomsInitialState,IUserInitialData } from '../../dto';
+import {backGroundColor, generalColor} from '../../styleConst';
 import SubTitle from '../styledComponents/subTitle';
 import { useSelector } from 'react-redux';
 import { ButtonRooms } from '../styledComponents/buttons';
@@ -13,6 +14,13 @@ interface IRoomsList{
 }
 const RoomsContainer =styled.div`
     padding: 50px;
+    margin: 50px 100px;
+    width:330px;
+    background-color: ${backGroundColor} ;
+    max-height: 90vh;
+    border-radius: 10px;
+    border: 1px solid ${generalColor};
+    overflow: auto;
 `
 const RoomList = ({socket}:IRoomsList)=>{
     const rooms = useSelector((state: IRoomsStore) => state.roomsData.data);

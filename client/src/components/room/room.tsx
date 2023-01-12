@@ -41,13 +41,13 @@ const HeaderContainer=styled.div`
 
 `
 const Main =styled.div`
-    margin: 50px 100px;
+    /* margin: 50px 100px;
     width:330px;
     background-color: ${backGroundColor} ;
     max-height: 90vh;
     border-radius: 10px;
     border: 1px solid ${generalColor};
-    overflow: auto;
+    overflow: auto; */
 `
 const Room = ({socket}:IRoomComponent)=>{
    const userName = useSelector( (state: IUserStore) => state.userData.name);
@@ -62,9 +62,7 @@ const Room = ({socket}:IRoomComponent)=>{
             </HeaderContainer>
                        
         </Header>
-        <Main>
-            <RoomList socket={socket}/>
-        </Main>
+        <RoomList socket={socket}/>
        <Setting/>
     </Wrapper>)
 }

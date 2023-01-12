@@ -3,10 +3,10 @@ import styled from 'styled-components';
 import {IRegData} from '../../dto'
 import { SocketModel } from '../../socketModel';
 import Wrapper from '../styledComponents/wrapper';
-import {backGroundColor,fontSize} from '../../styleConst'
+import { backGroundColor, fontSize, generalColor } from '../../styleConst'
 import Title from '../styledComponents/title';
 import SubTitle from '../styledComponents/subTitle';
-import {ButtonGeneral} from '../styledComponents/buttons'
+import { ButtonGeneral } from '../styledComponents/buttons'
 import Input from '../styledComponents/input';
 import Error from '../styledComponents/errorForInput';
 
@@ -19,6 +19,7 @@ const Content = styled.div`
    background-color: ${backGroundColor};
     padding: 50px;
     border-radius: 10px;
+    border: 1px solid ${generalColor};
 `
 
 const InputContainer = styled.div`

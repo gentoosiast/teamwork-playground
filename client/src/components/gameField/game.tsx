@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Cell, IFieldsInitialState, IUserInitialData } from '../../dto'
 import { SocketModel } from "../../socketModel";
 import { useSelector } from 'react-redux';
+import SubTitle from '../styledComponents/subTitle';
 const styleMap = {
   [Cell.Empty]: '',
   [Cell.Occupied]: 'cell_occupied',
@@ -69,7 +70,7 @@ export function GameField(props: IGameFieldProps) {
   const currentPlayer = useSelector((state: IUserStore) => state.userData.isCurrentPlayer)
   return (
     <div>
-      <p>{currentPlayer?'Your Turn':'Next player goes'}</p>
+      <SubTitle>{currentPlayer?'Your Turn':'Next player goes'}</SubTitle>
       <OurField></OurField>
       <EnemyField socket={props.socket}></EnemyField>
     </div>
