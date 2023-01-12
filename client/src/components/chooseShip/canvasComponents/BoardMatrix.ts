@@ -1,19 +1,18 @@
-import {ShipsSizes} from "../ChooseComponent";
-import ShipsController from "./ShipsController";
-
 export default class BoardMatrix {
 	_boardMatrix: number[][];
-	private shipsController: ShipsController;
 	private cellsInRow: number;
 	private _cellSize: number;
 	private boardMatrixEmptyValue: number;
 	private boardMatrixFullValue: number;
 	private boardMatrixBlockedCell: number;
 	private boardMatrixHoverValue: number;
+	private isRotated: boolean;
+	private activeSize: number;
 
-	constructor(shipsController: ShipsController) {
+	constructor(isRotated:boolean,activeSize:number) {
 		this._boardMatrix = []
-		this.shipsController = shipsController
+		this.isRotated=isRotated
+		this.activeSize=activeSize
 		this.cellsInRow = 10
 		this._cellSize = 30
 		this.boardMatrixEmptyValue = 99
@@ -27,11 +26,11 @@ export default class BoardMatrix {
 	}
 
 	isOnBoard(x: number, y: number) {
-		if (!this.shipsController.isRotated) {
-			return (x + this.shipsController.activeShipSize) <= this.matrixLength()
+		if (!this.isRotated) {
+			return (x + this.activeSize) <= this.matrixLength()
 				&& y < this.matrixLength() && y >= 0 && x >= 0
 		} else {
-			return (y + this.shipsController.activeShipSize) <= this.matrixLength()
+			return (y + this.activeSize) <= this.matrixLength()
 				&& x < this.matrixLength() && y >= 0 && x >= 0
 		}
 
@@ -56,16 +55,16 @@ export default class BoardMatrix {
 			val === 'hovered' ? this.boardMatrixHoverValue :
 				val === 'empty' ? this.boardMatrixEmptyValue : 99
 		const cells = []
-		for (let i = 0; i < this.shipsController.activeShipSize; i++) {
-			if (this.shipsController.isRotated) {
+		for (let i = 0; i < this.activeSize; i++) {
+			if (this.isRotated) {
 				if (y + i < this.cellsInRow && x < this.cellsInRow) cells.push("+")
 			} else {
 				if (y < this.cellsInRow && x + i < this.cellsInRow) cells.push("+")
 			}
 		}
-		if (cells.length === this.shipsController.activeShipSize) {
+		if (cells.length === this.activeSize) {
 			for (let i = 0; i < cells.length; i++) {
-				if (!this.shipsController.isRotated) {
+				if (!this.isRotated) {
 					if (this.boardMatrix[y][x + i] === this.boardMatrixBlockedCell) return
 					this.boardMatrix[y][x + i] = value
 				} else {

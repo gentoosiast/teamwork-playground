@@ -3,6 +3,8 @@ import { useSelector } from 'react-redux';
 import { IUserInitialData } from '../../dto';
 
 import { SocketModel } from '../../socketModel';
+import ChooseComponent from "./ChooseComponent";
+import {IShipsStore} from "../../reducer/shipsReducer";
 interface IChooseShip{
     socket:SocketModel
 }
@@ -80,8 +82,10 @@ const ChooseShip=({socket}:IChooseShip)=>{
     const rand = 0//Math.floor(Math.random()*3)
     const idGame = useSelector((state: IUserStore) => state.userData.idGames)
     console.log(rand)
+  const shipsw=useSelector(((state:IShipsStore) => state.shipsData.shipsToPut))
+  console.log(shipsw,'SPS')
     return (<>
-        Тут людина розставляє свої кораблики, де вони будуть. Потім всі дані по кліку летять на сервер
+     <ChooseComponent/>
             <button onClick={()=>socket.startGame( idGame[idGame.length-1],ships[rand])}>Start game</button> 
         </>)
 }

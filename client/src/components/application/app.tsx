@@ -7,6 +7,7 @@ import Room from '../room/room';
 import FinishPage from '../finishPage/finishPage';
 import ChooseShip from '../chooseShip/chooseShip';
 import { useDispatch, useSelector } from "react-redux";
+import imageObj from "../../utils/Image";
 
 interface IPage {
   pagesData: {
@@ -41,7 +42,7 @@ export const App = () => {
     const webSocket = new SocketModel({dispatch});
     setSocket(webSocket);
     setContent(<Registration socket={webSocket}/>);
-
+   // setContent(<ChooseShip socket={socket}/>);
     // return () => {
     //   webSocket.close();
     // }
