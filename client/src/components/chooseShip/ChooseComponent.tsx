@@ -6,6 +6,7 @@ import {useDispatch, useSelector} from "react-redux";
 import {IShipsStore} from "../../reducer/shipsReducer";
 import {CanvasComponent} from "./CanvasComponent";
 import {setAutoPut} from '../../reducer/shipsReducer'
+import {imagesObjType} from "../application/app";
 
 export enum ShipsSizes {
 	small = 2,
@@ -14,7 +15,8 @@ export enum ShipsSizes {
 	huge
 }
 
-const ChooseComponent = () => {
+const ChooseComponent = ({imagesObj}:{imagesObj:imagesObjType}) => {
+	console.log("!!!@#$$$--",imagesObj)
 	const shipsRef = useRef(null)
 	const dispatch=useDispatch()
 
@@ -25,7 +27,7 @@ const ChooseComponent = () => {
 				<button onClick={()=>dispatch(setAutoPut())}>Расставить автоматически</button>
 				<ShipsSection/>
 			</div>
-			<CanvasComponent/>
+			<CanvasComponent imagesObj={imagesObj}/>
 		</>
 
 	)
