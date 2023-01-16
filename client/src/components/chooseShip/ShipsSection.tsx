@@ -9,6 +9,7 @@ import {AppDispatch} from "../../dto";
 
 const ShipsSection = () => {
 	const ships=useSelector(((state:IShipsStore) => state.shipsData.shipsToPut))
+//	console.log(ships,'SPS')
 	const dispatch=useDispatch<AppDispatch>()
 	return (
 		<div>

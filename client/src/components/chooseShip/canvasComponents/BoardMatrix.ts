@@ -14,6 +14,7 @@ export default class BoardMatrix {
 	onClearHovered: (value: number) => void
 	private board: number[][];
 	private hoveredCells: string[];
+	private boardOccupateValue: number;
 
 	constructor(isRotated: boolean, board: number[][]) {
 		this.board = board
@@ -24,7 +25,8 @@ export default class BoardMatrix {
 		this.boardMatrixFullValue = 1
 		this.boardMatrixBlockedCell = 5
 		this.boardMatrixHoverValue = 2
-		this.boardMatrixEmptyValue=0
+		this.boardMatrixEmptyValue = 0
+		this.boardOccupateValue = 7
 	}
 
 	inPixels(indx: number) {
@@ -44,7 +46,7 @@ export default class BoardMatrix {
 	}
 
 	defineCellValue(val: string) {
-		return val === 'occupate' ? this.boardMatrixFullValue :
+		return val === 'occupate' ? this.boardOccupateValue :
 			val === 'hovered' ? this.boardMatrixHoverValue :
 				val === 'empty' ? 99 : 99
 	}
@@ -62,8 +64,7 @@ export default class BoardMatrix {
 			for (let i = 0; i < cells.length; i++) {
 				const yP = !rotated ? y : y + i
 				const xP = !rotated ? x + i : x
-				if (this.board[yP][xP] === this.boardMatrixBlockedCell) return
-				//this.boardMatrix[yP][xP] = value
+				if (this.board[yP][xP] === this.boardMatrixBlockedCell) continue
 				dataBoard.push(`${yP}-${xP}`)
 			}
 		}

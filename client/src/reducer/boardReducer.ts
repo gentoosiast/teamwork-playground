@@ -60,7 +60,7 @@ const boardReducer = createSlice({
 		clearHovered(state, action: PayloadAction<number>) {
 			state.boardMatrix.map((row: number[]) => {
 				return row.map((cell, i) => {
-					if (cell === 2) row[i] = action.payload
+					if (cell !== 5) row[i] = action.payload
 				})
 			})
 		},

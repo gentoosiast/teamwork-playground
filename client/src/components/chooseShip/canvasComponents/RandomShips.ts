@@ -24,7 +24,7 @@ export default class RandomShips {
 
 	actualShips(ships: Record<string, number>) {
 		this.ships = ships
-		console.log(this.ships,'EERRERR')
+	//	console.log(this.ships,'EERRERR')
 	}
 
 	* genShipsToAuto() {

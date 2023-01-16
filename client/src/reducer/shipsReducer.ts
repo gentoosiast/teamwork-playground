@@ -34,7 +34,7 @@ const shipsReducer = createSlice({
 	reducers: {
 		addShip(state, action: PayloadAction<{ ship:string,active:string }>) {
 			const ship=JSON.parse(action.payload.ship)
-				console.log(state,'THIS')
+			//	console.log(state,'THIS')
 			// console.log(action.payload)
 		// 	if(!state.activeShip)return
 		// 	console.log(state.shipsToPut[`${state.activeShip}`]-1,'PUTT')
@@ -52,12 +52,15 @@ const shipsReducer = createSlice({
 		},
 		setAutoPut(state){
 			state.isAutoPut=true
+		},
+		setDecShip(state,action:PayloadAction<string>){
+			state.shipsToPut[action.payload]=state.shipsToPut[action.payload]-1
 		}
 	},
 });
 
 const { actions, reducer } = shipsReducer;
 
-export const {isRotateShip,addShip,setActiveShip,setAutoPut} = actions;
+export const {isRotateShip,addShip,setActiveShip,setAutoPut,setDecShip} = actions;
 
 export default reducer;

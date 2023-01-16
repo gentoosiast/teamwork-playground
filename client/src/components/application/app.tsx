@@ -28,7 +28,7 @@ export const App = () => {
 	const page = useSelector((state: IPage) => state.pagesData.page);
 
 	useEffect(() => {
-		console.log("PAGEuseEff")
+	//	console.log("PAGEuseEff")
 		if (page === 'room') {
 			setContent(<Room socket={socket}/>);
 		}

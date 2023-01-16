@@ -3,7 +3,7 @@ import CanvasSection, {tShipCanvas} from "./CanvasSection";
 import {useDispatch, useSelector} from "react-redux";
 import {IShipsStore} from "../../reducer/shipsReducer";
 import {AppDispatch} from "../../dto";
-import {addShip, setActiveShip, isRotateShip} from '../../reducer/shipsReducer'
+import {addShip, setActiveShip, isRotateShip,setDecShip} from '../../reducer/shipsReducer'
 import {fillCells, clearHovered, setMoveAdded, IBoardStore,fillAreaCells} from '../../reducer/boardReducer'
 import {imagesObjType} from "../application/app";
 
@@ -17,9 +17,7 @@ export const CanvasComponent = ({imagesObj}: { imagesObj: imagesObjType }) => {
 
 	//todo ask: AppDispatch whatFor
 	const [canvSection, setCanvSection] = useState(null)
-	const [isM, setIsM] = useState(false)
 	const ships = useSelector((state: IShipsStore) => state.shipsData.shipsToPut)
-	type typeOnAddData = { type: string, ship: tShipCanvas }
 	const board = useSelector((state: IBoardStore) => state.boardData.boardMatrix)
 
 	useEffect(() => {
@@ -29,6 +27,7 @@ export const CanvasComponent = ({imagesObj}: { imagesObj: imagesObjType }) => {
 				(ship: tShipCanvas) => {
 					dispatch(addShip({ship: JSON.stringify(ship), active: activeShip}))
 					dispatch(setActiveShip(null))
+					dispatch(setDecShip(ship.type))
 				},
 				(type: string, _isRotated: boolean) => {
 					//dispatch(setActiveShip(type))

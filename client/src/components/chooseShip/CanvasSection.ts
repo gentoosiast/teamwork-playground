@@ -41,8 +41,9 @@ export class CanvasSection extends Control {
 	onRotateShip: () => void
 	onFillCells: (fillData: { data: string[], value: number }) => void
 	onClearHovered: (value: number) => void
-	onResetActiveShip:()=>void
-	onFillShipArea:(areaCells:Set<string>,value:number)=>void
+	onResetActiveShip: () => void
+	onFillShipArea: (areaCells: Set<string>, value: number) => void
+
 	constructor(parentNode: HTMLElement, ships: Record<string, number>, board: number[][],
 							isRotated: boolean, activeShip: string,
 							shipsOnCanvas: tShipCanvas[], imagesObj: imagesObjType, isAutoPut: boolean,
@@ -56,9 +57,8 @@ export class CanvasSection extends Control {
 		this.activeSize = ShipsSizes[this.activeShip as keyof typeof ShipsSizes]
 		this.board = board
 		this.boardMatrix = new BoardMatrix(this.isRotated, this.board)
-		this.boardMatrix.onClearHovered = (value: number) => 	this.onClearHovered(value)
+		this.boardMatrix.onClearHovered = (value: number) => this.onClearHovered(value)
 		this.boardMatrix.onFillCells = (fillData: { data: string[], value: number }) => {
-			console.log(fillData)
 			this.onFillCells(fillData)
 		}
 		this.onAddShip = onAddShip
@@ -145,42 +145,29 @@ export class CanvasSection extends Control {
 			this.y = y
 			const isIntersect = this.intersectionController.isIntersection(
 				x, y, this.activeSize, this.isRotated)
+			const value = !isIntersect ? 'hovered' : 'occupate'
 			if (!isIntersect && !this.isListenCkick) {
-				console.log("MOVE add listens")
-				//	this.boardMatrix.fillCells('hovered', x, y, this.activeSize, this.isRotated)
-				//	document.body.addEventListener('click', () => console.log("BODY"))
 				document.body.addEventListener('keyup', this.rotateShipBinded)
 				this.canvasSection.node.addEventListener('click', this.clickBinded)
-				//todo here if intersect other color fill hovered cells and not to add listener
 				this.isListenCkick = true
 			}
 			if (isIntersect) {
-				console.log("ADD logic color to intersect")
+				this.isListenCkick = false
+				this.canvasSection.node.removeEventListener('click', this.clickBinded)
 			}
-			//	this.isCurrentIntersect = true
-			this.boardMatrix.fillCells('hovered', x, y, this.activeSize, this.isRotated)
-			// 	if (isIntersect) {
-			// 		//	this.isCurrentIntersect = true
-			// 		//	this.boardMatrix.fillCells('hovered', x,y)
-			// 	} else {
-			// 		//	this.isCurrentIntersect = false
-			// 		//		this.boardMatrix.fillCells('occupate', x,y)
-			// 		//	this.canvasSection.node.addEventListener('click', this.clickBinded)
-			// 	}
+			this.boardMatrix.fillCells(value, x, y, this.activeSize, this.isRotated)
 			this.drawScene()
 		}
 	}
 
 	updateBoard(board: number[][]) {
-		log(board)
 		this.board = board
 		this.boardMatrix.updateBoard(board)
 		this.drawScene()
-		//console.log(this.board)
 	}
 
 	rotateShip(e: KeyboardEvent) {
-		console.log("ROTAATE")
+	//	console.log("ROTAATE")
 		const keyName = e.code;
 		if (keyName === 'Space') {
 			this.boardMatrix.clearCells()
@@ -198,17 +185,13 @@ export class CanvasSection extends Control {
 	///ships
 	//if activeShip, drawdarkGreen
 	drawScene() {
-		log(this.board)
 		this.board.forEach((row, rI) => {
 			row.forEach((cell, cI) => {
-				console.log(cell)
 				this.ctx.fillStyle =
 					cell === 5 ? "olive" :
 						cell === 2 ? 'darkGreen' :
 							cell === 7 ? "red"
 								: "green"
-			//	this.ctx.strokeStyle = 'red';
-			//	this.ctx.stroke()
 				this.ctx.fillRect((this.boardMatrix.inPixels(cI)) + 1, (this.boardMatrix.inPixels(rI)) + 1,
 					this.boardMatrix.cellSize - 2, this.boardMatrix.cellSize - 2);
 			})
@@ -246,7 +229,7 @@ export class CanvasSection extends Control {
 
 	private fillShipArea(x: number, y: number, size: number
 	) {
-	//	console.log("FILLAREA")
+		//	console.log("FILLAREA")
 		const areaCells: Set<string> = new Set()
 		for (let i = 0; i < size; i++) {
 			const xCoord = !this.isRotated ? x + i : x
@@ -257,9 +240,9 @@ export class CanvasSection extends Control {
 			})
 			this.boardMatrix.valueToCell(yCoord, xCoord, 'ship')
 		}
-	//	console.log(areaCells,'AREACELLS')
+		//	console.log(areaCells,'AREACELLS')
 		this.randomShips.occupateCells(areaCells)
-	this.onFillShipArea(areaCells,this.boardMatrix.getBlockValue())
+		this.onFillShipArea(areaCells, this.boardMatrix.getBlockValue())
 	}
 }
 

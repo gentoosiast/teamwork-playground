@@ -18,7 +18,7 @@ export class SocketModel {
     websocket.onmessage = (msg) => {
       const parsedMsg: IMessage = JSON.parse(msg.data);
       const parsedData = parsedMsg.data;
-      console.log(parsedMsg)
+   //   console.log(parsedMsg)
       switch (parsedMsg.type) {
         // case 'chat_message': {
 
