@@ -42,6 +42,7 @@ export class CanvasSection extends Control {
 	onFillCells: (fillData: { data: string[], value: number }) => void
 	onClearHovered: (value: number) => void
 	onResetActiveShip:()=>void
+	onFillShipArea:(areaCells:Set<string>,value:number)=>void
 	constructor(parentNode: HTMLElement, ships: Record<string, number>, board: number[][],
 							isRotated: boolean, activeShip: string,
 							shipsOnCanvas: tShipCanvas[], imagesObj: imagesObjType, isAutoPut: boolean,
@@ -52,16 +53,12 @@ export class CanvasSection extends Control {
 		this.ships = ships
 		this.isRotated = false
 		this.activeShip = activeShip
-		//	console.log("ac---", this.activeShip)
 		this.activeSize = ShipsSizes[this.activeShip as keyof typeof ShipsSizes]
-		//this.shipsOnCanvas = shipsOnCanvas
 		this.board = board
-		//	console.log("ACTIVESIZE", this.activeSize)
 		this.boardMatrix = new BoardMatrix(this.isRotated, this.board)
-		this.boardMatrix.onClearHovered = (value: number) => {
-			this.onClearHovered(value)
-		}
+		this.boardMatrix.onClearHovered = (value: number) => 	this.onClearHovered(value)
 		this.boardMatrix.onFillCells = (fillData: { data: string[], value: number }) => {
+			console.log(fillData)
 			this.onFillCells(fillData)
 		}
 		this.onAddShip = onAddShip
@@ -175,8 +172,11 @@ export class CanvasSection extends Control {
 	}
 
 	updateBoard(board: number[][]) {
+		log(board)
 		this.board = board
 		this.boardMatrix.updateBoard(board)
+		this.drawScene()
+		//console.log(this.board)
 	}
 
 	rotateShip(e: KeyboardEvent) {
@@ -198,16 +198,19 @@ export class CanvasSection extends Control {
 	///ships
 	//if activeShip, drawdarkGreen
 	drawScene() {
+		log(this.board)
 		this.board.forEach((row, rI) => {
 			row.forEach((cell, cI) => {
+				console.log(cell)
 				this.ctx.fillStyle =
 					cell === 5 ? "olive" :
 						cell === 2 ? 'darkGreen' :
 							cell === 7 ? "red"
 								: "green"
-				this.ctx.strokeStyle = 'red';
-				this.ctx.stroke()
-				this.ctx.fillRect((this.boardMatrix.inPixels(cI)) + 1, (this.boardMatrix.inPixels(rI)) + 1, this.boardMatrix.cellSize - 2, this.boardMatrix.cellSize - 2);
+			//	this.ctx.strokeStyle = 'red';
+			//	this.ctx.stroke()
+				this.ctx.fillRect((this.boardMatrix.inPixels(cI)) + 1, (this.boardMatrix.inPixels(rI)) + 1,
+					this.boardMatrix.cellSize - 2, this.boardMatrix.cellSize - 2);
 			})
 		})
 		this.shipsOnCanvas?.forEach(ship => {
@@ -243,6 +246,7 @@ export class CanvasSection extends Control {
 
 	private fillShipArea(x: number, y: number, size: number
 	) {
+	//	console.log("FILLAREA")
 		const areaCells: Set<string> = new Set()
 		for (let i = 0; i < size; i++) {
 			const xCoord = !this.isRotated ? x + i : x
@@ -253,7 +257,9 @@ export class CanvasSection extends Control {
 			})
 			this.boardMatrix.valueToCell(yCoord, xCoord, 'ship')
 		}
+	//	console.log(areaCells,'AREACELLS')
 		this.randomShips.occupateCells(areaCells)
+	this.onFillShipArea(areaCells,this.boardMatrix.getBlockValue())
 	}
 }
 

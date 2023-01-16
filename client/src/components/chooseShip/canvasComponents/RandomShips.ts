@@ -68,6 +68,7 @@ export default class RandomShips {
 	}
 	occupateCells(areaCells: Set<string>) {
 		this.isRandomActive && this.emptyAreas.occupateArea(areaCells)
+
 	}
 
 	updateBoard(board: number[][]) {

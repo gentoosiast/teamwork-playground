@@ -131,7 +131,7 @@ export class EmptyAreas {
 	}
 
 	occupateArea(areaCells: Set<any>) {
-		console.log("OCUPATEAREA")
+		//console.log("OCUPATEAREA")
 		//	console.log("OCset",areaCells)
 		const yS = new Map()
 		const xS = new Map()
@@ -143,8 +143,8 @@ export class EmptyAreas {
 			const valX = xS.has(x) ? xS.get(x) + `-${y}` : `${y}`
 			xS.set(x, valX)
 		})
-		console.log(yS, 'YY')
-		console.log(xS, 'XXX')
+	//	console.log(yS, 'YY')
+	//	console.log(xS, 'XXX')
 		this.deleteFromEmptyAreas('x', xS)
 		this.deleteFromEmptyAreas('y', yS)
 		console.log(this.horizontalAreas, '-----H')

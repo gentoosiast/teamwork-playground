@@ -43,13 +43,19 @@ const boardReducer = createSlice({
 	name: "boardData",
 	initialState,
 	reducers: {
+		fillAreaCells(state, action: PayloadAction<{data:string[],value:number}>){
+			action.payload.data.forEach(c=>{
+				const d=c.split('-')
+				const y=d[0]
+				const x=d[1]
+				state.boardMatrix[+y][+x]=action.payload.value
+			})
+		},
 		fillCells(state, action: PayloadAction<fillCellsType>) {
-			//`y-x`
 			action.payload.data.forEach(cell => {
 				const [y, x] = cell.split('-')
 				state.boardMatrix[+y][+x] = action.payload.value
 			})
-			console.log(state.boardMatrix)
 		},
 		clearHovered(state, action: PayloadAction<number>) {
 			state.boardMatrix.map((row: number[]) => {
@@ -66,6 +72,6 @@ const boardReducer = createSlice({
 
 const {actions, reducer} = boardReducer;
 
-export const {fillCells,clearHovered,setMoveAdded} = actions;
+export const {fillCells,clearHovered,setMoveAdded,fillAreaCells} = actions;
 
 export default reducer;

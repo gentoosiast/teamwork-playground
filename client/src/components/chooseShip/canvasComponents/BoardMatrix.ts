@@ -15,7 +15,7 @@ export default class BoardMatrix {
 	private board: number[][];
 	private hoveredCells: string[];
 
-	constructor(isRotated: boolean,board:number[][]) {
+	constructor(isRotated: boolean, board: number[][]) {
 		this.board = board
 		//this.isRotated = isRotated
 		this.cellsInRow = 10
@@ -24,13 +24,18 @@ export default class BoardMatrix {
 		this.boardMatrixFullValue = 1
 		this.boardMatrixBlockedCell = 5
 		this.boardMatrixHoverValue = 2
+		this.boardMatrixEmptyValue=0
 	}
 
 	inPixels(indx: number) {
 		return indx * this.cellSize
 	}
 
-	isOnBoard(x: number, y: number, activeSize:number,rotated:boolean) {
+	getBlockValue() {
+		return this.boardMatrixBlockedCell
+	}
+
+	isOnBoard(x: number, y: number, activeSize: number, rotated: boolean) {
 		const v = !rotated
 			? ((x + activeSize) <= this.matrixLength() && y < this.matrixLength() && y >= 0 && x >= 0)
 			: ((y + activeSize) <= this.matrixLength()
@@ -44,7 +49,7 @@ export default class BoardMatrix {
 				val === 'empty' ? 99 : 99
 	}
 
-	fillCells(val: string, x: number, y: number,activeSize:number,rotated:boolean) {
+	fillCells(val: string, x: number, y: number, activeSize: number, rotated: boolean) {
 		const value = this.defineCellValue(val)
 		const cells = []
 		const dataBoard = []
@@ -86,6 +91,6 @@ export default class BoardMatrix {
 	}
 
 	updateBoard(board: number[][]) {
-		this.board=JSON.parse(JSON.stringify(board))
+		this.board = JSON.parse(JSON.stringify(board))
 	}
 }
