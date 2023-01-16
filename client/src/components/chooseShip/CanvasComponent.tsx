@@ -4,10 +4,10 @@ import {useDispatch, useSelector} from "react-redux";
 import {IShipsStore} from "../../reducer/shipsReducer";
 import {AppDispatch} from "../../dto";
 import {addShip, setActiveShip, isRotateShip} from '../../reducer/shipsReducer'
+import {fillCells, clearHovered, setMoveAdded, IBoardStore} from '../../reducer/boardReducer'
 import {imagesObjType} from "../application/app";
 
-export const CanvasComponent = ({imagesObj}:{imagesObj:imagesObjType}) => {
-	console.log("canvasCompImages",imagesObj)
+export const CanvasComponent = ({imagesObj}: { imagesObj: imagesObjType }) => {
 	const canvasRef = useRef(null)
 	const dispatch = useDispatch<AppDispatch>()
 	const shipsOnCanvas = useSelector((state: IShipsStore) => state.shipsData.shipsOnCanvas)
@@ -17,23 +17,50 @@ export const CanvasComponent = ({imagesObj}:{imagesObj:imagesObjType}) => {
 
 	//todo ask: AppDispatch whatFor
 	const [canvSection, setCanvSection] = useState(null)
+	const [isM, setIsM] = useState(false)
 	const ships = useSelector((state: IShipsStore) => state.shipsData.shipsToPut)
 	type typeOnAddData = { type: string, ship: tShipCanvas }
+	const board = useSelector((state: IBoardStore) => state.boardData.boardMatrix)
 
 	useEffect(() => {
-		canvasRef.current.innerHTML = ''
-		const canvas = new CanvasSection(canvasRef.current, ships, isRotated, activeShip, shipsOnCanvas, imagesObj,
-			isAutoPut,
-			(ship: tShipCanvas) => {
-				dispatch(addShip({ship: JSON.stringify(ship), active: activeShip}))
-			},
-			(type: string, _isRotated: boolean) => {
-				dispatch(setActiveShip(type))
-				dispatch(isRotateShip(_isRotated))
-			})
-		setCanvSection(canvas)
-	}, [activeShip, isAutoPut,shipsOnCanvas])
+		//console.log("activeShip")
+		if (!canvSection) {
+			const canvas = new CanvasSection(canvasRef.current, ships, board, isRotated, activeShip, shipsOnCanvas, imagesObj,
+				isAutoPut,
+				(ship: tShipCanvas) => {
+					dispatch(addShip({ship: JSON.stringify(ship), active: activeShip}))
+					dispatch(setActiveShip(null))
+				},
+				(type: string, _isRotated: boolean) => {
+					//dispatch(setActiveShip(type))
+					//other method from random=====>dispatch(isRotateShip(_isRotated))
+				})
+			setCanvSection(canvas)
+			canvas.onRotateShip = () => {
+				dispatch(isRotateShip())
+			}
+			canvas.onFillCells = (fillData) => {
+				dispatch(fillCells(fillData))
+			}
+			canvas.onClearHovered = (value: number) => {
+				dispatch(clearHovered(value))
+			}
+			canvas.onResetActiveShip=()=>	dispatch(setActiveShip(null))
+		} else {
+			canvSection.destroy()
+		}
+	}, [isAutoPut, isM])
 
+	useEffect(() => canvSection?.updateShipOnBoard(shipsOnCanvas), [shipsOnCanvas])
+	useEffect(() => canvSection?.updateBoard(board), [board])
+	useEffect(() => {
+		canvSection?.addActiveShip(activeShip)
+	}, [activeShip])
+
+	useEffect(() => {
+		console.log("ROTATE")
+		canvSection?.setRotate(isRotated)
+	}, [isRotated])
 	return (
 		<div ref={canvasRef}/>
 	)

@@ -7,6 +7,7 @@ import {IShipsStore} from "../../reducer/shipsReducer";
 import {CanvasComponent} from "./CanvasComponent";
 import {setAutoPut} from '../../reducer/shipsReducer'
 import {imagesObjType} from "../application/app";
+import {AppDispatch} from "../../dto";
 
 export enum ShipsSizes {
 	small = 2,
@@ -16,9 +17,8 @@ export enum ShipsSizes {
 }
 
 const ChooseComponent = ({imagesObj}:{imagesObj:imagesObjType}) => {
-	console.log("!!!@#$$$--",imagesObj)
 	const shipsRef = useRef(null)
-	const dispatch=useDispatch()
+	const dispatch=useDispatch<AppDispatch>()
 
 	return (
 		<>

@@ -5,16 +5,15 @@ import {IShipsStore} from "../../reducer/shipsReducer";
 import {setActiveShip} from '../../reducer/shipsReducer'
 import {ShipsSizes} from "./ChooseComponent";
 import acorn from "acorn";
+import {AppDispatch} from "../../dto";
 
 const ShipsSection = () => {
 	const ships=useSelector(((state:IShipsStore) => state.shipsData.shipsToPut))
-	//console.log(ships,'SPS')
-	const dispatch=useDispatch()
+	const dispatch=useDispatch<AppDispatch>()
 	return (
 		<div>
 			{
 				Object.entries(ships).map((ship: [string, number], i) => {
-					console.log(ship)
 					return (
 						<p>
 							<span>{ship[1]}</span>

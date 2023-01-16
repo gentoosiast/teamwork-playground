@@ -44,8 +44,8 @@ const shipsReducer = createSlice({
 		// 	console.log(state.shipsOnCanvas,'ONCANV')
 		// 	state.shipsToPut[`${state.activeShip}`]=state.shipsToPut[`${state.activeShip}`]-1
 		},
-		isRotateShip(state,action:PayloadAction<boolean>){
-			state.isRotate=action.payload
+		isRotateShip(state){
+			state.isRotate=!state.isRotate
 		},
 		setActiveShip(state,action:PayloadAction<string>){
 			state.activeShip=action.payload

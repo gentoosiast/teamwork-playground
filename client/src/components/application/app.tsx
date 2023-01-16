@@ -46,8 +46,8 @@ export const App = () => {
 	}, [page]);
 
 	useEffect(() => {
-		console.log("CreateuseEff")
-		createImagesObject(50,{small: 50, medium: 100, large: 150, huge: 200},(imagesObj)=>{
+		//console.log("CreateuseEff")
+		createImagesObject(30,{small: 60, medium: 90, large: 120, huge: 150},(imagesObj)=>{
 			setImagesObj(imagesObj)
 			const webSocket = new SocketModel({dispatch});
 			setSocket(webSocket);
