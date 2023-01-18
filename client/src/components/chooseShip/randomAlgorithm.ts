@@ -4,24 +4,28 @@ type axisData = { id: number, data: number[][], longer: number }
 
 export class EmptyAreas {
 	private matrix: number[][];
-	private verticalAreas: any[];
-	private horizontalAreas: any[];
-	onGetCoordinates: (axis: string, type: string, y: number, x: number,isRotate:boolean) => void
+	// private verticalAreas: any[];
+	// private horizontalAreas: any[];
+	onGetCoordinates: (type: string, y: number, x: number,isRotate:boolean) => void
+	private notRotatedAreas: axisData[];
+	private rotatedAreas: axisData[];
 
 	constructor() {
 		this.matrix = null
-		this.verticalAreas = null
-		this.horizontalAreas = null
+	//	this.verticalAreas = null
+	//	this.horizontalAreas = null
 	}
 
 	start(matrix: number[][]) {
 		this.matrix = matrix
+		log("Ramdomstrt")
+		log(matrix)
 		//***** logic Mistake
-		this.verticalAreas = this.arrayDataFromArray('horizont',matrix)
-		this.horizontalAreas = this.arrayDataFromArray('vertical',matrix)
-		// log("VV--HH")
-		// log(this.verticalAreas)
-		// log(this.horizontalAreas)
+		this.notRotatedAreas = this.arrayDataFromArray('horizont',matrix)
+		this.rotatedAreas = this.arrayDataFromArray('vertical',matrix)
+		log("VV--HH")
+		log(this.notRotatedAreas)
+		log(this.rotatedAreas)
 	}
 
 	isNext(first: number, second: number) {
@@ -79,7 +83,6 @@ export class EmptyAreas {
 		//console.log(value)
 		const ar: axisData[] = []
 		const r = this.axisData(value, board)
-		//console.log("R",r)
 		r.forEach((row, i) => {
 			const longer = this.longerSub(row)
 			ar.push({id: i, data: row, longer})
@@ -97,11 +100,10 @@ export class EmptyAreas {
 	}
 
 	apdateEmptyAreas(axis: string, d: string[]) {
-		//console.log("UPDATE EMPTY AREAS",axis)
-		console.log(this.horizontalAreas)
-		const objAxis = axis === 'horizont' ? this.horizontalAreas : this.verticalAreas
+		console.log("UPDATE EMPTY AREAS",axis)
+		const objAxis = axis === 'y' ? this.notRotatedAreas : this.rotatedAreas
 		console.log(JSON.parse(JSON.stringify(objAxis)), '!!ObjAxis')
-		 const el = objAxis.find(e => e.id == d[0])
+		 const el = objAxis.find(e => e.id == +d[0])
 		const idx = objAxis.indexOf(el)
 		//console.log("EL", el)
 		const setAxis = new Set(d[1].split('-'))
@@ -121,17 +123,17 @@ export class EmptyAreas {
 		//console.log("DDDdeleteFromEmptyAreas    axis",axis)
 		const dAr = Array.from(data)
 		//console.log("DARRRRR",dAr)
-		const ax = axis === 'x' ? 'horizont' : 'vertical'
+	//	const ax = axis === 'x' ? 'horizont' : 'vertical'
 	//	console.log(ax,'AXX')
 		dAr.forEach(d => {
 		//		console.log(d, 'DD')
-			this.apdateEmptyAreas(ax, d)
+			this.apdateEmptyAreas(axis, d)
 		})
 	}
 
 	occupateArea(areaCells: Set<any>) {
 		console.log("OCUPATEAREA")
-		//	console.log("OCset",areaCells)
+			console.log("OCset",areaCells)
 		const yS = new Map()
 		const xS = new Map()
 		Array.from(areaCells).forEach(e => {
@@ -147,25 +149,27 @@ export class EmptyAreas {
 		 this.deleteFromEmptyAreas('x', xS)
 		 this.deleteFromEmptyAreas('y', yS)
 		log("HORIZONT and VERTIC areac")
-		log(this.horizontalAreas)
-		log(this.verticalAreas)
+		log(this.rotatedAreas)
+		log(this.notRotatedAreas)
 	//	console.log(this.horizontalAreas, '-----H')
 	//	console.log(this.verticalAreas, '------V')
 	}
 
 	generateRandomShip(type: string, size: number, isRotate: boolean) {
-		console.log("RANDOMMM44444")
-		const axis = isRotate ? 'vertical' : 'horizont'
-		console.log("CURRENTAxis", axis,isRotate)
-		const objAxis = isRotate ? this.horizontalAreas :this.verticalAreas
+		console.log("generateRandomShip")
+		//const axis = isRotate ? 'vertical' : 'horizont'
+		//const axis = isRotate ?  :'vertical'
+		//console.log("CURRENTAxis", axis,isRotate)
+		const objAxis = isRotate ? JSON.parse(JSON.stringify(this.rotatedAreas))
+			:JSON.parse(JSON.stringify(this.notRotatedAreas))
 		//const objAxis = isRotate ? this.verticalAreas : this.horizontalAreas
 		console.log(JSON.parse(JSON.stringify(objAxis)), 'ObjAxis')
-		const suited = objAxis.filter(e => e.longer >= size)
+		const suited = objAxis.filter((e:axisData) => e.longer >= size)
 		console.log(JSON.parse(JSON.stringify(suited)), 'SUITED')
 		const randomItm = Math.floor(Math.random() * suited.length)
-		//console.log(randomItm,'RANDitm')
+		console.log(randomItm,'RANDitm')
 		const coords = suited[randomItm].data.find((el: []) => el.length >= size)
-		 //console.log(coords,'coords')
+		 console.log(coords,'coords')
 		//
 		// //console.log('NEWshipData',JSON.parse(JSON.stringify({size, suited, randomItm, coords, axis})))
 		// console.log(coords.length - size,'coords.length - size')
@@ -176,6 +180,6 @@ export class EmptyAreas {
 		console.log('y-', y, 'x-', x)
 	//	log({y,x,type,size,isRotate,axis})
 	//	console.log('NEWshipData',y,x,type,size,isRotate,axis)
-		this.onGetCoordinates(axis, type, y, x,isRotate)
+		this.onGetCoordinates( type, y, x,isRotate)
 	}
 }

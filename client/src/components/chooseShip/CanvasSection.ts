@@ -44,6 +44,7 @@ export class CanvasSection extends Control {
 	onResetActiveShip: () => void
 	onFillShipArea: (areaCells: Set<string>, value: number) => void
 	private createEmptyValues: boolean;
+	private isRandomMode: boolean;
 
 	constructor(parentNode: HTMLElement, ships: Record<string, number>, board: number[][],
 							isRotated: boolean, activeShip: string,
@@ -52,6 +53,7 @@ export class CanvasSection extends Control {
 							onDataFromRandom: (type: string, isRotated: boolean) => void) {
 		super(parentNode);
 		this.imagesObj = imagesObj
+		this.isRandomMode=false
 		this.ships = ships
 		this.isRotated = false
 		this.activeShip = activeShip
@@ -83,7 +85,7 @@ this.createEmptyValues=false
 		]
 		this.drawScene()
 		this.randomShips = new RandomShips()
-		this.randomShips.onGetCoordinates = (axis: string, type: string,
+		this.randomShips.onGetCoordinates = (type: string,
 																				 y: number, x: number, isRotate: boolean) => {
 
 			//	this.shipsController.fromRandomData(type, axis !== 'vertical')
@@ -103,8 +105,9 @@ this.createEmptyValues=false
 	}
 
 	autoPutShips(shipsToPut: Record<string, number>, board: number[][]) {
-		//log("AUTO")
+		log("AUTO")
 		//this.randomShips.actualShips(shipsToPut,board)
+		this.isRandomMode=true
 		this.randomShips.putRandomShips(shipsToPut,board)
 	}
 
@@ -116,10 +119,10 @@ this.createEmptyValues=false
 	}
 
 	onClick(e: MouseEvent) {
-		if(!this.createEmptyValues){
-			this.randomShips.emptyValues(this.board)
-			this.createEmptyValues=true
-		}
+	//	if(!this.createEmptyValues){
+		//	this.randomShips.emptyValues(this.board)
+		//	this.createEmptyValues=true
+	//	}
 		const {x, y} = this.getCursorPosition(e, this.canvasSection.node)
 		//	if (this.intersectionController.isCurrentIntersect) return
 		this.canvasSection.node.removeEventListener('mousemove', this.moveBinded)
@@ -268,7 +271,9 @@ this.createEmptyValues=false
 			this.boardMatrix.valueToCell(yCoord, xCoord, 'ship')
 		}
 		//	console.log(areaCells,'AREACELLS')
-		this.randomShips.occupateCells(areaCells)
+		if(this.isRandomMode) {
+			this.randomShips.occupateCells(areaCells)
+		}
 		this.onFillShipArea(areaCells, this.boardMatrix.getBlockValue())
 	}
 }

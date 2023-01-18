@@ -7,7 +7,7 @@ export default class RandomShips {
 	private emptyAreas: EmptyAreas;
 	private generator: Generator<string, void, unknown>;
 	private intervalId: any;
-	onGetCoordinates: (axis: string, type: string, y: number, x: number, isRotate: boolean) => void
+	onGetCoordinates: (type: string, y: number, x: number, isRotate: boolean) => void
 	private isRandomActive: boolean;
 
 	constructor() {
@@ -16,8 +16,8 @@ export default class RandomShips {
 		this.generator = null
 		this.emptyAreas = new EmptyAreas()
 		this.emptyAreas.onGetCoordinates =
-			(axis: string, type: string, y: number, x: number, isRotate: boolean) => {
-				this.onGetCoordinates(axis, type, y, x, isRotate)
+			(type: string, y: number, x: number, isRotate: boolean) => {
+				this.onGetCoordinates(type, y, x, isRotate)
 			}
 	}
 
@@ -36,11 +36,11 @@ export default class RandomShips {
 	interval() {
 		log("interval")
 		const val = this.generator.next().value
-		//console.log(val,'val')
+		console.log(val,'val')
 		if (val) {
 			const isRotate = !!Math.round(Math.random())
 			const shipSize = ShipsSizes[val as keyof typeof ShipsSizes]
-		//	console.log(shipSize,'size','----isRotare=',isRotate)
+			console.log('type-',val,'||',shipSize,'size','----isRotare=',isRotate)
 			this.emptyAreas.generateRandomShip(val, shipSize, isRotate)
 		} else {
 			clearInterval(this.intervalId)
@@ -55,11 +55,11 @@ export default class RandomShips {
 		this.ships = shipsToPut
 		this.emptyValues(board)
 		this.generator = this.genShipsToAuto()
-		while (this.interval()) {
-			console.log('1')
-		}
-		//this.interval()
-		//this.interval()
+		// while (this.interval()) {
+		// 	console.log('1')
+		// }
+		this.interval()
+		this.interval()
 	//this.intervalId = setInterval(()=>this.interval(),100)
 	}
 
