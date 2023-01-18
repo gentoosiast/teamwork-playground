@@ -1,9 +1,9 @@
 import React, {useEffect, useRef, useState} from "react";
-import CanvasSection, {tShipCanvas} from "./CanvasSection";
+import CanvasSection, {log, tShipCanvas} from "./CanvasSection";
 import {useDispatch, useSelector} from "react-redux";
 import {IShipsStore} from "../../reducer/shipsReducer";
 import {AppDispatch} from "../../dto";
-import {addShip, setActiveShip, isRotateShip,setDecShip} from '../../reducer/shipsReducer'
+import {addShip, setActiveShip, isRotateShip,setDecShip,randomRotate} from '../../reducer/shipsReducer'
 import {fillCells, clearHovered, setMoveAdded, IBoardStore,fillAreaCells} from '../../reducer/boardReducer'
 import {imagesObjType} from "../application/app";
 
@@ -30,8 +30,10 @@ export const CanvasComponent = ({imagesObj}: { imagesObj: imagesObjType }) => {
 					dispatch(setDecShip(ship.type))
 				},
 				(type: string, _isRotated: boolean) => {
-					//dispatch(setActiveShip(type))
-					//other method from random=====>dispatch(isRotateShip(_isRotated))
+				//console.log("onDataFromRandom")
+					dispatch(setActiveShip(type))
+					dispatch(randomRotate(_isRotated))
+				//	dispatch(isRotateShip(_isRotated))
 				})
 			setCanvSection(canvas)
 			canvas.onRotateShip = () => dispatch(isRotateShip())
@@ -44,12 +46,21 @@ export const CanvasComponent = ({imagesObj}: { imagesObj: imagesObjType }) => {
 		} else {
 			canvSection.destroy()
 		}
-	}, [isAutoPut])
-
+	}, [])
+useEffect(()=>canvSection?.autoPutShips(ships,board),[isAutoPut])
 	useEffect(() => canvSection?.updateShipOnBoard(shipsOnCanvas), [shipsOnCanvas])
-	useEffect(() => canvSection?.updateBoard(board), [board])
-	useEffect(() => canvSection?.addActiveShip(activeShip), [activeShip])
-	useEffect(() => canvSection?.setRotate(isRotated), [isRotated])
+	useEffect(() => {
+		canvSection?.updateBoard(board)
+	//	log(board)
+	}, [board])
+	useEffect(() => {
+	//	console.log("APDT act sh")
+		canvSection?.addActiveShip(activeShip)
+	}, [activeShip])
+	useEffect(() => {
+		//console.log("APDT is rot")
+		canvSection?.setRotate(isRotated)
+	}, [isRotated])
 	return (
 		<div ref={canvasRef}/>
 	)

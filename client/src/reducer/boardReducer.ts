@@ -56,6 +56,7 @@ const boardReducer = createSlice({
 				const [y, x] = cell.split('-')
 				state.boardMatrix[+y][+x] = action.payload.value
 			})
+			console.log("stBorad",state.boardMatrix)
 		},
 		clearHovered(state, action: PayloadAction<number>) {
 			state.boardMatrix.map((row: number[]) => {

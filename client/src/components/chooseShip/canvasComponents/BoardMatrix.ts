@@ -17,7 +17,7 @@ export default class BoardMatrix {
 	private boardOccupateValue: number;
 
 	constructor(isRotated: boolean, board: number[][]) {
-		this.board = board
+		this.board = JSON.parse(JSON.stringify(board))
 		//this.isRotated = isRotated
 		this.cellsInRow = 10
 		this._cellSize = 30
@@ -88,7 +88,17 @@ export default class BoardMatrix {
 	}
 
 	valueToCell(y: number, x: number, val: string) {
-		this.board[y][x] = val === 'blocked' ? this.boardMatrixBlockedCell : val === 'ship' ? 88 : 99
+		//console.log(this.board,'BMatrix')
+		//console.log(val,'val')
+	//	console.log(y,x,'y-x')
+		const t=val === 'blocked'
+			? this.boardMatrixBlockedCell
+			: val === 'ship'
+				? 88 : 99
+	//	console.log("TTTt",t)
+	//	console.log(this.board[y][x],')')
+		this.board[y][x] = t
+	//	log(this.board)
 	}
 
 	updateBoard(board: number[][]) {
