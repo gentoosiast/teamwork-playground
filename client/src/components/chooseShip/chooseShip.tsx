@@ -81,7 +81,6 @@ interface IUserStore {
 const ChooseShip = ({socket, imagesObj}: IChooseShip) => {
 	const rand = 0//Math.floor(Math.random()*3)
 	const idGame = useSelector((state: IUserStore) => state.userData.idGames)
-	const shipsw = useSelector(((state: IShipsStore) => state.shipsData.shipsToPut))
 	return (<>
 		<ChooseComponent imagesObj={imagesObj}/>
 		<button onClick={() => socket.startGame(idGame[idGame.length - 1], ships[rand])}>Start game</button>

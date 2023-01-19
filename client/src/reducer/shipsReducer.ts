@@ -34,15 +34,7 @@ const shipsReducer = createSlice({
 	reducers: {
 		addShip(state, action: PayloadAction<{ ship:string,active:string }>) {
 			const ship=JSON.parse(action.payload.ship)
-			//	console.log(state,'THIS')
-			// console.log(action.payload)
-		// 	if(!state.activeShip)return
-		// 	console.log(state.shipsToPut[`${state.activeShip}`]-1,'PUTT')
-		// 	//const elValue=state.shipsToPut[`${state.activeShip}`]
-		// 	// @ts-ignore
 		 state.shipsOnCanvas.push(ship)
-		// 	console.log(state.shipsOnCanvas,'ONCANV')
-		// 	state.shipsToPut[`${state.activeShip}`]=state.shipsToPut[`${state.activeShip}`]-1
 		},
 		isRotateShip(state){
 			state.isRotate=!state.isRotate

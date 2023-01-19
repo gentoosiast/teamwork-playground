@@ -10,7 +10,7 @@ import {imagesObjType} from "../application/app";
 import {AppDispatch} from "../../dto";
 
 export enum ShipsSizes {
-	small = 2,
+	small = 1,
 	medium,
 	large,
 	huge

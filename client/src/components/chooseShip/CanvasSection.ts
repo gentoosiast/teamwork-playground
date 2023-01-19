@@ -10,7 +10,7 @@ export const log = function (arg: any) {
 	console.log(JSON.parse(JSON.stringify(arg)))
 }
 export type tShipCanvas = { type: string, isRotate: boolean, xC: number, yC: number }
-
+//todo field onCanvas
 export class CanvasSection extends Control {
 	private canvasSection: Control<HTMLCanvasElement>;
 	private ctx: CanvasRenderingContext2D;
@@ -45,12 +45,13 @@ export class CanvasSection extends Control {
 	onFillShipArea: (areaCells: Set<string>, value: number) => void
 	private createEmptyValues: boolean;
 	private isRandomMode: boolean;
-
+	shipsReady:()=>void
 	constructor(parentNode: HTMLElement, ships: Record<string, number>, board: number[][],
 							isRotated: boolean, activeShip: string,
 							shipsOnCanvas: tShipCanvas[], imagesObj: imagesObjType, isAutoPut: boolean,
 							onAddShip: (ship: tShipCanvas) => void,
-							onDataFromRandom: (type: string, isRotated: boolean) => void) {
+							// onDataFromRandom: (type: string, isRotated: boolean) => void
+	) {
 		super(parentNode);
 		this.imagesObj = imagesObj
 		this.isRandomMode=false
@@ -85,14 +86,13 @@ this.createEmptyValues=false
 		]
 		this.drawScene()
 		this.randomShips = new RandomShips()
+		this.randomShips.shipsReady=()=>{
+			this.shipsReady()
+		//setTimeout(()=>console.log("*****",this.shipsOnCanvas),0)
+		}
 		this.randomShips.onGetCoordinates = (type: string,
 																				 y: number, x: number, isRotate: boolean) => {
 
-			//	this.shipsController.fromRandomData(type, axis !== 'vertical')
-			//	this.prevPosX = x
-			//	this.prevPosY = y
-			// onDataFromRandom(type, isRotate)
-			// console.log(x,y,'RANDING')
 			const size=ShipsSizes[type as keyof typeof ShipsSizes]
 			 this.addShipToCanvasmage(x, y,size,isRotate,type)
 		}
@@ -108,6 +108,7 @@ this.createEmptyValues=false
 		log("AUTO")
 		//this.randomShips.actualShips(shipsToPut,board)
 		this.isRandomMode=true
+		this.isRotated=null
 		this.randomShips.putRandomShips(shipsToPut,board)
 	}
 
@@ -119,12 +120,7 @@ this.createEmptyValues=false
 	}
 
 	onClick(e: MouseEvent) {
-	//	if(!this.createEmptyValues){
-		//	this.randomShips.emptyValues(this.board)
-		//	this.createEmptyValues=true
-	//	}
 		const {x, y} = this.getCursorPosition(e, this.canvasSection.node)
-		//	if (this.intersectionController.isCurrentIntersect) return
 		this.canvasSection.node.removeEventListener('mousemove', this.moveBinded)
 		this.canvasSection.node.removeEventListener('click', this.clickBinded)
 		document.body.removeEventListener('keyup', this.rotateShipBinded)
@@ -133,13 +129,11 @@ this.createEmptyValues=false
 
 	updateShipOnBoard(shipsOnCanvas: tShipCanvas[]) {
 		this.shipsOnCanvas = shipsOnCanvas
+		console.log("##$$#$",this.shipsOnCanvas)
 		this.drawScene()
 	}
 
 	addShipToCanvasmage(x: number, y: number, size?: number, isRotate?: boolean, type?: string) {
-		//console.log("IMG--",x,y,this.activeSize,this.isRotated)
-		//console.log("IMAGE")
-		//	console.log('addShipToCanvasmage',x, y,size,isRotate,type)
 		this.intersectionController.iterAddToIntersection(x, y, size || this.activeSize, isRotate || this.isRotated)
 		this.boardMatrix.clearCells();
 		this.fillShipArea(x, y, size || this.activeSize, isRotate)
@@ -147,7 +141,6 @@ this.createEmptyValues=false
 			xC: x, yC: y,
 			isRotate: isRotate || this.isRotated, type: type || this.activeShip
 		}
-	//	console.log(imageObj,'OBJ')
 		this.onAddShip(imageObj)
 		this.drawScene()
 	}
@@ -163,6 +156,11 @@ this.createEmptyValues=false
 
 	onMove(e: MouseEvent) {
 		const {x, y} = this.getCursorPosition(e, this.canvasSection.node)
+		if(!this.boardMatrix.isOnBoard(x, y, this.activeSize, this.isRotated)){
+			document.body.removeEventListener('keyup', this.rotateShipBinded)
+			this.canvasSection.node.removeEventListener('click', this.clickBinded)
+			this.isListenCkick = false
+		}
 		if (this.boardMatrix.isOnBoard(x, y, this.activeSize, this.isRotated)) {
 			this.boardMatrix.clearCells()
 			this.x = x
@@ -223,7 +221,8 @@ this.createEmptyValues=false
 		this.shipsOnCanvas?.forEach(ship => {
 			const axis = ship.isRotate ? 'vertical' : 'horizont'
 			const img = this.imagesObj[axis][ship.type]
-			this.ctx.drawImage(img, this.boardMatrix.inPixels(ship.xC), this.boardMatrix.inPixels(ship.yC), img.width, img.height)
+			this.ctx.drawImage(img, this.boardMatrix.inPixels(ship.xC), this.boardMatrix.inPixels(ship.yC),
+				img.width, img.height)
 		})
 	}
 
@@ -243,14 +242,11 @@ this.createEmptyValues=false
 
 	circleStepsFill(y: number, x: number, val: string) {
 		const pointsArr: string[] = []
-		//	console.log(this.boardMatrix.matrixLength(),'CIRCELmaxr')
 		this.circleSteps.forEach(stp => {
 			if (y + stp.y < 0 || y + stp.y >= this.boardMatrix.matrixLength()
 				|| x + stp.x < 0 || x + stp.x >= this.boardMatrix.matrixLength()) return//y + stp.y, x + i + stp.x
-				//console.log("~",y + stp.y,"~", x + stp.x)
 			pointsArr.push(this.fillArea(y + stp.y, x + stp.x, val))
 		})
-		//	console.log("POINTSARR",pointsArr)
 		return pointsArr
 	}
 
@@ -262,15 +258,11 @@ this.createEmptyValues=false
 		for (let i = 0; i < size; i++) {
 			const xCoord = (!rot) ? x + i : x
 			const yCoord = (rot) ? y + i : y
-			//	console.log(this.board,'$$$$$')
-		//		console.log(yCoord,xCoord,'-------Y_X')
 			this.circleStepsFill(yCoord, xCoord, 'blocked').forEach(c => {
 				areaCells.add(c)
 			})
-			//	console.log("Areasells",areaCells)
 			this.boardMatrix.valueToCell(yCoord, xCoord, 'ship')
 		}
-		//	console.log(areaCells,'AREACELLS')
 		if(this.isRandomMode) {
 			this.randomShips.occupateCells(areaCells)
 		}

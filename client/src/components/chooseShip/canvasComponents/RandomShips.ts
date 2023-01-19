@@ -1,15 +1,13 @@
 import {EmptyAreas} from "../randomAlgorithm";
 import {ShipsSizes} from "../ChooseComponent";
-import {log} from "../CanvasSection";
 
 export default class RandomShips {
 	private ships: Record<string, number>;
 	private emptyAreas: EmptyAreas;
 	private generator: Generator<string, void, unknown>;
-	private intervalId: any;
 	onGetCoordinates: (type: string, y: number, x: number, isRotate: boolean) => void
 	private isRandomActive: boolean;
-
+	shipsReady:()=>void
 	constructor() {
 		this.ships = null
 		this.isRandomActive = false
@@ -32,18 +30,14 @@ export default class RandomShips {
 			yield y[i]
 		}
 	}
-//todo define random metchod and click
 	interval() {
-		log("interval")
 		const val = this.generator.next().value
-		console.log(val,'val')
 		if (val) {
 			const isRotate = !!Math.round(Math.random())
 			const shipSize = ShipsSizes[val as keyof typeof ShipsSizes]
-			console.log('type-',val,'||',shipSize,'size','----isRotare=',isRotate)
 			this.emptyAreas.generateRandomShip(val, shipSize, isRotate)
 		} else {
-			clearInterval(this.intervalId)
+			this.shipsReady()
 			return false
 		}
 		return true
@@ -55,11 +49,9 @@ export default class RandomShips {
 		this.ships = shipsToPut
 		this.emptyValues(board)
 		this.generator = this.genShipsToAuto()
-		// while (this.interval()) {
-		// 	console.log('1')
-		// }
-		this.interval()
-		this.interval()
+		while (this.interval()) {console.log('1')}
+		// this.interval()
+		// this.interval()
 	//this.intervalId = setInterval(()=>this.interval(),100)
 	}
 

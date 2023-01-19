@@ -9,7 +9,6 @@ import {AppDispatch} from "../../dto";
 
 const ShipsSection = () => {
 	const ships=useSelector(((state:IShipsStore) => state.shipsData.shipsToPut))
-//	console.log(ships,'SPS')
 	const dispatch=useDispatch<AppDispatch>()
 	return (
 		<div>
@@ -19,9 +18,7 @@ const ShipsSection = () => {
 						<p>
 							<span>{ship[1]}</span>
 							<ImageComponent
-								onClick={() => {
-									dispatch(setActiveShip(ship[0]))
-								}
+								onClick={() => {if(ship[1]>0) dispatch(setActiveShip(ship[0]))}
 								}
 								size={ShipsSizes[ship[0] as keyof typeof ShipsSizes]}/>
 						</p>)

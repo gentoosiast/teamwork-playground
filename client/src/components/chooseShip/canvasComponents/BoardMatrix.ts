@@ -88,17 +88,11 @@ export default class BoardMatrix {
 	}
 
 	valueToCell(y: number, x: number, val: string) {
-		//console.log(this.board,'BMatrix')
-		//console.log(val,'val')
-	//	console.log(y,x,'y-x')
-		const t=val === 'blocked'
+	const t=val === 'blocked'
 			? this.boardMatrixBlockedCell
 			: val === 'ship'
 				? 88 : 99
-	//	console.log("TTTt",t)
-	//	console.log(this.board[y][x],')')
 		this.board[y][x] = t
-	//	log(this.board)
 	}
 
 	updateBoard(board: number[][]) {
