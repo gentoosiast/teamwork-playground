@@ -45,7 +45,7 @@ export class CanvasSection extends Control {
 	onFillShipArea: (areaCells: Set<string>, value: number) => void
 	private createEmptyValues: boolean;
 	private isRandomMode: boolean;
-	shipsReady:()=>void
+	//shipsReady:()=>void
 	constructor(parentNode: HTMLElement, ships: Record<string, number>, board: number[][],
 							isRotated: boolean, activeShip: string,
 							shipsOnCanvas: tShipCanvas[], imagesObj: imagesObjType, isAutoPut: boolean,
@@ -86,10 +86,6 @@ this.createEmptyValues=false
 		]
 		this.drawScene()
 		this.randomShips = new RandomShips()
-		this.randomShips.shipsReady=()=>{
-			this.shipsReady()
-		//setTimeout(()=>console.log("*****",this.shipsOnCanvas),0)
-		}
 		this.randomShips.onGetCoordinates = (type: string,
 																				 y: number, x: number, isRotate: boolean) => {
 
@@ -129,7 +125,7 @@ this.createEmptyValues=false
 
 	updateShipOnBoard(shipsOnCanvas: tShipCanvas[]) {
 		this.shipsOnCanvas = shipsOnCanvas
-		console.log("##$$#$",this.shipsOnCanvas)
+	//	console.log("##$$#$",this.shipsOnCanvas)
 		this.drawScene()
 	}
 

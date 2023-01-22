@@ -6,10 +6,21 @@ import {setActiveShip} from '../../reducer/shipsReducer'
 import {ShipsSizes} from "./ChooseComponent";
 import acorn from "acorn";
 import {AppDispatch} from "../../dto";
+import {useCallback} from "react";
+import {tShipCanvas} from "./CanvasSection";
 
-const ShipsSection = () => {
-	const ships=useSelector(((state:IShipsStore) => state.shipsData.shipsToPut))
-	const dispatch=useDispatch<AppDispatch>()
+const ShipsSection = ({onStartGame}
+												: { onStartGame: (ships: tShipCanvas[]) => void }) => {
+	const ships = useSelector(((state: IShipsStore) => state.shipsData.shipsToPut))
+	const shipsOnCanvas = useSelector((state: IShipsStore) => state.shipsData.shipsOnCanvas)
+	const isReady = useCallback(() => {
+		return Object.values(ships).every(e => e === 0)
+	}, [ships])
+	if (isReady()) {
+		//console.log(shipsOnCanvas,'^')
+		onStartGame(shipsOnCanvas)
+	}
+	const dispatch = useDispatch<AppDispatch>()
 	return (
 		<div>
 			{
@@ -18,7 +29,9 @@ const ShipsSection = () => {
 						<p>
 							<span>{ship[1]}</span>
 							<ImageComponent
-								onClick={() => {if(ship[1]>0) dispatch(setActiveShip(ship[0]))}
+								onClick={() => {
+									if (ship[1] > 0) dispatch(setActiveShip(ship[0]))
+								}
 								}
 								size={ShipsSizes[ship[0] as keyof typeof ShipsSizes]}/>
 						</p>)

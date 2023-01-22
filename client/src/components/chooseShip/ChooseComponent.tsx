@@ -1,6 +1,6 @@
 import React, {useEffect, useRef, useState} from "react";
 //import {ShipsSection} from "./ShipsSection";
-import CanvasSection from "./CanvasSection";
+import CanvasSection, {tShipCanvas} from "./CanvasSection";
 import ShipsSection from "./ShipsSection";
 import {useDispatch, useSelector} from "react-redux";
 import {IShipsStore} from "../../reducer/shipsReducer";
@@ -16,7 +16,8 @@ export enum ShipsSizes {
 	huge
 }
 
-const ChooseComponent = ({imagesObj}:{imagesObj:imagesObjType}) => {
+const ChooseComponent = ({imagesObj,onStartGame}
+:{imagesObj:imagesObjType,onStartGame:(ship:tShipCanvas[])=>void}) => {
 	const shipsRef = useRef(null)
 	const dispatch=useDispatch<AppDispatch>()
 
@@ -25,7 +26,7 @@ const ChooseComponent = ({imagesObj}:{imagesObj:imagesObjType}) => {
 			<div ref={shipsRef}>
 				<h5>Расставьте корабли</h5>
 				<button onClick={()=>dispatch(setAutoPut())}>Расставить автоматически</button>
-				<ShipsSection/>
+				<ShipsSection onStartGame={(ships:tShipCanvas[])=>onStartGame(ships)}/>
 			</div>
 			<CanvasComponent imagesObj={imagesObj}/>
 		</>

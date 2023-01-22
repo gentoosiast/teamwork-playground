@@ -51,13 +51,14 @@ export class SocketModel {
           const {ships,currentPlayerIndex} = JSON.parse(parsedMsg.data);
           const shipForClient = emptyState();
           ships.forEach((ship:IShip) => {
-                for (let i = 0; i < ship.length; i += 1) {
-                  if (ship.direction === 0) {
-                    shipForClient[ship.position.y][ship.position.x + i] = Cell.Occupied;
-                  } else {
-                    shipForClient[ship.position.y + i][ship.position.x] = Cell.Occupied;
-                  }
-                }
+            //todo terurn logic
+                // for (let i = 0; i < ship.length; i += 1) {
+                //   if (ship.direction === 0) {
+                //     shipForClient[ship.position.y][ship.position.x + i] = Cell.Occupied;
+                //   } else {
+                //     shipForClient[ship.position.y + i][ship.position.x] = Cell.Occupied;
+                //   }
+              //  }
               });
           dispatch(addField({field:shipForClient}));
           dispatch(changeCurrentPlayer({isCurrentPlayer: currentPlayerIndex=== this.playerIdx}))
@@ -163,7 +164,6 @@ export class SocketModel {
   //   }
   //   this.webSocket.send(JSON.stringify(request));
   // }
-
   reg(data:IRegData){
     this.sendMessage('reg',JSON.stringify(data))
   }

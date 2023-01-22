@@ -1,11 +1,12 @@
-import React, {useState} from 'react';
+import React, {useRef, useState} from 'react';
 import {useSelector} from 'react-redux';
-import {IUserInitialData} from '../../dto';
+import {IShip, IUserInitialData, IVector} from '../../dto';
 
 import {SocketModel} from '../../socketModel';
 import ChooseComponent from "./ChooseComponent";
 import {IShipsStore} from "../../reducer/shipsReducer";
 import {imagesObjType} from "../application/app";
+import {tShipCanvas} from "./CanvasSection";
 
 interface IChooseShip {
 	socket: SocketModel,
@@ -79,11 +80,23 @@ interface IUserStore {
 }
 
 const ChooseShip = ({socket, imagesObj}: IChooseShip) => {
-	const rand = 0//Math.floor(Math.random()*3)
+//	const rand = 0//Math.floor(Math.random()*3)
 	const idGame = useSelector((state: IUserStore) => state.userData.idGames)
+	//const ships=null
+	const shipsOnCanvas= useSelector((state:IShipsStore)=>state.shipsData.shipsOnCanvas)
 	return (<>
-		<ChooseComponent imagesObj={imagesObj}/>
-		<button onClick={() => socket.startGame(idGame[idGame.length - 1], ships[rand])}>Start game</button>
+		<ChooseComponent imagesObj={imagesObj} onStartGame={()=>{console.log(shipsOnCanvas)}}/>
+		<button onClick={() => {
+			console.log(shipsOnCanvas)
+			const toIShip:IShip[]=shipsOnCanvas.map(sh=>{
+				return {
+					position:{x:sh.xC,y:sh.yC},
+					direction:!!sh.isRotate,
+					type:sh.type
+				}
+			})
+			socket.startGame(idGame[idGame.length - 1], toIShip)
+		}}>Start game</button>
 	</>)
 }
 

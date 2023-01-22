@@ -7,7 +7,6 @@ export default class RandomShips {
 	private generator: Generator<string, void, unknown>;
 	onGetCoordinates: (type: string, y: number, x: number, isRotate: boolean) => void
 	private isRandomActive: boolean;
-	shipsReady:()=>void
 	constructor() {
 		this.ships = null
 		this.isRandomActive = false
@@ -37,7 +36,6 @@ export default class RandomShips {
 			const shipSize = ShipsSizes[val as keyof typeof ShipsSizes]
 			this.emptyAreas.generateRandomShip(val, shipSize, isRotate)
 		} else {
-			this.shipsReady()
 			return false
 		}
 		return true
