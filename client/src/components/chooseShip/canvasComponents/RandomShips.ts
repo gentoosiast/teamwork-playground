@@ -2,29 +2,20 @@ import {EmptyAreas} from "../randomAlgorithm";
 import {ShipsSizes} from "../ChooseComponent";
 
 export default class RandomShips {
-	private matrix: number[][];
 	private ships: Record<string, number>;
 	private emptyAreas: EmptyAreas;
 	private generator: Generator<string, void, unknown>;
-	private intervalId: any;
-	onGetCoordinates: (axis: string, type: string, y: number, x: number) => void
+	onGetCoordinates: (type: string, y: number, x: number, isRotate: boolean) => void
 	private isRandomActive: boolean;
-
-	constructor(matrix: number[][]) {
-		this.matrix = matrix
+	constructor() {
 		this.ships = null
 		this.isRandomActive = false
-		this.generator = this.genShipsToAuto()
+		this.generator = null
 		this.emptyAreas = new EmptyAreas()
 		this.emptyAreas.onGetCoordinates =
-			(axis: string, type: string, y: number, x: number) => {
-				this.onGetCoordinates(axis, type, y, x)
+			(type: string, y: number, x: number, isRotate: boolean) => {
+				this.onGetCoordinates(type, y, x, isRotate)
 			}
-	}
-
-	actualShips(ships: Record<string, number>) {
-		this.ships = ships
-		console.log(this.ships,'EERRERR')
 	}
 
 	* genShipsToAuto() {
@@ -34,39 +25,37 @@ export default class RandomShips {
 				y.push(k[0])
 			}
 		})
-		//console.log(y,'$')
 		for (let i = 0; i < y.length; i++) {
 			yield y[i]
 		}
 	}
-//images
-	//
 	interval() {
 		const val = this.generator.next().value
 		if (val) {
 			const isRotate = !!Math.round(Math.random())
 			const shipSize = ShipsSizes[val as keyof typeof ShipsSizes]
-			this.emptyAreas.putShip(val, shipSize, isRotate)
+			this.emptyAreas.generateRandomShip(val, shipSize, isRotate)
 		} else {
-			//clearInterval(this.intervalId)
 			return false
 		}
 		return true
 	}
-
-	putRandomShips() {
-		this.isRandomActive = true
-		this.emptyAreas.start(this.matrix)
-		// for(let i=0;i<8;i++){
-		// 	this.interval()
-		// }
-		//this.intervalId = setInterval(() => {
-		while (this.interval()){ console.log('1')}
-		// 	// setTimeout(()=>this.interval(),500)
-		// 	//	}, 100)
-		// 	}
+	emptyValues(board:number[][]){
+		this.emptyAreas.start(board)
 	}
+	putRandomShips(shipsToPut: Record<string, number>, board: number[][]) {
+		this.ships = shipsToPut
+		this.emptyValues(board)
+		this.generator = this.genShipsToAuto()
+		while (this.interval()) {console.log('1')}
+		// this.interval()
+		// this.interval()
+	//this.intervalId = setInterval(()=>this.interval(),100)
+	}
+
 	occupateCells(areaCells: Set<string>) {
-		this.isRandomActive && this.emptyAreas.occupateArea(areaCells)
+	////	console.log("_____occupateCells___")
+	//	console.log("AREAcells",areaCells)
+		this.emptyAreas.occupateArea(areaCells)
 	}
 }

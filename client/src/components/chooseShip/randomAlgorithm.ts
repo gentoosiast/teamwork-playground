@@ -4,27 +4,30 @@ type axisData = { id: number, data: number[][], longer: number }
 
 export class EmptyAreas {
 	private matrix: number[][];
-	private verticalAreas: any[];
-	private horizontalAreas: any[];
-	onGetCoordinates: (axis: string, type: string, y: number, x: number) => void
+	// private verticalAreas: any[];
+	// private horizontalAreas: any[];
+	onGetCoordinates: (type: string, y: number, x: number,isRotate:boolean) => void
+	private notRotatedAreas: axisData[];
+	private rotatedAreas: axisData[];
 
 	constructor() {
 		this.matrix = null
-		this.verticalAreas = null
-		this.horizontalAreas = null
+	//	this.verticalAreas = null
+	//	this.horizontalAreas = null
 	}
 
 	start(matrix: number[][]) {
 		this.matrix = matrix
+		log("Ramdomstrt")
+		log(matrix)
 		//***** logic Mistake
-		this.verticalAreas = this.arrayDataFromArray('horizont')
-		this.horizontalAreas = this.arrayDataFromArray('vertical')
+		this.notRotatedAreas = this.arrayDataFromArray('horizont',matrix)
+		this.rotatedAreas = this.arrayDataFromArray('vertical',matrix)
 		log("VV--HH")
-		log(this.verticalAreas)
-		log(this.horizontalAreas)
+		log(this.notRotatedAreas)
+		log(this.rotatedAreas)
 	}
 
-//new Ar??
 	isNext(first: number, second: number) {
 		return first + 1 === second
 	}
@@ -51,13 +54,12 @@ export class EmptyAreas {
 	}
 
 	axisData(_axis: string, matrix: number[][]) {
-		console.log("_AXIS",_axis)
 		const arr = []
 		for (let i = 0; i < matrix.length; i++) {
 			const s: number[] = []
 			for (let j = 0; j < matrix[0].length; j++) {
 				const value = _axis === 'vertical' ? matrix[j][i] : matrix[i][j]
-				if (value === 99) s.push(j)
+				if (value === 0) s.push(j)
 			}
 			const t = this.arrToSubArr(s)
 			arr.push(t)
@@ -77,9 +79,10 @@ export class EmptyAreas {
 		return ar.sort((a, b) => b.longer - a.longer)
 	}
 
-	arrayDataFromArray(value: string) {
+	arrayDataFromArray(value: string,board:number[][]) {
+		//console.log(value)
 		const ar: axisData[] = []
-		const r = this.axisData(value, this.matrix)
+		const r = this.axisData(value, board)
 		r.forEach((row, i) => {
 			const longer = this.longerSub(row)
 			ar.push({id: i, data: row, longer})
@@ -97,42 +100,28 @@ export class EmptyAreas {
 	}
 
 	apdateEmptyAreas(axis: string, d: string[]) {
-		const objAxis = axis === 'horizont' ? this.horizontalAreas : this.verticalAreas
-			console.log(JSON.parse(JSON.stringify(objAxis)), '!!ObjAxis')
-		const el = objAxis.find(e => e.id == d[0])
+			const objAxis = axis === 'y' ? this.notRotatedAreas : this.rotatedAreas
+		 const el = objAxis.find(e => e.id == +d[0])
 		const idx = objAxis.indexOf(el)
 		//console.log("EL", el)
 		const setAxis = new Set(d[1].split('-'))
 		const rr = this.elementsHasntInSet(el, setAxis)
-		//console.log(rr,'elementsHasntInSet')
 		const subs = this.arrToSubArr(rr)
 		const longer = this.longerSub(subs)
 
 		objAxis.splice(idx, 1, {id: el.id, data: this.arrToSubArr(rr), longer})
-		// el.data = this.arrToSubArr(rr)
-		// el.longer = longer
-		console.log("APDT",JSON.parse(JSON.stringify(objAxis)))
+		el.data = this.arrToSubArr(rr)
+		el.longer = longer
 	}
 
 	deleteFromEmptyAreas(axis: string, data: Map<string, string>) {
-		console.log("deleteFromEmptyAreas    axis", axis)
 		const dAr = Array.from(data)
-		const ax = axis === 'x' ? 'horizont' : 'vertical'
 		dAr.forEach(d => {
-			//	console.log(d, 'DD')
-			this.apdateEmptyAreas(ax, d)
+			this.apdateEmptyAreas(axis, d)
 		})
-		if (axis === 'horizont') {
-			console.log(JSON.parse(JSON.stringify(this.horizontalAreas)), 'horELNEWWW')
-		} else {
-			console.log(JSON.parse(JSON.stringify(this.verticalAreas)), 'vertELNEWWW')
-		}
-
 	}
 
 	occupateArea(areaCells: Set<any>) {
-		console.log("OCUPATEAREA")
-		//	console.log("OCset",areaCells)
 		const yS = new Map()
 		const xS = new Map()
 		Array.from(areaCells).forEach(e => {
@@ -143,32 +132,26 @@ export class EmptyAreas {
 			const valX = xS.has(x) ? xS.get(x) + `-${y}` : `${y}`
 			xS.set(x, valX)
 		})
-		console.log(yS, 'YY')
-		console.log(xS, 'XXX')
-		this.deleteFromEmptyAreas('x', xS)
-		this.deleteFromEmptyAreas('y', yS)
-		console.log(this.horizontalAreas, '-----H')
-		console.log(this.verticalAreas, '------V')
+		 this.deleteFromEmptyAreas('x', xS)
+		 this.deleteFromEmptyAreas('y', yS)
 	}
 
-	putShip(type: string, size: number, isRotate: boolean) {
-		console.log("ISrotate", isRotate)
-		const axis = isRotate ? 'vertical' : 'horizont'
-		console.log("CURRENTAxis", axis)
-		const objAxis = isRotate ? this.verticalAreas : this.horizontalAreas
-		//console.log(JSON.parse(JSON.stringify(objAxis)), 'ObjAxis')
-		const suited = objAxis.filter(e => e.longer >= size)
-		//e.log(suited, 'SUITED')
-		const randomItm = Math.floor(Math.random() * suited.length)
-		//console.log(randomItm,'RANDitm')
+	generateRandomShip(type: string, size: number, isRotate: boolean) {
+		const objAxis = isRotate ? JSON.parse(JSON.stringify(this.rotatedAreas))
+			:JSON.parse(JSON.stringify(this.notRotatedAreas))
+		console.log(JSON.parse(JSON.stringify(objAxis)), 'ObjAxis')
+		const suited = objAxis.filter((e:axisData) => e.longer >= size)
+		console.log(JSON.parse(JSON.stringify(suited)), 'SUITED')
+
+		const randomItm = Math.round(Math.random() * (suited.length - 1));//Math.floor(Math.random() * (suited.length-1))
+		console.log(randomItm,'RANDitm')
 		const coords = suited[randomItm].data.find((el: []) => el.length >= size)
-		//e.log(coords)
-		console.log(JSON.parse(JSON.stringify({size, suited, randomItm, coords, axis})))
-		const x = !isRotate ? suited[randomItm].id : coords[Math.floor(Math.random() * (coords.length - size))]
-		const y = !isRotate ? coords[Math.floor(Math.random() * (coords.length - size))] : suited[randomItm].id;
-		//	console.log(x,y)
+	//	 console.log(coords,'coords')
+
+		const x = !isRotate ? coords[Math.floor(Math.random() * (coords.length - size))]:suited[randomItm].id
+		const y = !isRotate ? suited[randomItm].id:coords[Math.floor(Math.random() * (coords.length - size))]
+
 		console.log('y-', y, 'x-', x)
-		console.log(isRotate, 'ISROTATE')
-		this.onGetCoordinates(axis, type, y, x)
+		this.onGetCoordinates( type, y, x,isRotate)
 	}
 }

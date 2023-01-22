@@ -48,9 +48,9 @@ export interface IVector{
 }
 
   export interface IShip {
-    position: IVector
-    direction: number;
-    length: number;
+    position: IVector;
+    direction: boolean;
+    type:string
 }
 export interface IMessage {
   type: string,
