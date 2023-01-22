@@ -26,6 +26,7 @@ export const CanvasComponent = ({imagesObj}: { imagesObj: imagesObjType }) => {
 	}
 	useEffect(() => {
 			if (!canvSection) {
+
 				const canvas = new CanvasSection(canvasRef.current, ships, board, isRotated,
 					activeShip, shipsOnCanvas, imagesObj, isAutoPut,
 					(ship: tShipCanvas) => {

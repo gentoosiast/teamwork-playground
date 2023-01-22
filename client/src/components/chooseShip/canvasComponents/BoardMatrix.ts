@@ -28,7 +28,10 @@ export default class BoardMatrix {
 		this.boardMatrixEmptyValue = 0
 		this.boardOccupateValue = 7
 	}
-
+fillCell(val:string, x:number, y:number,activeSize:number, isRotated:boolean){
+	this.clearCells()
+	this.fillCells('hovered', x, y, activeSize, isRotated)
+}
 	inPixels(indx: number) {
 		return indx * this.cellSize
 	}
@@ -36,7 +39,9 @@ export default class BoardMatrix {
 	getBlockValue() {
 		return this.boardMatrixBlockedCell
 	}
-
+	getCurrentCell(x: number, y: number) {
+		return {x: Math.floor(x / this.cellSize), y: Math.floor(y / this.cellSize)}
+	}
 	isOnBoard(x: number, y: number, activeSize: number, rotated: boolean) {
 		const v = !rotated
 			? ((x + activeSize) <= this.matrixLength() && y < this.matrixLength() && y >= 0 && x >= 0)

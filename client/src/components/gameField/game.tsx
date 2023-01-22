@@ -1,5 +1,5 @@
 import './game.css';
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useRef, useState} from "react";
 import { Cell, IFieldsInitialState, IUserInitialData } from '../../dto'
 import { SocketModel } from "../../socketModel";
 import { useSelector } from 'react-redux';
@@ -23,19 +23,25 @@ interface IFieldStore {
 export function EnemyField(props: IGameFieldProps) {
   const enemyField = useSelector( (state: IFieldStore) => state.fieldsData.enemyField);
   const idGame = useSelector((state: IUserStore) => state.userData.idGames)
+  const fieldRef=useRef(null)
+
+  useEffect(()=>{
+    //*fieldRef.current
+  },[])
   return (
     <div className="field">
       {enemyField.map((row, y) => {
         return (
-          <div className="row" key={y}>
-            {row.map((cell, x) => {
-              return (
-                <div className={"cell" + (` ${styleMap[cell]}`)} key={x} onClick={() => {
-                  props.socket.attack(x, y, idGame[idGame.length-1]);
-                }}></div>
-              );
-            })}
-          </div>
+          <div ref={fieldRef}></div>
+          // <div className="row" key={y}>
+          //   {row.map((cell, x) => {
+          //     return (
+          //       <div className={"cell" + (` ${styleMap[cell]}`)} key={x} onClick={() => {
+          //         props.socket.attack(x, y, idGame[idGame.length-1]);
+          //       }}></div>
+          //     );
+          //   })}
+          // </div>
         )
       })}
     </div>

@@ -87,7 +87,7 @@ const ChooseShip = ({socket, imagesObj}: IChooseShip) => {
 	return (<>
 		<ChooseComponent imagesObj={imagesObj} onStartGame={()=>{console.log(shipsOnCanvas)}}/>
 		<button onClick={() => {
-			console.log(shipsOnCanvas)
+		//	console.log(shipsOnCanvas)
 			const toIShip:IShip[]=shipsOnCanvas.map(sh=>{
 				return {
 					position:{x:sh.xC,y:sh.yC},
@@ -95,7 +95,8 @@ const ChooseShip = ({socket, imagesObj}: IChooseShip) => {
 					type:sh.type
 				}
 			})
-			socket.startGame(idGame[idGame.length - 1], toIShip)
+			console.log(socket)
+			socket?.startGame(idGame[idGame.length - 1], toIShip)
 		}}>Start game</button>
 	</>)
 }
