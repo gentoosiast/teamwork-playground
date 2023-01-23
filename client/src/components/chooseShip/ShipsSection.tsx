@@ -26,7 +26,7 @@ const ShipsSection = ({onStartGame}
 			{
 				Object.entries(ships).map((ship: [string, number], i) => {
 					return (
-						<p>
+						<p key={i}>
 							<span>{ship[1]}</span>
 							<ImageComponent
 								onClick={() => {

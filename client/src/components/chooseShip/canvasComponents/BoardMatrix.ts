@@ -18,7 +18,6 @@ export default class BoardMatrix {
 
 	constructor(isRotated: boolean, board: number[][]) {
 		this.board = JSON.parse(JSON.stringify(board))
-		//this.isRotated = isRotated
 		this.cellsInRow = 10
 		this._cellSize = 30
 		this.hoveredCells = []
@@ -28,13 +27,16 @@ export default class BoardMatrix {
 		this.boardMatrixEmptyValue = 0
 		this.boardOccupateValue = 7
 	}
+	public getCursorPosition(event: MouseEvent, node: HTMLElement) {
+		const rect = node.getBoundingClientRect()
+		const x = event.clientX - rect.left
+		const y = event.clientY - rect.top
+		return this.getCurrentCell(x, y)
+	}
 fillCell(val:string, x:number, y:number,activeSize:number, isRotated:boolean){
 	this.clearCells()
-	this.fillCells('hovered', x, y, activeSize, isRotated)
+	this.fillCells(val, x, y, activeSize, isRotated)
 }
-	inPixels(indx: number) {
-		return indx * this.cellSize
-	}
 
 	getBlockValue() {
 		return this.boardMatrixBlockedCell

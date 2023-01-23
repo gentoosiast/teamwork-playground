@@ -26,7 +26,7 @@ export function EnemyField(props: IGameFieldProps) {
   const fieldRef=useRef(null)
 
   useEffect(()=>{
-    //*fieldRef.current
+    const Board=fieldRef.current
   },[])
   return (
     <div className="field">
