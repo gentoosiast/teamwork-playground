@@ -1,10 +1,9 @@
 import './game.css';
 import React, {useEffect, useRef, useState} from "react";
-import {Cell, IFieldsInitialState, IUserInitialData} from '../../dto'
+import {Cell, IFieldsInitialState, IUserInitialData,tShipCanvas} from '../../dto'
 import {SocketModel} from "../../socketModel";
 import {useSelector} from 'react-redux';
 import BoardComponent from "../chooseShip/canvasComponents/BoardComponent";
-import {tShipCanvas} from "../chooseShip/CanvasSection";
 import {imagesObjType} from "../application/app";
 import {IBoardStore} from "../../reducer/boardReducer";
 import {BoardMatrixBase, BoardMatrixGameField} from "../chooseShip/canvasComponents/BoardMatrix";
@@ -35,7 +34,7 @@ export function EnemyField(props: IGameFieldProps) {
 	const boardMatrix= new BoardMatrixGameField(enemyField)
 	boardMatrix.onGetClickedCell=(x,y)=>{
 		console.log(x,y)
-		//==props.socket.attack(x, y, idGame[idGame.length-1])
+		props.socket.attack(x, y, idGame[idGame.length-1]);
 	}
 	{/*//       <div className={"cell" + (` ${styleMap[cell]}`)} key={x} onClick={() => */}
 	{/*//         props.socket.attack(x, y, idGame[idGame.length-1]);*/}

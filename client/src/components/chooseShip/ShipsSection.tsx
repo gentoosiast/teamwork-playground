@@ -3,11 +3,10 @@ import ImageComponent from "./ImageComponent";
 import {useDispatch, useSelector} from "react-redux";
 import {IShipsStore} from "../../reducer/shipsReducer";
 import {setActiveShip} from '../../reducer/shipsReducer'
-import {ShipsSizes} from "./ChooseComponent";
 import acorn from "acorn";
-import {AppDispatch} from "../../dto";
+import {AppDispatch, ShipsSizes, tShipCanvas} from "../../dto";
 import {useCallback} from "react";
-import {tShipCanvas} from "./CanvasSection";
+
 
 const ShipsSection = ({onStartGame}
 												: { onStartGame: (ships: tShipCanvas[]) => void }) => {

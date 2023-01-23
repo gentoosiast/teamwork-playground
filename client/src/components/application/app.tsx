@@ -50,9 +50,9 @@ export const App = () => {
 			setImagesObj(imagesObj)
 			const webSocket = new SocketModel({dispatch});
 			setSocket(webSocket);
-			// setContent(<Registration socket={webSocket}/>);
+			 setContent(<Registration socket={webSocket}/>);
 			//setContent(<ChooseShip socket={socket} imagesObj={imagesObj}/>);
-			setContent(	<GameField socket={socket} shipsImages={imagesObj}></GameField>)
+			//setContent(	<GameField socket={socket} shipsImages={imagesObj}></GameField>)
 			return () => {
 				webSocket.close();
 			}

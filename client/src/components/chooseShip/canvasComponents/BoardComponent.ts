@@ -1,6 +1,6 @@
 import Control from "../../../../common/controll";
 import {imagesObjType} from "../../application/app";
-import {tShipCanvas} from "../CanvasSection";
+import {tShipCanvas} from "../../../dto";
 
 export default class BoardComponent extends Control {
 	private canvasSection: Control<HTMLCanvasElement>;

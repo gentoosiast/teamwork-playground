@@ -1,8 +1,8 @@
 import React, {useEffect, useMemo, useRef, useState} from "react";
-import CanvasSection, {log, tShipCanvas} from "./CanvasSection";
+import CanvasSection, {log} from "./CanvasSection";
 import {useDispatch, useSelector} from "react-redux";
 import {IShipsStore} from "../../reducer/shipsReducer";
-import {AppDispatch} from "../../dto";
+import {AppDispatch,tShipCanvas} from "../../dto";
 import {addShip, setActiveShip, isRotateShip, setDecShip, randomRotate} from '../../reducer/shipsReducer'
 import {fillCells, clearHovered, setMoveAdded, IBoardStore, fillAreaCells} from '../../reducer/boardReducer'
 import {imagesObjType} from "../application/app";

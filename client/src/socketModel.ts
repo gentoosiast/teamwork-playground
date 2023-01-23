@@ -174,8 +174,6 @@ export class SocketModel {
     this.sendMessage('add_user_to_room', JSON.stringify({ indexRoom}))
   }
   startGame(gameId: number, ships: IShip[]){
-    console.log(ships)
-    console.log("START")
     this.sendMessage('add_ships', JSON.stringify({gameId, ships, indexPlayer: this.playerIdx}))
   }
 

@@ -161,9 +161,7 @@ websocket.on('request', (e) => {
         break;
       }
       case 'add_ships':{
-        console.log("**&^^%%")
         const data =JSON.parse(parsedMsg.data);
-        console.log(data,'DATA')
         const game = games.get(data.gameId )
         if(game){
             game.addShip(data.ships, data.indexPlayer )

@@ -1,4 +1,4 @@
-import {tShipCanvas} from "../components/chooseShip/CanvasSection";
+import {tShipCanvas} from "../dto";
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
 export enum ShipsCount {
 	huge = 1,

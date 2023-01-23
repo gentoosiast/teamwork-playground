@@ -3,20 +3,23 @@ import {IClients, IShip, IPlayer, IVector,IMessage} from '../dto';
 import { BotController } from "./botController";
 import { IPlayerController } from "./IPlayerController";
 import { PlayerController } from "./playerController";
-const botShip =[ {
+const botShip:IShip[] =[ {
   position: {x: 0, y: 0},
-  direction: 1,
-  length: 3
+  direction: true,
+  length: 3,
+  type:'small'
 },
 {
   position: {x: 4, y: 4},
-  direction: 1,
-  length: 2
+  direction: true,
+  length: 2,
+  type:'small'
 },
 {
   position: {x: 7, y: 7},
-  direction: 0,
-  length: 1
+  direction: false,
+  length: 1,
+  type:'small'
 }]
 
 export class Game {

@@ -4,7 +4,7 @@ import { IShip, IVector, Cell } from "../dto";
 export class IPlayerController{
     id: number;
     ships: IShip[] = [];
-    shipField:Array<Array<number>> = [];
+    shipField:Array<Array<number>> = [[]];
     field: Array<Array<Cell>> = emptyState();
     enemyField: Array<Array<Cell>> = emptyState();
     demeges = 0;
@@ -29,6 +29,7 @@ export class IPlayerController{
     }
 
     addEnemyShips(ships: IShip[]){
+      console.log('addEnemyField',this.id, ships )
         this.ships = ships;
         
         for (let i = 0; i < 9; i += 1) {
@@ -39,8 +40,10 @@ export class IPlayerController{
          this.shipField.push(row);
        }        
        ships.forEach((ship, idx) => {
+
          for (let i = 0; i < ship.length; i += 1) {
-           if (ship.direction === 0) {
+           if (!ship.direction) {
+            //===0
              this.shipField[ship.position.y][ship.position.x + i] = idx;
            } else {
              this.shipField[ship.position.y + i][ship.position.x] = idx;
@@ -82,7 +85,7 @@ export class IPlayerController{
       this.demeges++;
       const height = this.enemyField.length;
       const width =  this.enemyField[0].length;
-      if (ship.direction === 0){
+      if (!ship.direction){ ////====0
         for (let i =-1; i < ship.length+1; i += 1){
           for (let j =-1; j < 2; j += 1){
             if(ship.position.y+j>=0&&ship.position.y+j<height&&ship.position.x + i>=0&&ship.position.x + i<width){
@@ -114,7 +117,7 @@ export class IPlayerController{
     checkShip(ship: IShip){
       let isKilled = true;
       for (let i = 0; i < ship.length; i += 1) {
-        if (ship.direction === 0) {
+        if (! ship.direction ) { ///===0
           if ( this.enemyField[ship.position.y][ship.position.x + i] === Cell.Empty) {
             isKilled = false;
             break;

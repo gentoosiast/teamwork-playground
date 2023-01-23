@@ -1,7 +1,7 @@
 import Control from "../../../common/controll";
 import BoardMatrix from "./canvasComponents/BoardMatrix";
 import RandomShips from "./canvasComponents/RandomShips";
-import {ShipsSizes} from "./ChooseComponent";
+import {ShipsSizes,tShipCanvas} from "../../dto";
 import {imagesObjType} from "../application/app";
 import CanvasSectionController from "./canvasComponents/CanvasSectionController";
 import BoardComponent from "./canvasComponents/BoardComponent";
@@ -9,9 +9,6 @@ import BoardComponent from "./canvasComponents/BoardComponent";
 export const log = function (arg: any) {
 	console.log(JSON.parse(JSON.stringify(arg)))
 }
-export type tShipCanvas = { type: string, isRotate: boolean, xC: number, yC: number }
-
-
 export class CanvasSection extends Control {
 	private parentNode: HTMLElement;
 	private moveBinded: (e: MouseEvent) => void;

@@ -1,5 +1,5 @@
 import {EmptyAreas} from "../randomAlgorithm";
-import {ShipsSizes} from "../ChooseComponent";
+import {ShipsSizes} from "../../../dto";
 
 export default class RandomShips {
 	private ships: Record<string, number>;
