@@ -16,6 +16,7 @@ export default class BoardComponent extends Control {
 		this.canvasSection.node.width = columns * cellSize
 		this.canvasSection.node.height = rows * cellSize
 		this.imagesData = imagesData
+		//this.canvas.addEventListener('click',this.onClick)
 	}
 
 	get canvas() {
@@ -52,8 +53,8 @@ export default class BoardComponent extends Control {
 		})
 	}
 
-	drawScene(matrix: number[][], shipsOnCanvas: tShipCanvas[]) {
+	drawScene(matrix: number[][], shipsOnCanvas?: tShipCanvas[]) {
 		this.drawBoard(matrix)
-		this.drawShips(shipsOnCanvas)
+		shipsOnCanvas && this.drawShips(shipsOnCanvas)
 	}
 }

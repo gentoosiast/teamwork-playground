@@ -37,7 +37,7 @@ export const App = () => {
 		}
 		if (page === 'gameField') {
 			setContent(<>
-				<GameField socket={socket}></GameField>
+				<GameField socket={socket} shipsImages={imagesObj}></GameField>
 			</>);
 		}
 		if (page === 'finishGame') {
@@ -51,7 +51,8 @@ export const App = () => {
 			const webSocket = new SocketModel({dispatch});
 			setSocket(webSocket);
 			// setContent(<Registration socket={webSocket}/>);
-			setContent(<ChooseShip socket={socket} imagesObj={imagesObj}/>);
+			//setContent(<ChooseShip socket={socket} imagesObj={imagesObj}/>);
+			setContent(	<GameField socket={socket} shipsImages={imagesObj}></GameField>)
 			return () => {
 				webSocket.close();
 			}

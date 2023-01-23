@@ -6,6 +6,7 @@ export interface IBoardStore {
 
 export interface IShipsInitialState {
 	cellsInRow: number,
+	cellSize:number,
 	boardMatrix: number[][],
 	_moveAdded:boolean,
 	_ckickAdded:boolean
@@ -29,6 +30,7 @@ function emptyMatrix(len: number) {
 
 const initialState: IShipsInitialState = {
 	cellsInRow: 10,
+	cellSize:30,
 	boardMatrix: emptyMatrix(10),
 	_moveAdded:false,
 	_ckickAdded:false

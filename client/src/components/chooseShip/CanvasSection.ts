@@ -45,7 +45,7 @@ export class CanvasSection extends Control {
 		this.activeShip = activeShip
 		this.activeSize = ShipsSizes[this.activeShip as keyof typeof ShipsSizes]
 		this.board = board
-		this.boardMatrix = new BoardMatrix(this.isRotated, this.board)
+		this.boardMatrix = new BoardMatrix(this.board)
 		this.boardComponent = new BoardComponent(this.node, 10, 10, this.boardMatrix.cellSize, imagesObj)
 		this.boardMatrix.onClearHovered = (value: number) => this.onClearHovered(value)
 		this.boardMatrix.onFillCells = (fillData: { data: string[], value: number }) => {
