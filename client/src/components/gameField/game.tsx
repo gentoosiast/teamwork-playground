@@ -32,16 +32,21 @@ export function EnemyField(props: IGameFieldProps) {
 	const cellInRow = useSelector((state: IBoardStore) => state.boardData.cellsInRow)
 	const cellSize = useSelector((state: IBoardStore) => state.boardData.cellSize)
 	const boardMatrix= new BoardMatrixGameField(enemyField)
+	const [board,setBoard]=useState(null)
+	useEffect(()=>{
+		console.log(enemyField)
+		board?.drawBoard(enemyField)
+
+	},[enemyField])
 	boardMatrix.onGetClickedCell=(x,y)=>{
 		console.log(x,y)
 		props.socket.attack(x, y, idGame[idGame.length-1]);
 	}
-	{/*//       <div className={"cell" + (` ${styleMap[cell]}`)} key={x} onClick={() => */}
-	{/*//         props.socket.attack(x, y, idGame[idGame.length-1]);*/}
 	useEffect(() => {
 		const Board = new BoardComponent(fieldRef.current,cellInRow,cellInRow,cellSize,props.shipsImages)
 		Board.canvas.addEventListener('click',(e)=>boardMatrix.onClick(e,Board.canvas))
 		Board.drawScene(enemyField)
+		setBoard(Board)
 	}, [])
 	return (
 					<div ref={fieldRef}/>
@@ -53,9 +58,16 @@ export function OurField({shipsImages}:{shipsImages:imagesObjType}) {
 	const ourRef= useRef(null)
 	const cellInRow = useSelector((state: IBoardStore) => state.boardData.cellsInRow)
 	const cellSize = useSelector((state: IBoardStore) => state.boardData.cellSize)
+	const [board,setBoard]=useState(null)
+	useEffect(()=>{
+		console.log(ourField)
+		board?.drawBoard(ourField)
+
+	},[ourField])
 	useEffect(() => {
 		const Board = new BoardComponent(ourRef.current,cellInRow,cellInRow,cellSize,shipsImages)
 		Board.drawScene(ourField)
+		setBoard(Board)
 	}, [])
 	return (
 	<div ref={ourRef}/>

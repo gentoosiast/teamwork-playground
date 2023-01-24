@@ -67,6 +67,7 @@ export class Game {
 
     startSingleGame(){
       this.playerControllers.set(1, new BotController(1,(position, status, isChangeCurrent)=> this.sendMessageAttack(position, status,isChangeCurrent), (id)=>this.finishGame(id)));
+      //****add random
       this.addShip(botShip,1);
     }
 

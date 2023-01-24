@@ -16,9 +16,7 @@ export default class BoardComponent extends Control {
 		this.canvasSection.node.width = columns * cellSize
 		this.canvasSection.node.height = rows * cellSize
 		this.imagesData = imagesData
-		//this.canvas.addEventListener('click',this.onClick)
 	}
-
 	get canvas() {
 		return this.canvasSection.node
 	}
@@ -31,12 +29,13 @@ export default class BoardComponent extends Control {
 	}
 
 	drawBoard(matrix: number[][]) {
+		console.log("drawBoard",matrix)
 		matrix.forEach((row, rI) => {
 			row.forEach((cell, cI) => {
 				this.ctx.fillStyle =
-					cell === 5 ? "olive" :
-						cell === 2 ? 'darkGreen' :
-							cell === 7 ? "red"
+					(cell === 5) ? "olive" :
+						(cell === 2 || cell===1) ? 'darkGreen' :
+							(cell === 7 || cell===3) ? "red"
 								: "green"
 				this.ctx.fillRect((this.inPixels(cI)) + 1, (this.inPixels(rI)) + 1,
 					this.cellSize - 2, this.cellSize - 2);
