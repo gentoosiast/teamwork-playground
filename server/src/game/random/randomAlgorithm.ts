@@ -1,31 +1,21 @@
-import {log} from "./CanvasSection";
+
 
 type axisData = { id: number, data: number[][], longer: number }
 
 export class EmptyAreas {
 	private matrix: number[][];
-	// private verticalAreas: any[];
-	// private horizontalAreas: any[];
-	onGetCoordinates: (type: string, y: number, x: number,isRotate:boolean) => void
+	onGetCoordinates: (type: string, y: number, x: number, isRotate: boolean) => void
 	private notRotatedAreas: axisData[];
 	private rotatedAreas: axisData[];
 
 	constructor() {
 		this.matrix = null
-	//	this.verticalAreas = null
-	//	this.horizontalAreas = null
 	}
 
 	start(matrix: number[][]) {
 		this.matrix = matrix
-		log("Ramdomstrt")
-		log(matrix)
-		//***** logic Mistake
-		this.notRotatedAreas = this.arrayDataFromArray('horizont',matrix)
-		this.rotatedAreas = this.arrayDataFromArray('vertical',matrix)
-		log("VV--HH")
-		log(this.notRotatedAreas)
-		log(this.rotatedAreas)
+		this.notRotatedAreas = this.arrayDataFromArray('horizont', matrix)
+		this.rotatedAreas = this.arrayDataFromArray('vertical', matrix)
 	}
 
 	isNext(first: number, second: number) {
@@ -79,7 +69,7 @@ export class EmptyAreas {
 		return ar.sort((a, b) => b.longer - a.longer)
 	}
 
-	arrayDataFromArray(value: string,board:number[][]) {
+	arrayDataFromArray(value: string, board: number[][]) {
 		//console.log(value)
 		const ar: axisData[] = []
 		const r = this.axisData(value, board)
@@ -100,12 +90,12 @@ export class EmptyAreas {
 	}
 
 	apdateEmptyAreas(axis: string, d: string[]) {
-			const objAxis = axis === 'y' ? this.notRotatedAreas : this.rotatedAreas
-		 const el = objAxis.find(e => e.id == +d[0])
+		const objAxis = axis === 'y' ? this.notRotatedAreas : this.rotatedAreas
+		const el = objAxis.find(e => e.id == +d[0]) as axisData
 		const idx = objAxis.indexOf(el)
 		//console.log("EL", el)
 		const setAxis = new Set(d[1].split('-'))
-		const rr = this.elementsHasntInSet(el, setAxis)
+		const rr = this.elementsHasntInSet(el , setAxis)
 		const subs = this.arrToSubArr(rr)
 		const longer = this.longerSub(subs)
 
@@ -132,26 +122,18 @@ export class EmptyAreas {
 			const valX = xS.has(x) ? xS.get(x) + `-${y}` : `${y}`
 			xS.set(x, valX)
 		})
-		 this.deleteFromEmptyAreas('x', xS)
-		 this.deleteFromEmptyAreas('y', yS)
+		this.deleteFromEmptyAreas('x', xS)
+		this.deleteFromEmptyAreas('y', yS)
 	}
 
 	generateRandomShip(type: string, size: number, isRotate: boolean) {
 		const objAxis = isRotate ? JSON.parse(JSON.stringify(this.rotatedAreas))
-			:JSON.parse(JSON.stringify(this.notRotatedAreas))
-	//	console.log(JSON.parse(JSON.stringify(objAxis)), 'ObjAxis')
-		const suited = objAxis.filter((e:axisData) => e.longer >= size)
-		//console.log(JSON.parse(JSON.stringify(suited)), 'SUITED')
-
+			: JSON.parse(JSON.stringify(this.notRotatedAreas))
+		const suited = objAxis.filter((e: axisData) => e.longer >= size)
 		const randomItm = Math.round(Math.random() * (suited.length - 1));//Math.floor(Math.random() * (suited.length-1))
-		//console.log(randomItm,'RANDitm')
 		const coords = suited[randomItm].data.find((el: []) => el.length >= size)
-	//	 console.log(coords,'coords')
-
-		const x = !isRotate ? coords[Math.floor(Math.random() * (coords.length - size))]:suited[randomItm].id
-		const y = !isRotate ? suited[randomItm].id:coords[Math.floor(Math.random() * (coords.length - size))]
-
-	//	console.log('y-', y, 'x-', x)
-		this.onGetCoordinates( type, y, x,isRotate)
+		const x = !isRotate ? coords[Math.floor(Math.random() * (coords.length - size))] : suited[randomItm].id
+		const y = !isRotate ? suited[randomItm].id : coords[Math.floor(Math.random() * (coords.length - size))]
+		return({type, y, x, isRotate})
 	}
 }

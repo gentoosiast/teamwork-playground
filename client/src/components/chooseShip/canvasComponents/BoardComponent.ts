@@ -29,7 +29,7 @@ export default class BoardComponent extends Control {
 	}
 
 	drawBoard(matrix: number[][]) {
-		console.log("drawBoard",matrix)
+		//console.log("drawBoard",matrix)
 		matrix.forEach((row, rI) => {
 			row.forEach((cell, cI) => {
 				this.ctx.fillStyle =

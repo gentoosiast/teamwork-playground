@@ -9,6 +9,9 @@ import ChooseShip from '../chooseShip/chooseShip';
 import {useDispatch, useSelector} from "react-redux";
 import imageObj from "../../utils/Image";
 import {createImagesObject} from "../../utils/functions";
+import RandomShips from "../chooseShip/canvasComponents/RandomShips";
+import {IShipsStore} from "../../reducer/shipsReducer";
+import {IBoardStore} from "../../reducer/boardReducer";
 
 interface IPage {
 	pagesData: {
@@ -26,6 +29,7 @@ export const App = () => {
 	const [imagesObj, setImagesObj] = useState<imagesObjType>(null)
 	const dispatch = useDispatch<AppDispatch>();
 	const page = useSelector((state: IPage) => state.pagesData.page);
+
 
 	useEffect(() => {
 	//	console.log("PAGEuseEff")

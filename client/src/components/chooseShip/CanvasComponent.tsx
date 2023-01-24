@@ -6,6 +6,7 @@ import {AppDispatch,tShipCanvas} from "../../dto";
 import {addShip, setActiveShip, isRotateShip, setDecShip, randomRotate} from '../../reducer/shipsReducer'
 import {fillCells, clearHovered, setMoveAdded, IBoardStore, fillAreaCells} from '../../reducer/boardReducer'
 import {imagesObjType} from "../application/app";
+import RandomShips from "./canvasComponents/RandomShips";
 
 export const CanvasComponent = ({imagesObj}: { imagesObj: imagesObjType }) => {
 	const canvasRef = useRef(null)
@@ -15,9 +16,13 @@ export const CanvasComponent = ({imagesObj}: { imagesObj: imagesObjType }) => {
 	const activeShip = useSelector((state: IShipsStore) => state.shipsData.activeShip)
 	const isAutoPut = useSelector((state: IShipsStore) => state.shipsData.isAutoPut)
 	//todo ask: AppDispatch whatFor
+
 	const [canvSection, setCanvSection] = useState(null)
 	const ships = useSelector((state: IShipsStore) => state.shipsData.shipsToPut)
 	const board = useSelector((state: IBoardStore) => state.boardData.boardMatrix)
+
+	//state.shipsData.shipsToPut
+	//empty board
 	const test = useMemo(() => {
 		return shipsOnCanvas
 	}, [shipsOnCanvas])
