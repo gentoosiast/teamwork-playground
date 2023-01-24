@@ -1,43 +1,21 @@
 import {log} from "../CanvasSection";
-
-export default class BoardMatrix {
-//	_boardMatrix: number[][];
-	private cellsInRow: number;
-	private _cellSize: number;
-	private boardMatrixEmptyValue: number;
-	private boardMatrixFullValue: number;
-	private boardMatrixBlockedCell: number;
-	private boardMatrixHoverValue: number;
-	//private isRotated: boolean;
-	//private activeSize: number;
+export class BoardMatrixBase{
+	public cellsInRow: number;
+	public _cellSize: number;
 	onFillCells: (fillData: { data: string[], value: number }) => void
 	onClearHovered: (value: number) => void
-	private board: number[][];
-	private hoveredCells: string[];
-	private boardOccupateValue: number;
-
-	constructor(isRotated: boolean, board: number[][]) {
+	public board: number[][];
+//todo cellSize from reducer
+	constructor(board: number[][]) {
 		this.board = JSON.parse(JSON.stringify(board))
-		//this.isRotated = isRotated
 		this.cellsInRow = 10
 		this._cellSize = 30
-		this.hoveredCells = []
-		this.boardMatrixFullValue = 1
-		this.boardMatrixBlockedCell = 5
-		this.boardMatrixHoverValue = 2
-		this.boardMatrixEmptyValue = 0
-		this.boardOccupateValue = 7
 	}
-fillCell(val:string, x:number, y:number,activeSize:number, isRotated:boolean){
-	this.clearCells()
-	this.fillCells('hovered', x, y, activeSize, isRotated)
-}
-	inPixels(indx: number) {
-		return indx * this.cellSize
-	}
-
-	getBlockValue() {
-		return this.boardMatrixBlockedCell
+	public getCursorPosition(event: MouseEvent, node: HTMLElement) {
+		const rect = node.getBoundingClientRect()
+		const x = event.clientX - rect.left
+		const y = event.clientY - rect.top
+		return this.getCurrentCell(x, y)
 	}
 	getCurrentCell(x: number, y: number) {
 		return {x: Math.floor(x / this.cellSize), y: Math.floor(y / this.cellSize)}
@@ -49,7 +27,58 @@ fillCell(val:string, x:number, y:number,activeSize:number, isRotated:boolean){
 				&& x < this.matrixLength() && y >= 0 && x >= 0)
 		return v
 	}
+	matrixLength() {
+		return this.board.length
+	}
+	get cellSize() {
+		return this._cellSize
+	}
+}
 
+export class BoardMatrixGameField extends BoardMatrixBase{
+	private ckickBinded: any;
+	onGetClickedCell:(x:number,y:number)=>void
+	constructor(board:number[][]) {
+		super(board);
+		this.ckickBinded=this.onClick.bind(this)
+	}
+	onClick(e:MouseEvent,HtmlEl:HTMLCanvasElement){
+		const {x,y}=this.getCursorPosition(e,HtmlEl)
+		this.onGetClickedCell(x,y)
+	}
+}
+export default class BoardMatrix extends BoardMatrixBase{
+
+	private boardMatrixEmptyValue: number;
+	private boardMatrixFullValue: number;
+	private boardMatrixBlockedCell: number;
+	private boardMatrixHoverValue: number;
+	onFillCells: (fillData: { data: string[], value: number }) => void
+	onClearHovered: (value: number) => void
+	private hoveredCells: string[];
+	private boardOccupateValue: number;
+//todo cellSize from reducer
+
+	constructor(board: number[][]) {
+		super(board)
+	//	this.board = JSON.parse(JSON.stringify(board))
+		this.cellsInRow = 10
+		this._cellSize = 30
+		this.hoveredCells = []
+		this.boardMatrixFullValue = 1
+		this.boardMatrixBlockedCell = 5
+		this.boardMatrixHoverValue = 2
+		this.boardMatrixEmptyValue = 0
+		this.boardOccupateValue = 7
+	}
+fillCell(val:string, x:number, y:number,activeSize:number, isRotated:boolean){
+	this.clearCells()
+	this.fillCells(val, x, y, activeSize, isRotated)
+}
+
+	getBlockValue() {
+		return this.boardMatrixBlockedCell
+	}
 	defineCellValue(val: string) {
 		return val === 'occupate' ? this.boardOccupateValue :
 			val === 'hovered' ? this.boardMatrixHoverValue :
@@ -78,18 +107,6 @@ fillCell(val:string, x:number, y:number,activeSize:number, isRotated:boolean){
 
 	clearCells() {
 		this.onClearHovered(this.boardMatrixEmptyValue)
-	}
-
-	matrixLength() {
-		return this.board.length
-	}
-
-	get boardWidth() {
-		return this.cellsInRow * this.cellSize
-	}
-
-	get cellSize() {
-		return this._cellSize
 	}
 
 	valueToCell(y: number, x: number, val: string) {

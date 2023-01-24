@@ -2,6 +2,8 @@ import { SocketModel } from '../../socketModel';
 import React from 'react';
 import { IRoom,IRoomsInitialState,IUserInitialData } from '../../dto';
 import { useSelector } from 'react-redux';
+import {IShipsStore} from "../../reducer/shipsReducer";
+import {IBoardStore} from "../../reducer/boardReducer";
 
 interface IUserStore {
     userData: IUserInitialData;
@@ -17,6 +19,8 @@ const Room = ({socket}:IRoomComponent)=>{
     const handlerClick =(ind: number)=>{
         socket.addUserToRoom(ind)
     }
+  const ships = useSelector((state: IShipsStore) => state.shipsData.shipsToPut)
+  const board = useSelector((state: IBoardStore) => state.boardData.boardMatrix)
     const rooms = useSelector((state: IRoomsStore) => state.roomsData.data)
     const roomsComp = !rooms.length?'emptyRooms':
     (<><h2>Rooms</h2>
@@ -34,7 +38,7 @@ const Room = ({socket}:IRoomComponent)=>{
     return(<>
     <p>Hello, {userName}</p>
         <button onClick={()=>socket.createRoom()}>Create Room</button>
-        <button onClick={()=>socket.singlePlay()}>Play with Bot</button>   
+        <button onClick={()=>socket.singlePlay({board,shipsToPut:ships})}>Play with Bot</button>
         {roomsComp}
     </>)
 }

@@ -1,20 +1,15 @@
 import Control from "../../../common/controll";
 import BoardMatrix from "./canvasComponents/BoardMatrix";
 import RandomShips from "./canvasComponents/RandomShips";
-import {ShipsSizes} from "./ChooseComponent";
+import {ShipsSizes,tShipCanvas} from "../../dto";
 import {imagesObjType} from "../application/app";
-import IntersectionController from "./canvasComponents/IntersectionController";
-import FillComponent from "./canvasComponents/FillComponent";
 import CanvasSectionController from "./canvasComponents/CanvasSectionController";
+import BoardComponent from "./canvasComponents/BoardComponent";
 
 export const log = function (arg: any) {
 	console.log(JSON.parse(JSON.stringify(arg)))
 }
-export type tShipCanvas = { type: string, isRotate: boolean, xC: number, yC: number }
-
 export class CanvasSection extends Control {
-	private canvasSection: Control<HTMLCanvasElement>;
-	private ctx: CanvasRenderingContext2D;
 	private parentNode: HTMLElement;
 	private moveBinded: (e: MouseEvent) => void;
 	private clickBinded: () => void;
@@ -24,7 +19,6 @@ export class CanvasSection extends Control {
 	private shipsOnCanvas: tShipCanvas[];
 	private isRotated: any;
 	private activeShip: string;
-	private imagesObj: imagesObjType;
 	private board: number[][];
 	private activeSize: number;
 	private onAddShip: (ship: tShipCanvas) => void;
@@ -35,22 +29,21 @@ export class CanvasSection extends Control {
 	onFillShipArea: (areaCells: Set<string>, value: number) => void
 	private createEmptyValues: boolean;
 	private isRandomMode: boolean;
-	//private fillComponent: FillComponent;
 	private canvasSectionController: CanvasSectionController;
-
+	private boardComponent: BoardComponent;
 	constructor(parentNode: HTMLElement, ships: Record<string, number>, board: number[][],
 							isRotated: boolean, activeShip: string,
 							shipsOnCanvas: tShipCanvas[], imagesObj: imagesObjType, isAutoPut: boolean,
 							onAddShip: (ship: tShipCanvas) => void
 	) {
 		super(parentNode);
-		this.imagesObj = imagesObj
 		this.isRandomMode = false
 		this.isRotated = false
 		this.activeShip = activeShip
 		this.activeSize = ShipsSizes[this.activeShip as keyof typeof ShipsSizes]
 		this.board = board
-		this.boardMatrix = new BoardMatrix(this.isRotated, this.board)
+		this.boardMatrix = new BoardMatrix(this.board)
+		this.boardComponent = new BoardComponent(this.node, 10, 10, this.boardMatrix.cellSize, imagesObj)
 		this.boardMatrix.onClearHovered = (value: number) => this.onClearHovered(value)
 		this.boardMatrix.onFillCells = (fillData: { data: string[], value: number }) => {
 			this.onFillCells(fillData)
@@ -58,29 +51,25 @@ export class CanvasSection extends Control {
 		this.onAddShip = onAddShip
 		this.parentNode = parentNode
 		this.createEmptyValues = false
-		this.canvasSection = new Control(parentNode, 'canvas', 'canvas')
-		this.canvasSection.node.width = this.boardMatrix.boardWidth
-		this.canvasSection.node.height = this.boardMatrix.boardWidth
 		this.moveBinded = this.onMove.bind(this)
 		this.clickBinded = this.onClick.bind(this)
 		this.rotateShipBinded = this.rotateShip.bind(this)
-		this.ctx = this.canvasSection.node.getContext('2d')
-		this.canvasSectionController=new CanvasSectionController(this.canvasSection.node,this.boardMatrix)
-		this.canvasSectionController.onAddShip=(ship)=>this.onAddShip(ship)
+		this.canvasSectionController = new CanvasSectionController(this.boardMatrix)
+		this.canvasSectionController.onAddShip = (ship) => this.onAddShip(ship)
 		this.canvasSectionController.onFillShipArea = (areaCells) => {
 			if (this.isRandomMode) {
 				this.randomShips.occupateCells(areaCells)
 			}
 			this.onFillShipArea(areaCells, this.boardMatrix.getBlockValue())
 		}
-		this.drawScene()
+		this.boardComponent.drawScene(this.board, this.shipsOnCanvas)
 		this.randomShips = new RandomShips()
 		this.randomShips.onGetCoordinates = (type: string,
 																				 y: number, x: number, isRotate: boolean) => {
 			const size = ShipsSizes[type as keyof typeof ShipsSizes]
 			this.canvasSectionController.addShipImg(x, y, size, isRotate, type)
 		}
-		this.canvasSection.node.onmousemove = this.moveBinded
+		this.boardComponent.canvas.onmousemove = this.moveBinded
 	}
 
 	autoPutShips(shipsToPut: Record<string, number>, board: number[][]) {
@@ -89,19 +78,20 @@ export class CanvasSection extends Control {
 		this.randomShips.putRandomShips(shipsToPut, board)
 	}
 
-
 	onClick(e: MouseEvent) {
-		this.canvasSection.node.removeEventListener('mousemove', this.moveBinded)
-		this.canvasSection.node.removeEventListener('click', this.clickBinded)
+		const {x, y} = this.boardMatrix.getCursorPosition(e, this.boardComponent.node)
+		this.boardComponent.canvas.removeEventListener('mousemove', this.moveBinded)
+		this.boardComponent.canvas.removeEventListener('click', this.clickBinded)
 		document.body.removeEventListener('keyup', this.rotateShipBinded)
-		this.canvasSectionController.onClick(e,this.activeSize,this.isRotated,this.activeShip)
-		this.drawScene()
+		this.canvasSectionController.onClick(x, y, this.activeSize, this.isRotated, this.activeShip)
+
+		this.boardComponent.drawScene(this.board, this.shipsOnCanvas)
 		this.onResetActiveShip()
 	}
 
 	updateShipOnBoard(shipsOnCanvas: tShipCanvas[]) {
 		this.shipsOnCanvas = shipsOnCanvas
-		this.drawScene()
+		this.boardComponent.drawScene(this.board, this.shipsOnCanvas)
 	}
 
 	addActiveShip(ship: string) {
@@ -109,24 +99,28 @@ export class CanvasSection extends Control {
 		this.activeSize = ShipsSizes[ship as keyof typeof ShipsSizes]
 	}
 
-	setRotate(rotate: boolean) {this.isRotated = rotate}
+	setRotate(rotate: boolean) {
+		this.isRotated = rotate
+	}
 
 	onMove(e: MouseEvent) {
-		const notOnBoard=this.canvasSectionController.onMove(e,this.activeSize,this.isRotated)
-		if(notOnBoard){
+		const {x, y} = this.boardMatrix.getCursorPosition(e, this.boardComponent.node)
+		const notOnBoard = this.canvasSectionController.onMove(x, y, this.activeSize, this.isRotated)
+		if (notOnBoard) {
 			document.body.removeEventListener('keyup', this.rotateShipBinded)
-			this.canvasSection.node.removeEventListener('click', this.clickBinded)
-		}else{
+			this.boardComponent.canvas.removeEventListener('click', this.clickBinded)
+		} else {
 			document.body.addEventListener('keyup', this.rotateShipBinded)
-			this.canvasSection.node.addEventListener('click', this.clickBinded)
+			this.boardComponent.canvas.addEventListener('click', this.clickBinded)
 		}
-		this.drawScene()
+
+		this.boardComponent.drawScene(this.board, this.shipsOnCanvas)
 	}
 
 	updateBoard(board: number[][]) {
 		this.board = board
 		this.boardMatrix.updateBoard(board)
-		this.drawScene()
+		this.boardComponent.drawScene(this.board, this.shipsOnCanvas)
 	}
 
 	rotateShip(e: KeyboardEvent) {
@@ -134,28 +128,8 @@ export class CanvasSection extends Control {
 		if (keyName === 'Space') {
 			this.onRotateShip()
 			this.canvasSectionController.rotateShip(this.activeSize, this.isRotated)
-			this.drawScene()
+			this.boardComponent.drawScene(this.board, this.shipsOnCanvas)
 		}
-	}
-
-	drawScene() {
-		this.board.forEach((row, rI) => {
-			row.forEach((cell, cI) => {
-				this.ctx.fillStyle =
-					cell === 5 ? "olive" :
-						cell === 2 ? 'darkGreen' :
-							cell === 7 ? "red"
-								: "green"
-				this.ctx.fillRect((this.boardMatrix.inPixels(cI)) + 1, (this.boardMatrix.inPixels(rI)) + 1,
-					this.boardMatrix.cellSize - 2, this.boardMatrix.cellSize - 2);
-			})
-		})
-		this.shipsOnCanvas?.forEach(ship => {
-			const axis = ship.isRotate ? 'vertical' : 'horizont'
-			const img = this.imagesObj[axis][ship.type]
-			this.ctx.drawImage(img, this.boardMatrix.inPixels(ship.xC), this.boardMatrix.inPixels(ship.yC),
-				img.width, img.height)
-		})
 	}
 }
 

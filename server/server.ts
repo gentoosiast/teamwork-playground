@@ -152,18 +152,17 @@ websocket.on('request', (e) => {
         break;
       }
       case 'single_play':{
+        const data =JSON.parse(parsedMsg.data);
        const idGame = Math.floor(Math.random()*100)+'';
        const game = new Game([{ connection: client,
         index: 0,
         name: 'ddd'}], idGame)
        games.set(idGame, game );
-       game.startSingleGame();
+       game.startSingleGame(data);
         break;
       }
       case 'add_ships':{
-        console.log("**&^^%%")
         const data =JSON.parse(parsedMsg.data);
-        console.log(data,'DATA')
         const game = games.get(data.gameId )
         if(game){
             game.addShip(data.ships, data.indexPlayer )

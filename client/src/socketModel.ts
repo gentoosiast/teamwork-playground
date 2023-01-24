@@ -1,6 +1,6 @@
 import { Dispatch } from "react";
 import { emptyState } from "./utils/fieldGenerator";
-import { IRegData , IUser, IRoom, IShip,IMessage,Cell, AppDispatch} from "./dto";
+import {IRegData, IUser, IRoom, IShip, IMessage, Cell, AppDispatch, tShipCanvas} from "./dto";
 import {addUserName,addUserIndex,addIdGame,changeCurrentPlayer,setWinner} from './reducer/userReducer';
 import { setRooms } from "./reducer/roomsReducer";
 import { changePage } from './reducer/pagesReduser';
@@ -174,13 +174,11 @@ export class SocketModel {
     this.sendMessage('add_user_to_room', JSON.stringify({ indexRoom}))
   }
   startGame(gameId: number, ships: IShip[]){
-    console.log(ships)
-    console.log("START")
     this.sendMessage('add_ships', JSON.stringify({gameId, ships, indexPlayer: this.playerIdx}))
   }
 
-  singlePlay(){
-    this.sendMessage('single_play','')
+  singlePlay(data:{board:number[][],shipsToPut:Record<string, number>}){
+    this.sendMessage('single_play',JSON.stringify({board:data.board,shipsToPut:data.shipsToPut}))
   }
   sendMessage(type: string, message: string){
     const request: IMessage = {

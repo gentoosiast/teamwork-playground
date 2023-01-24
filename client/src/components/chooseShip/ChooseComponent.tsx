@@ -1,20 +1,13 @@
 import React, {useEffect, useRef, useState} from "react";
 //import {ShipsSection} from "./ShipsSection";
-import CanvasSection, {tShipCanvas} from "./CanvasSection";
 import ShipsSection from "./ShipsSection";
 import {useDispatch, useSelector} from "react-redux";
 import {IShipsStore} from "../../reducer/shipsReducer";
 import {CanvasComponent} from "./CanvasComponent";
 import {setAutoPut} from '../../reducer/shipsReducer'
 import {imagesObjType} from "../application/app";
-import {AppDispatch} from "../../dto";
+import {AppDispatch,tShipCanvas} from "../../dto";
 
-export enum ShipsSizes {
-	small = 1,
-	medium,
-	large,
-	huge
-}
 
 const ChooseComponent = ({imagesObj,onStartGame}
 :{imagesObj:imagesObjType,onStartGame:(ship:tShipCanvas[])=>void}) => {
