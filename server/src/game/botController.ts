@@ -14,7 +14,6 @@ export class BotController extends IPlayerController{
   chekedShipMatrix:IVector[] = [{x:-1, y: 0},{x:1,y:0},{x:0,y:1},{x:0,y:-1}];
 
   nextRound(): void {
-      console.log(this.action)
       if(this.action.status ==='shot'){       
         const possiblePositions:IVector[]= [];
         const height = this.enemyField.length;
@@ -41,7 +40,6 @@ export class BotController extends IPlayerController{
               }
           })
         }) 
-        console.log('possiblePositions',possiblePositions)
         if(possiblePositions.length){
           this.attack(possiblePositions[Math.floor(Math.random()*possiblePositions.length)])
         }       
@@ -53,11 +51,11 @@ export class BotController extends IPlayerController{
     }
 
     attack(position: IVector){
+  
         if(!this.checkEmpty(position)){
             this.nextRound();
             return;
           } 
-    
         const shipIndex = this.shipField[position.y][position.x];
         this.changeField(position);
           if (shipIndex === -1) {
@@ -79,9 +77,7 @@ export class BotController extends IPlayerController{
           }
           
           this.nextRound();
-          if(this.demeges===3){
-            this.finishGame(this.id);
-          }
+          
       }      
     
 }

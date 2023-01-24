@@ -34,7 +34,7 @@ export function EnemyField(props: IGameFieldProps) {
 	const boardMatrix= new BoardMatrixGameField(enemyField)
 	const [board,setBoard]=useState(null)
 	useEffect(()=>{
-		console.log(enemyField)
+		//console.log(enemyField)
 		board?.drawBoard(enemyField)
 
 	},[enemyField])
@@ -43,7 +43,7 @@ export function EnemyField(props: IGameFieldProps) {
 		props.socket.attack(x, y, idGame[idGame.length-1]);
 	}
 	useEffect(() => {
-		const Board = new BoardComponent(fieldRef.current,cellInRow,cellInRow,cellSize,props.shipsImages)
+		const Board = new BoardComponent(fieldRef.current,cellInRow+1,cellInRow+1,cellSize,props.shipsImages)
 		Board.canvas.addEventListener('click',(e)=>boardMatrix.onClick(e,Board.canvas))
 		Board.drawScene(enemyField)
 		setBoard(Board)
@@ -60,7 +60,7 @@ export function OurField({shipsImages}:{shipsImages:imagesObjType}) {
 	const cellSize = useSelector((state: IBoardStore) => state.boardData.cellSize)
 	const [board,setBoard]=useState(null)
 	useEffect(()=>{
-		console.log(ourField)
+		//console.log('ourField',ourField)
 		board?.drawBoard(ourField)
 
 	},[ourField])

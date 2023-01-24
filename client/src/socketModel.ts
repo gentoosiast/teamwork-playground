@@ -50,16 +50,17 @@ export class SocketModel {
           dispatch(setWinner({winner:false}));
           const {ships,currentPlayerIndex} = JSON.parse(parsedMsg.data);
           const shipForClient = emptyState();
+          console.log('SOCKET', ships)
           ships.forEach((ship:IShip) => {
-            //todo terurn logic
-                // for (let i = 0; i < ship.length; i += 1) {
-                //   if (ship.direction === 0) {
-                //     shipForClient[ship.position.y][ship.position.x + i] = Cell.Occupied;
-                //   } else {
-                //     shipForClient[ship.position.y + i][ship.position.x] = Cell.Occupied;
-                //   }
-              //  }
+                for (let i = 0; i < ship.length; i++) {
+                  if (!ship.direction) {
+                    shipForClient[ship.position.y][ship.position.x + i] = Cell.Occupied;
+                  } else {
+                    shipForClient[ship.position.y + i][ship.position.x] = Cell.Occupied;
+                  }
+               }
               });
+          console.log( shipForClient)
           dispatch(addField({field:shipForClient}));
           dispatch(changeCurrentPlayer({isCurrentPlayer: currentPlayerIndex=== this.playerIdx}))
           break;

@@ -55,33 +55,28 @@ export class Game {
 	}
 
 	addShip(ships: IShip[], indexPlayer: number) {
-		console.log('addShip', ships, indexPlayer)
 		const player = this.playerControllers.get(indexPlayer);
 
 		player?.addOurShips(ships);
 		const enemy = this.playerControllers.get((indexPlayer + 1) % 2);
 		enemy?.addEnemyShips(ships)
 		this.size++;
-
 		if (this.size >= 2) {
-			this.playerControllers.forEach(player => player.startGame())
+			this.playerControllers.forEach(player => player.startGame());
+			this.sendMessageToAll('turn', JSON.stringify({currentPlayer: this.currentPlayer}))
 		}
 
 	}
 
 	startSingleGame(data: { board: number[][], shipsToPut: Record<string, number> }) {
 		this.playerControllers.set(1, new BotController(1, (position, status, isChangeCurrent) => this.sendMessageAttack(position, status, isChangeCurrent), (id) => this.finishGame(id)));
-console.log("!1")
 		const rmdm = new RandomShips(data.shipsToPut)
 		rmdm.onBotRandomShips = (ships: IShip[]) => {
-			console.log(ships, '-----!!@@')
+		//	console.log(ships, '-----!!@@')
 		}
-		const t= rmdm.putRandomShips(data.board)
-// 	console.log(data)
-// 	console.log("____")
-		console.log("####", t)
+		const t= rmdm.putRandomShips(data.board);
 
-		this.addShip(rmdm.putRandomShips(data.board), 1);
+		this.addShip(t, 1);
 	}
 
 	attack(position: IVector, indexPlayer: number) {

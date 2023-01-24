@@ -70,11 +70,11 @@ export default class RandomShipsServer {
 		const shipsArr = []
 		const s = this.getShipsItems()
 		s.forEach(ss => {
-			const isRotate = !!Math.round(Math.random())
+			const direction = !!Math.round(Math.random())
 			const shipSize = ShipsSizes[ss as keyof typeof ShipsSizes]
-			shipsArr.push(this.emptyAreas.generateRandomShip(ss, shipSize, isRotate))
+			shipsArr.push(this.emptyAreas.generateRandomShip(ss, shipSize, direction))
 		})
-		return shipsArr
+		return shipsArr;
 	}
 
 	occupateCells(areaCells: Set<string>) {

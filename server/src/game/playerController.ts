@@ -10,9 +10,10 @@ export class PlayerController extends IPlayerController{
         this.client= client;
     }
     startGame(){
+        console.log(this.fake)
         const responseObj: IMessage = {
             type: "start_game",
-            data: JSON.stringify({ ships:this.ourShips, currentPlayerIndex:0 }),
+            data: JSON.stringify({ ships:this.fake, currentPlayerIndex:this.id }),
             id: 0
         };
         this.client.sendUTF(JSON.stringify(responseObj))

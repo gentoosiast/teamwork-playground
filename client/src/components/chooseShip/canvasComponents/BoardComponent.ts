@@ -34,8 +34,10 @@ export default class BoardComponent extends Control {
 			row.forEach((cell, cI) => {
 				this.ctx.fillStyle =
 					(cell === 5) ? "olive" :
-						(cell === 2 || cell===1) ? 'darkGreen' :
-							(cell === 7 || cell===3) ? "red"
+						(cell === 1) ? 'darkGreen' :
+						(cell === 2 ) ? 'blue' :
+							(cell === 7 || cell===3) ? "red":
+							(cell === 4 ) ? 'black' 
 								: "green"
 				this.ctx.fillRect((this.inPixels(cI)) + 1, (this.inPixels(rI)) + 1,
 					this.cellSize - 2, this.cellSize - 2);

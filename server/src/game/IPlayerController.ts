@@ -4,13 +4,14 @@ import { IShip, IVector, Cell } from "../dto";
 export class IPlayerController{
     id: number;
     ships: IShip[] = [];
-    shipField:Array<Array<number>> = [[]];
+    shipField:Array<Array<number>> =[]
     field: Array<Array<Cell>> = emptyState();
     enemyField: Array<Array<Cell>> = emptyState();
     demeges = 0;
     sendMessage: (position: IVector,status: string, isChangeCurrent?: boolean)=>void;
     finishGame: (winPlayer: number)=>void;
     ourShips: IShip[]=[];
+    fake: IShip[]=[];
     
     constructor(id: number, sendMessage: (position: IVector,status: string, isChangeCurrent: boolean)=>void, finishGame:(winPlayer:number)=>void){
         this.id = id;
@@ -29,12 +30,12 @@ export class IPlayerController{
     }
 
     addEnemyShips(ships: IShip[]){
-      console.log('addEnemyField',this.id, ships )
+
         this.ships = ships;
-        
-        for (let i = 0; i < 9; i += 1) {
+
+        for (let i = 0; i < 10; i += 1) {
          const row = [];
-         for (let j = 0; j < 9; j += 1) {
+         for (let j = 0; j < 10; j += 1) {
            row.push(-1);
          }
          this.shipField.push(row);
@@ -50,6 +51,7 @@ export class IPlayerController{
            }
          }
        });
+      this.fake = ships
     }
 
     checkEmpty(position: IVector){
@@ -74,9 +76,6 @@ export class IPlayerController{
           this.sendMessage(position, 'shot');
         } else{
           this.killShip(ship);
-        }
-        if(this.demeges===3){
-          this.finishGame(this.id);
         }
     }   
     
@@ -111,6 +110,9 @@ export class IPlayerController{
           this.changeField({y: ship.position.y+i, x:ship.position.x }, 'killed');
           this.sendMessage({y: ship.position.y+i, x:ship.position.x}, 'killed');
         }
+      }
+      if(this.demeges===10){
+        this.finishGame(this.id);
       }
     }
 

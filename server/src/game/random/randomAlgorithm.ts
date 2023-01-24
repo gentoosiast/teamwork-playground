@@ -134,6 +134,6 @@ export class EmptyAreas {
 		const coords = suited[randomItm].data.find((el: []) => el.length >= size)
 		const x = !isRotate ? coords[Math.floor(Math.random() * (coords.length - size))] : suited[randomItm].id
 		const y = !isRotate ? suited[randomItm].id : coords[Math.floor(Math.random() * (coords.length - size))]
-		return({type, y, x, isRotate})
+		return({type, position:{y, x}, direction:isRotate, length: size})
 	}
 }
