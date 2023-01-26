@@ -9,7 +9,6 @@ export default class RandomShips {
 	onGetCoordinates: (type: string, y: number, x: number, isRotate: boolean) => void
 	private isRandomActive: boolean;
 	private botShips: Record<string, string|number|boolean>[];
-	onBotRandomShips:(ships:Record<string, string | number | boolean>[])=>void
 	constructor(isBot?:boolean) {
 		this.botShips=[]
 		this.ships = null
@@ -23,9 +22,6 @@ export default class RandomShips {
 					this.onGetCoordinates(type, y, x, isRotate)
 				}else{
 					this.botShips.push({type, y, x, isRotate})
-					if(shipsSum===this.botShips.length){
-						this.onBotRandomShips(this.botShips)
-					}
 				}
 			}
 	}
@@ -42,7 +38,9 @@ export default class RandomShips {
 		}
 	}
 	interval() {
+		console.log("INTERVALLL")
 		const val = this.generator.next().value
+		console.log(val)
 		if (val) {
 			const isRotate = !!Math.round(Math.random())
 			const shipSize = ShipsSizes[val as keyof typeof ShipsSizes]
@@ -57,14 +55,9 @@ export default class RandomShips {
 	}
 	putRandomShips(shipsToPut: Record<string, number>, board: number[][]) {
 		this.ships = shipsToPut
-
-		//console.log(sum,'SUM')
 		this.emptyValues(board)
 		this.generator = this.genShipsToAuto()
 		while (this.interval()) {console.log('1')}
-		// this.interval()
-		// this.interval()
-	//this.intervalId = setInterval(()=>this.interval(),100)
 	}
 
 	occupateCells(areaCells: Set<string>) {

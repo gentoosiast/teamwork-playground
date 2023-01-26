@@ -7,6 +7,8 @@ import BoardComponent from "../chooseShip/canvasComponents/BoardComponent";
 import {imagesObjType} from "../application/app";
 import {IBoardStore} from "../../reducer/boardReducer";
 import {BoardMatrixBase, BoardMatrixGameField} from "../chooseShip/canvasComponents/BoardMatrix";
+import RandomShips from "../chooseShip/canvasComponents/RandomShips";
+import {IShipsStore} from "../../reducer/shipsReducer";
 
 const styleMap = {
 	[Cell.Empty]: '',
@@ -43,7 +45,7 @@ export function EnemyField(props: IGameFieldProps) {
 		props.socket.attack(x, y, idGame[idGame.length-1]);
 	}
 	useEffect(() => {
-		const Board = new BoardComponent(fieldRef.current,cellInRow+1,cellInRow+1,cellSize,props.shipsImages)
+		const Board = new BoardComponent(fieldRef.current,cellInRow,cellInRow,cellSize,props.shipsImages)
 		Board.canvas.addEventListener('click',(e)=>boardMatrix.onClick(e,Board.canvas))
 		Board.drawScene(enemyField)
 		setBoard(Board)
@@ -93,6 +95,7 @@ interface IUserStore {
 }
 
 export function GameField(props: IGameFieldProps) {
+
 	const currentPlayer = useSelector((state: IUserStore) => state.userData.isCurrentPlayer)
 	return (
 		<div>

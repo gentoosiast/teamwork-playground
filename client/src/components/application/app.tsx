@@ -12,6 +12,7 @@ import {createImagesObject} from "../../utils/functions";
 import RandomShips from "../chooseShip/canvasComponents/RandomShips";
 import {IShipsStore} from "../../reducer/shipsReducer";
 import {IBoardStore} from "../../reducer/boardReducer";
+import RandomShipsServer from "../../../../server/src/game/random/RandomShipsServer";
 
 interface IPage {
 	pagesData: {

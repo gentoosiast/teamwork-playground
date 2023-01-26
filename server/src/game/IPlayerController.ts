@@ -39,7 +39,8 @@ export class IPlayerController{
            row.push(-1);
          }
          this.shipField.push(row);
-       }        
+       }
+        console.log("THIS<SHIP",this.shipField)
        ships.forEach((ship, idx) => {
 
          for (let i = 0; i < ship.length; i += 1) {

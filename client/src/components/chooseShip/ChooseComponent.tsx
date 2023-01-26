@@ -19,7 +19,9 @@ const ChooseComponent = ({imagesObj,onStartGame}
 			<div ref={shipsRef}>
 				<h5>Расставьте корабли</h5>
 				<button onClick={()=>dispatch(setAutoPut())}>Расставить автоматически</button>
-				<ShipsSection onStartGame={(ships:tShipCanvas[])=>onStartGame(ships)}/>
+				<ShipsSection onStartGame={(ships:tShipCanvas[])=> {
+					setTimeout(()=>onStartGame(ships),2000)
+				}}/>
 			</div>
 			<CanvasComponent imagesObj={imagesObj}/>
 		</>

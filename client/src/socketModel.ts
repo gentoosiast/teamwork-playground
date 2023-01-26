@@ -60,7 +60,7 @@ export class SocketModel {
                   }
                }
               });
-          console.log( shipForClient)
+        //  console.log( shipForClient)
           dispatch(addField({field:shipForClient}));
           dispatch(changeCurrentPlayer({isCurrentPlayer: currentPlayerIndex=== this.playerIdx}))
           break;

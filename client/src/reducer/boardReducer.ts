@@ -12,20 +12,8 @@ export interface IShipsInitialState {
 	_ckickAdded:boolean
 }
 
-function createEmptyMatrix(cellsInRow: number) {
-	const matrix = []
-	for (let i = 0; i < cellsInRow; i++) {
-		const row = []
-		for (let j = 0; j < cellsInRow; j++) {
-			row.push(99)
-		}
-		matrix.push(row)
-	}
-	return matrix
-}
-
 function emptyMatrix(len: number) {
-	return new Array(10).fill(new Array(10).fill(0))
+	return new Array(len).fill(new Array(len).fill(0))
 }
 
 const initialState: IShipsInitialState = {

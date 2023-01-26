@@ -1,4 +1,5 @@
-
+import {IShip, ShipType} from "../../dto";
+import {log} from "../../../../client/src/components/chooseShip/CanvasSection";
 
 type axisData = { id: number, data: number[][], longer: number }
 
@@ -126,14 +127,15 @@ export class EmptyAreas {
 		this.deleteFromEmptyAreas('y', yS)
 	}
 
-	generateRandomShip(type: string, size: number, isRotate: boolean) {
-		const objAxis = isRotate ? JSON.parse(JSON.stringify(this.rotatedAreas))
+	generateRandomShip(type: string, size: number, isRotate: boolean):IShip {
+		const objAxis = !isRotate ? JSON.parse(JSON.stringify(this.rotatedAreas))
 			: JSON.parse(JSON.stringify(this.notRotatedAreas))
 		const suited = objAxis.filter((e: axisData) => e.longer >= size)
 		const randomItm = Math.round(Math.random() * (suited.length - 1));//Math.floor(Math.random() * (suited.length-1))
 		const coords = suited[randomItm].data.find((el: []) => el.length >= size)
 		const x = !isRotate ? coords[Math.floor(Math.random() * (coords.length - size))] : suited[randomItm].id
 		const y = !isRotate ? suited[randomItm].id : coords[Math.floor(Math.random() * (coords.length - size))]
-		return({type, position:{y, x}, direction:isRotate, length: size})
+		console.log("X<Y",x,y)
+		return({type:type as ShipType, position:{y, x}, direction:isRotate, length: size})
 	}
 }

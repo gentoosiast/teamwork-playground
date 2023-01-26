@@ -3,7 +3,9 @@ import {IClients, IShip, IPlayer, IVector, IMessage} from '../dto';
 import {BotController} from "./botController";
 import {IPlayerController} from "./IPlayerController";
 import {PlayerController} from "./playerController";
-import RandomShips from "./random/RandomShips";
+import RandomShips from "./random/RandomShipsServer";
+import RandomShipsServer from "./random/RandomShipsServer";
+import {ShipsCount} from "../../../client/src/reducer/shipsReducer";
 
 const botShip: IShip[] = [{
 	position: {x: 0, y: 0},
@@ -56,7 +58,7 @@ export class Game {
 
 	addShip(ships: IShip[], indexPlayer: number) {
 		const player = this.playerControllers.get(indexPlayer);
-
+//todo why this formula
 		player?.addOurShips(ships);
 		const enemy = this.playerControllers.get((indexPlayer + 1) % 2);
 		enemy?.addEnemyShips(ships)
@@ -70,12 +72,8 @@ export class Game {
 
 	startSingleGame(data: { board: number[][], shipsToPut: Record<string, number> }) {
 		this.playerControllers.set(1, new BotController(1, (position, status, isChangeCurrent) => this.sendMessageAttack(position, status, isChangeCurrent), (id) => this.finishGame(id)));
-		const rmdm = new RandomShips(data.shipsToPut)
-		rmdm.onBotRandomShips = (ships: IShip[]) => {
-		//	console.log(ships, '-----!!@@')
-		}
-		const t= rmdm.putRandomShips(data.board);
-
+		const ran = new RandomShipsServer(data.shipsToPut)
+		const t = ran.putRandomShips(data.board);
 		this.addShip(t, 1);
 	}
 
