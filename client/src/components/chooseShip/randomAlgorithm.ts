@@ -143,11 +143,8 @@ export class EmptyAreas {
 			: JSON.parse(JSON.stringify(this.notRotatedAreas))
 		//	console.log(JSON.parse(JSON.stringify(objAxis)), 'ObjAxis')
 		const suited = objAxis.filter((e: axisData) => e.longer >= size)
-		console.log(JSON.parse(JSON.stringify(suited)), 'SUITED')
 		const r = () => {
 			const num = Math.round(Math.random() * (suited.length - 1))
-			console.log('NYM', num, '---', tryT.includes(num), tryT)
-			console.log('TYPEinside', type)
 			if (type === 'small') {
 				if (tryT.includes(num)) {
 					r()

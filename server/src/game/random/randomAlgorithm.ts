@@ -2,7 +2,7 @@ import {IShip, ShipType} from "../../dto";
 import {log} from "../../../../client/src/components/chooseShip/CanvasSection";
 
 type axisData = { id: number, data: number[][], longer: number }
-
+const tryT: number[] = []
 export class EmptyAreas {
 	private matrix: number[][];
 	onGetCoordinates: (type: string, y: number, x: number, isRotate: boolean) => void
@@ -131,7 +131,19 @@ export class EmptyAreas {
 		const objAxis = !isRotate ? JSON.parse(JSON.stringify(this.rotatedAreas))
 			: JSON.parse(JSON.stringify(this.notRotatedAreas))
 		const suited = objAxis.filter((e: axisData) => e.longer >= size)
-		const randomItm = Math.round(Math.random() * (suited.length - 1));//Math.floor(Math.random() * (suited.length-1))
+		const r = () => {
+			const num = Math.round(Math.random() * (suited.length - 1))
+			if (type === 'small') {
+				if (tryT.includes(num)) {
+					r()
+				} else {
+					tryT.push(num)
+					return num
+				}
+			}
+			return num
+		}
+		const randomItm = r()
 		const coords = suited[randomItm].data.find((el: []) => el.length >= size)
 		const x = !isRotate ? coords[Math.floor(Math.random() * (coords.length - size))] : suited[randomItm].id
 		const y = !isRotate ? suited[randomItm].id : coords[Math.floor(Math.random() * (coords.length - size))]
