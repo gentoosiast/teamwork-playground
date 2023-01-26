@@ -6,6 +6,7 @@ import {setActiveShip} from '../../reducer/shipsReducer'
 import acorn from "acorn";
 import {AppDispatch, ShipsSizes, tShipCanvas} from "../../dto";
 import {useCallback} from "react";
+import Span from "../styledComponents/span";
 
 
 const ShipsSection = ({onStartGame}
@@ -24,15 +25,16 @@ const ShipsSection = ({onStartGame}
 		<div>
 			{
 				Object.entries(ships).map((ship: [string, number], i) => {
+					const count = 'Count:'+ship[1]
 					return (
 						<p key={i}>
-							<span>{ship[1]}</span>
 							<ImageComponent
 								onClick={() => {
 									if (ship[1] > 0) dispatch(setActiveShip(ship[0]))
 								}
 								}
 								size={ShipsSizes[ship[0] as keyof typeof ShipsSizes]}/>
+							<Span>{count}</Span>
 						</p>)
 				})
 			}

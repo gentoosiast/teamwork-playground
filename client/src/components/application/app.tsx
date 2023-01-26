@@ -9,10 +9,7 @@ import ChooseShip from '../chooseShip/chooseShip';
 import {useDispatch, useSelector} from "react-redux";
 import imageObj from "../../utils/Image";
 import {createImagesObject} from "../../utils/functions";
-import RandomShips from "../chooseShip/canvasComponents/RandomShips";
-import {IShipsStore} from "../../reducer/shipsReducer";
-import {IBoardStore} from "../../reducer/boardReducer";
-import RandomShipsServer from "../../../../server/src/game/random/RandomShipsServer";
+import BackGround from '../styledComponents/background';
 
 interface IPage {
 	pagesData: {
@@ -55,7 +52,8 @@ export const App = () => {
 			setImagesObj(imagesObj)
 			const webSocket = new SocketModel({dispatch});
 			setSocket(webSocket);
-			 setContent(<Registration socket={webSocket}/>);
+			 //setContent(<Registration socket={webSocket}/>);
+			 setContent(<FinishPage/>)
 			//setContent(<ChooseShip socket={socket} imagesObj={imagesObj}/>);
 			//setContent(	<GameField socket={socket} shipsImages={imagesObj}></GameField>)
 			return () => {
@@ -65,9 +63,9 @@ export const App = () => {
 			},[])
 
 			return (
-				<>
+				<BackGround>
 					{content}
 					{/* <ChooseComponent/> */}
-				</>
+				</BackGround>
 			);
 		}

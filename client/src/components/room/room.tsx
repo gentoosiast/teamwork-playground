@@ -2,9 +2,17 @@ import { SocketModel } from '../../socketModel';
 import React from 'react';
 import { IRoom,IRoomsInitialState,IUserInitialData } from '../../dto';
 import { useSelector } from 'react-redux';
+import styled from 'styled-components';
+import Setting  from '../styledComponents/setting';
+import Title from '../styledComponents/title';
+import SubTitle from '../styledComponents/subTitle';
+import { ButtonRooms } from '../styledComponents/buttons';
+import RoomList from './roomList';
+import { generalColor,backGroundColor } from '../../styleConst';
 import {IShipsStore} from "../../reducer/shipsReducer";
 import {IBoardStore} from "../../reducer/boardReducer";
-
+import Wrapper from '../styledComponents/wrapper'
+import Content from '../styledComponents/content'
 interface IUserStore {
     userData: IUserInitialData;
 }
@@ -15,32 +23,29 @@ interface IRoomComponent {
 interface IRoomsStore {
     roomsData: IRoomsInitialState;
   }
+// const Header = styled.div`
+//     width:500px;    
+//     background-color: ${backGroundColor} ;
+//     padding: 50px;
+//     border-radius: 10px;
+//     border: 1px solid ${generalColor};
+// `
 const Room = ({socket}:IRoomComponent)=>{
-    const handlerClick =(ind: number)=>{
-        socket.addUserToRoom(ind)
-    }
+
   const ships = useSelector((state: IShipsStore) => state.shipsData.shipsToPut)
   const board = useSelector((state: IBoardStore) => state.boardData.boardMatrix)
-    const rooms = useSelector((state: IRoomsStore) => state.roomsData.data)
-    const roomsComp = !rooms.length?'emptyRooms':
-    (<><h2>Rooms</h2>
-        {rooms.map((it,ind)=>{
-            return(
-            <div key={ind}>
-                Rooom id={it.roomId}
-                Users: {it.roomUsers.map(i=>i.name).join()}
-                <button onClick={()=>handlerClick(it.roomId)}>add to Room</button>
-            </div>
-            )
-        })}
-    </>);
    const userName = useSelector( (state: IUserStore) => state.userData.name);
-    return(<>
-    <p>Hello, {userName}</p>
-        <button onClick={()=>socket.createRoom()}>Create Room</button>
-        <button onClick={()=>socket.singlePlay({board,shipsToPut:ships})}>Play with Bot</button>
-        {roomsComp}
-    </>)
+    return(
+        <Wrapper>
+            <Content width={500}>
+                <div>
+                    <SubTitle>Welcome to Battleship, {userName}</SubTitle>
+                    <SubTitle>What game do you choose?</SubTitle> 
+                    <ButtonRooms onClick={()=>socket.singlePlay({board,shipsToPut:ships})}>Play with Bot</ButtonRooms>  
+                    <ButtonRooms onClick={()=>socket.createRoom()}>Create Room</ButtonRooms>
+                </div>
+            </Content>
+        <RoomList socket={socket}/>
+    </Wrapper>)
 }
-
 export default Room;
