@@ -1,6 +1,9 @@
 import React from "react";
 import styled from 'styled-components';
 
+interface ISettingIcon{
+    handleClick: ()=>void;
+}
 const Button = styled.button`
     position: absolute;
     top: 30px;
@@ -16,11 +19,11 @@ const Image = styled.img`
     }
 `;
 
-const Setting = ()=>{
-    return(<>
-    <Button>
+const SettingIcon = ({handleClick}:ISettingIcon)=>{
+    return(
+    <Button onClick={handleClick}>
         <Image src='../../assets/svg/setting.svg' alt='icons'/>
     </Button>
-    </>)
+    )
 }
-export default Setting;
+export default SettingIcon;

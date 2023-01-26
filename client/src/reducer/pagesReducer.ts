@@ -8,7 +8,7 @@ interface IPage {
     page: string
 }
 
-const pageReduser = createSlice({
+const pageReducer = createSlice({
   name: "pagesData",
   initialState,
   reducers: {
@@ -18,7 +18,7 @@ const pageReduser = createSlice({
   },
 });
 
-const { actions, reducer } = pageReduser;
+const { actions, reducer } = pageReducer;
 
 export const {changePage} = actions;
 
