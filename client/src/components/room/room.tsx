@@ -11,7 +11,8 @@ import RoomList from './roomList';
 import { generalColor,backGroundColor } from '../../styleConst';
 import {IShipsStore} from "../../reducer/shipsReducer";
 import {IBoardStore} from "../../reducer/boardReducer";
-
+import Wrapper from '../styledComponents/wrapper'
+import Content from '../styledComponents/content'
 interface IUserStore {
     userData: IUserInitialData;
 }
@@ -22,35 +23,13 @@ interface IRoomComponent {
 interface IRoomsStore {
     roomsData: IRoomsInitialState;
   }
-const Wrapper = styled.div`
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    position: relative;
-    height:  100%;
-    padding: 50px;
-`
-
-const Header = styled.div`
-    width:500px;
-    
-    background-color: ${backGroundColor} ;
-    padding: 50px;
-    border-radius: 10px;
-    border: 1px solid ${generalColor};
-`
-const HeaderContainer=styled.div`
-
-`
-const Main =styled.div`
-    /* margin: 50px 100px;
-    width:330px;
-    background-color: ${backGroundColor} ;
-    max-height: 90vh;
-    border-radius: 10px;
-    border: 1px solid ${generalColor};
-    overflow: auto; */
-`
+// const Header = styled.div`
+//     width:500px;    
+//     background-color: ${backGroundColor} ;
+//     padding: 50px;
+//     border-radius: 10px;
+//     border: 1px solid ${generalColor};
+// `
 const Room = ({socket}:IRoomComponent)=>{
 
   const ships = useSelector((state: IShipsStore) => state.shipsData.shipsToPut)
@@ -58,14 +37,14 @@ const Room = ({socket}:IRoomComponent)=>{
    const userName = useSelector( (state: IUserStore) => state.userData.name);
     return(
         <Wrapper>
-            <Header>
-                <HeaderContainer>
+            <Content width={500}>
+                <div>
                     <SubTitle>Welcome to Battleship, {userName}</SubTitle>
                     <SubTitle>What game do you choose?</SubTitle> 
                     <ButtonRooms onClick={()=>socket.singlePlay({board,shipsToPut:ships})}>Play with Bot</ButtonRooms>  
                     <ButtonRooms onClick={()=>socket.createRoom()}>Create Room</ButtonRooms>
-                </HeaderContainer>
-            </Header>
+                </div>
+            </Content>
         <RoomList socket={socket}/>
     </Wrapper>)
 }

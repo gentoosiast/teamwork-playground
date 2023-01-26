@@ -3,13 +3,13 @@ import styled from "styled-components";
 
 const WrapperComponent= styled.div`
     display: flex;
-    justify-content: center;
+    justify-content: space-around;
     align-items: center;
     width: 100%;
     height: 100%;
 `;
 interface IWrapper{
-    children:JSX.Element;
+    children:JSX.Element|JSX.Element[];
 }
 const Wrapper = ({children}:IWrapper)=>{
     return (<WrapperComponent>

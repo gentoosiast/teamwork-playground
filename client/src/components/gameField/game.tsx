@@ -10,6 +10,8 @@ import {BoardMatrixBase, BoardMatrixGameField} from "../chooseShip/canvasCompone
 import RandomShips from "../chooseShip/canvasComponents/RandomShips";
 import {IShipsStore} from "../../reducer/shipsReducer";
 import SubTitle from '../styledComponents/subTitle';
+import Content from '../styledComponents/content'
+import Wrapper from '../styledComponents/wrapper'
 const styleMap = {
 	[Cell.Empty]: '',
 	[Cell.Occupied]: 'cell_occupied',
@@ -94,14 +96,21 @@ interface IUserStore {
 	userData: IUserInitialData;
 }
 
+
 export function GameField(props: IGameFieldProps) {
 
 	const currentPlayer = useSelector((state: IUserStore) => state.userData.isCurrentPlayer)
 	return (
-		<div>
-			<SubTitle>{currentPlayer ? 'Your Turn' : 'Next player goes'}</SubTitle>
-			<OurField shipsImages={props.shipsImages}/>
-			<EnemyField shipsImages={props.shipsImages} socket={props.socket}/>
-		</div>
+		<Wrapper>	
+			<Content width={300}>
+				<SubTitle>{currentPlayer ? 'Your Turn' : 'Next player goes'}</SubTitle>
+			</Content>
+			
+			<>
+				<OurField shipsImages={props.shipsImages}/>
+				<EnemyField shipsImages={props.shipsImages} socket={props.socket}/>
+			</>
+			
+		</Wrapper>
 	);
 }

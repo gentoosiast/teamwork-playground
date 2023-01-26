@@ -14,7 +14,6 @@ interface IRoomsList{
 }
 const RoomsContainer =styled.div`
     padding: 50px;
-    margin: 50px 100px;
     width:330px;
     background-color: ${backGroundColor} ;
     max-height: 90vh;
