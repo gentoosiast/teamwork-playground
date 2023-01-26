@@ -3,7 +3,7 @@ import { emptyState } from "./utils/fieldGenerator";
 import {IRegData, IUser, IRoom, IShip, IMessage, Cell, AppDispatch, tShipCanvas} from "./dto";
 import {addUserName,addUserIndex,addIdGame,changeCurrentPlayer,setWinner} from './reducer/userReducer';
 import { setRooms } from "./reducer/roomsReducer";
-import { changePage } from './reducer/pagesReduser';
+import { changePage } from './reducer/pagesReducer';
 import {changeField,addField} from './reducer/fieldsReducer';
 interface ISocketModel{
   dispatch: AppDispatch

@@ -10,13 +10,13 @@ import {useDispatch, useSelector} from "react-redux";
 import imageObj from "../../utils/Image";
 import {createImagesObject} from "../../utils/functions";
 import BackGround from '../styledComponents/background';
+import Setting  from '../setting/setting';
 
 interface IPage {
 	pagesData: {
 		page: string;
 	}
 }
-
 export type imagesObjType = {
 	vertical: Record<string, HTMLImageElement>,
 	horizont: Record<string, HTMLImageElement>
@@ -66,6 +66,7 @@ export const App = () => {
 				<BackGround>
 					{content}
 					{/* <ChooseComponent/> */}
+					<Setting/>
 				</BackGround>
 			);
 		}

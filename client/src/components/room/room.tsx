@@ -3,7 +3,6 @@ import React from 'react';
 import { IRoom,IRoomsInitialState,IUserInitialData } from '../../dto';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
-import Setting  from '../styledComponents/setting';
 import Title from '../styledComponents/title';
 import SubTitle from '../styledComponents/subTitle';
 import { ButtonRooms } from '../styledComponents/buttons';

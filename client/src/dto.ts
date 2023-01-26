@@ -77,3 +77,9 @@ export type tShipCanvas = {
   yC: number 
 }
 
+export interface ISetting {
+  isSound: boolean,
+  volumeSound: number,
+  isMusic: boolean,
+  volumeMusic: number,
+}
