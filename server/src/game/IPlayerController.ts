@@ -4,13 +4,14 @@ import { IShip, IVector, Cell } from "../dto";
 export class IPlayerController{
     id: number;
     ships: IShip[] = [];
-    shipField:Array<Array<number>> = [];
+    shipField:Array<Array<number>> =[]
     field: Array<Array<Cell>> = emptyState();
     enemyField: Array<Array<Cell>> = emptyState();
     demeges = 0;
     sendMessage: (position: IVector,status: string, isChangeCurrent?: boolean)=>void;
     finishGame: (winPlayer: number)=>void;
     ourShips: IShip[]=[];
+    fake: IShip[]=[];
     
     constructor(id: number, sendMessage: (position: IVector,status: string, isChangeCurrent: boolean)=>void, finishGame:(winPlayer:number)=>void){
         this.id = id;
@@ -29,24 +30,29 @@ export class IPlayerController{
     }
 
     addEnemyShips(ships: IShip[]){
+
         this.ships = ships;
-        
-        for (let i = 0; i < 9; i += 1) {
+
+        for (let i = 0; i < 10; i += 1) {
          const row = [];
-         for (let j = 0; j < 9; j += 1) {
+         for (let j = 0; j < 10; j += 1) {
            row.push(-1);
          }
          this.shipField.push(row);
-       }        
+       }
+        console.log("THIS<SHIP",this.shipField)
        ships.forEach((ship, idx) => {
+
          for (let i = 0; i < ship.length; i += 1) {
-           if (ship.direction === 0) {
+           if (!ship.direction) {
+            //===0
              this.shipField[ship.position.y][ship.position.x + i] = idx;
            } else {
              this.shipField[ship.position.y + i][ship.position.x] = idx;
            }
          }
        });
+      this.fake = ships
     }
 
     checkEmpty(position: IVector){
@@ -72,9 +78,6 @@ export class IPlayerController{
         } else{
           this.killShip(ship);
         }
-        if(this.demeges===3){
-          this.finishGame(this.id);
-        }
     }   
     
     
@@ -82,7 +85,7 @@ export class IPlayerController{
       this.demeges++;
       const height = this.enemyField.length;
       const width =  this.enemyField[0].length;
-      if (ship.direction === 0){
+      if (!ship.direction){ ////====0
         for (let i =-1; i < ship.length+1; i += 1){
           for (let j =-1; j < 2; j += 1){
             if(ship.position.y+j>=0&&ship.position.y+j<height&&ship.position.x + i>=0&&ship.position.x + i<width){
@@ -109,12 +112,15 @@ export class IPlayerController{
           this.sendMessage({y: ship.position.y+i, x:ship.position.x}, 'killed');
         }
       }
+      if(this.demeges===10){
+        this.finishGame(this.id);
+      }
     }
 
     checkShip(ship: IShip){
       let isKilled = true;
       for (let i = 0; i < ship.length; i += 1) {
-        if (ship.direction === 0) {
+        if (! ship.direction ) { ///===0
           if ( this.enemyField[ship.position.y][ship.position.x + i] === Cell.Empty) {
             isKilled = false;
             break;

@@ -9,6 +9,8 @@ import SubTitle from '../styledComponents/subTitle';
 import { ButtonRooms } from '../styledComponents/buttons';
 import RoomList from './roomList';
 import { generalColor,backGroundColor } from '../../styleConst';
+import {IShipsStore} from "../../reducer/shipsReducer";
+import {IBoardStore} from "../../reducer/boardReducer";
 
 interface IUserStore {
     userData: IUserInitialData;
@@ -31,7 +33,7 @@ const Wrapper = styled.div`
 
 const Header = styled.div`
     width:500px;
-    height: 250px;
+    
     background-color: ${backGroundColor} ;
     padding: 50px;
     border-radius: 10px;
@@ -50,21 +52,21 @@ const Main =styled.div`
     overflow: auto; */
 `
 const Room = ({socket}:IRoomComponent)=>{
+
+  const ships = useSelector((state: IShipsStore) => state.shipsData.shipsToPut)
+  const board = useSelector((state: IBoardStore) => state.boardData.boardMatrix)
    const userName = useSelector( (state: IUserStore) => state.userData.name);
-    return(<Wrapper>
-        <Header>
-            <HeaderContainer>
-                <SubTitle>Welcome to Battleship, {userName}</SubTitle>
-                <SubTitle>What game do you choose?</SubTitle> 
-                <ButtonRooms onClick={()=>socket.singlePlay()}>Play with Bot</ButtonRooms>  
-                <ButtonRooms onClick={()=>socket.createRoom()}>Create Room</ButtonRooms>
-               
-            </HeaderContainer>
-                       
-        </Header>
+    return(
+        <Wrapper>
+            <Header>
+                <HeaderContainer>
+                    <SubTitle>Welcome to Battleship, {userName}</SubTitle>
+                    <SubTitle>What game do you choose?</SubTitle> 
+                    <ButtonRooms onClick={()=>socket.singlePlay({board,shipsToPut:ships})}>Play with Bot</ButtonRooms>  
+                    <ButtonRooms onClick={()=>socket.createRoom()}>Create Room</ButtonRooms>
+                </HeaderContainer>
+            </Header>
         <RoomList socket={socket}/>
-       <Setting/>
     </Wrapper>)
 }
-
 export default Room;

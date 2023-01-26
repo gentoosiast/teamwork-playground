@@ -45,8 +45,6 @@ const fields = [field, field2];
 let currentPlayer = 0;
 
 const clients: Array<IClients> = [];
-const players: Array<IPlayer> = [];
-
 const rooms = new Map<string, Room>()
 const games =new Map<string, Game>()
 
@@ -88,16 +86,16 @@ websocket.on('request', (e) => {
         game?.attack({x: data.x, y: data.y}, data.indexPlayer )
         break;
       }
-      case 'get_field': {
-        // const field: IVector = JSON.parse(parsedMsg.data);
-        const responseObj: IMessage = {
-          type: "get_field",
-          data: JSON.stringify(field),
-          id: 0
-        }
-        clients.forEach((c) => c.connection.sendUTF(JSON.stringify(responseObj)));
-        break;
-      }
+      // case 'get_field': {
+      //   // const field: IVector = JSON.parse(parsedMsg.data);
+      //   const responseObj: IMessage = {
+      //     type: "get_field",
+      //     data: JSON.stringify(field),
+      //     id: 0
+      //   }
+      //   clients.forEach((c) => c.connection.sendUTF(JSON.stringify(responseObj)));
+      //   break;
+      // }
       case 'reg':{
         const name = JSON.parse(parsedMsg.data).name;
         const newClient = {connection: client, name: name,index:clients.length }
@@ -154,23 +152,22 @@ websocket.on('request', (e) => {
         break;
       }
       case 'single_play':{
+        const data =JSON.parse(parsedMsg.data);
        const idGame = Math.floor(Math.random()*100)+'';
        const game = new Game([{ connection: client,
         index: 0,
         name: 'ddd'}], idGame)
        games.set(idGame, game );
-       game.startSingleGame();
+       game.startSingleGame(data);
         break;
       }
       case 'add_ships':{
-        
         const data =JSON.parse(parsedMsg.data);
         const game = games.get(data.gameId )
         if(game){
             game.addShip(data.ships, data.indexPlayer )
         }
         break;
-
       }
       // case 'join': {
       //   const shipField: Array<Array<number>> = [];
@@ -190,11 +187,12 @@ websocket.on('request', (e) => {
     }
   })
   client.on('close', () => {
+    games.forEach(it=>{
+      if(it.isPlayer(client)){
+        it.disconnect(client)        
+      }
+    })
     clients.filter(it=> it.connection!==client);
-    const playerIdx = players.findIndex(player => client === player.connection);
-    if (playerIdx !== -1) {
-      players.splice(playerIdx, 1);
-    }
   })
 })
 

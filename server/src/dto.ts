@@ -5,14 +5,15 @@ export interface IClients{
     index: number,
     name: string,
   };
-
+export type ShipType = 'small'|'medium'|'large'|'huge';
 export interface IShip {
     position: {
         x: number;
         y: number;
     };
-    direction: number;
+    direction: boolean;
     length: number;
+    type: ShipType;
 }
 export interface IPlayer {
     connection: connection;

@@ -47,9 +47,12 @@ export interface IVector{
   y: number;
 }
 
+export type ShipType = 'small'|'medium'|'large'|'huge';
+
   export interface IShip {
-    position: IVector
-    direction: number;
+    position: IVector;
+    direction: boolean;
+    type:ShipType;
     length: number;
 }
 export interface IMessage {
@@ -59,3 +62,18 @@ export interface IMessage {
 }
 import store from "./store/store";
 export type AppDispatch = typeof store.dispatch;
+
+export enum ShipsSizes {
+	small = 1,
+	medium,
+	large,
+	huge
+}
+
+export type tShipCanvas = { 
+  type: ShipType,
+  isRotate: boolean,
+  xC: number,
+  yC: number 
+}
+

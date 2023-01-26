@@ -1,42 +1,29 @@
 import React, {useEffect, useRef, useState} from "react";
-import {ShipsSection} from "./ShipsSection";
-import CanvasSection from "./CanvasSection";
+//import {ShipsSection} from "./ShipsSection";
+import ShipsSection from "./ShipsSection";
+import {useDispatch, useSelector} from "react-redux";
+import {IShipsStore} from "../../reducer/shipsReducer";
+import {CanvasComponent} from "./CanvasComponent";
+import {setAutoPut} from '../../reducer/shipsReducer'
+import {imagesObjType} from "../application/app";
+import {AppDispatch,tShipCanvas} from "../../dto";
 
-export enum ShipsCount {
-	huge=1,
-	large,
-	medium,
-	small
-}
-export enum ShipsSizes{
-	small=2,
-	medium,
-	large,
-	huge
-}
-//todo add the other color under dragged ship
-//todo draw cells
-//
-const ChooseComponent = () => {
-	const [ships,setShips]=useState({
-		huge: ShipsCount["huge"],
-		large: ShipsCount["large"],
-		medium: ShipsCount["medium"],
-		small: ShipsCount["small"]
-	})
-	const canvasRef = useRef(null)
+
+const ChooseComponent = ({imagesObj,onStartGame}
+:{imagesObj:imagesObjType,onStartGame:(ship:tShipCanvas[])=>void}) => {
 	const shipsRef = useRef(null)
-	useEffect(() => {
-		const shipsSection = new ShipsSection(shipsRef.current,ships)
-		const canvasSection= new CanvasSection(shipsRef.current,ships)
-	}, [])
+	const dispatch=useDispatch<AppDispatch>()
+
 	return (
 		<>
 			<div ref={shipsRef}>
 				<h5>Расставьте корабли</h5>
-
+				<button onClick={()=>dispatch(setAutoPut())}>Расставить автоматически</button>
+				<ShipsSection onStartGame={(ships:tShipCanvas[])=> {
+					setTimeout(()=>onStartGame(ships),2000)
+				}}/>
 			</div>
-			<canvas ref={canvasRef}/>
+			<CanvasComponent imagesObj={imagesObj}/>
 		</>
 
 	)

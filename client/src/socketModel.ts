@@ -1,6 +1,6 @@
 import { Dispatch } from "react";
 import { emptyState } from "./utils/fieldGenerator";
-import { IRegData , IUser, IRoom, IShip,IMessage,Cell, AppDispatch} from "./dto";
+import {IRegData, IUser, IRoom, IShip, IMessage, Cell, AppDispatch, tShipCanvas} from "./dto";
 import {addUserName,addUserIndex,addIdGame,changeCurrentPlayer,setWinner} from './reducer/userReducer';
 import { setRooms } from "./reducer/roomsReducer";
 import { changePage } from './reducer/pagesReduser';
@@ -18,7 +18,7 @@ export class SocketModel {
     websocket.onmessage = (msg) => {
       const parsedMsg: IMessage = JSON.parse(msg.data);
       const parsedData = parsedMsg.data;
-      console.log(parsedMsg)
+   //   console.log(parsedMsg)
       switch (parsedMsg.type) {
         // case 'chat_message': {
 
@@ -50,15 +50,17 @@ export class SocketModel {
           dispatch(setWinner({winner:false}));
           const {ships,currentPlayerIndex} = JSON.parse(parsedMsg.data);
           const shipForClient = emptyState();
+          console.log('SOCKET', ships)
           ships.forEach((ship:IShip) => {
-                for (let i = 0; i < ship.length; i += 1) {
-                  if (ship.direction === 0) {
+                for (let i = 0; i < ship.length; i++) {
+                  if (!ship.direction) {
                     shipForClient[ship.position.y][ship.position.x + i] = Cell.Occupied;
                   } else {
                     shipForClient[ship.position.y + i][ship.position.x] = Cell.Occupied;
                   }
-                }
+               }
               });
+        //  console.log( shipForClient)
           dispatch(addField({field:shipForClient}));
           dispatch(changeCurrentPlayer({isCurrentPlayer: currentPlayerIndex=== this.playerIdx}))
           break;
@@ -91,6 +93,10 @@ export class SocketModel {
             dispatch(changePage({page:'finishGame'}))
   
             break;
+        }
+        case 'diconnect':{
+          dispatch(setWinner({winner: true}))
+          dispatch(changePage({page:'finishGame'}))
         }
         default:
           break;
@@ -125,83 +131,60 @@ export class SocketModel {
     }
   }
 
-  loadField() {
-    const getField: IMessage = {
-      type: 'get_field',
-      data: '',
-      id: 0
-    }
-    this.webSocket.send(JSON.stringify(getField))
-  }
+  // loadField() {
+  //   const getField: IMessage = {
+  //     type: 'get_field',
+  //     data: '',
+  //     id: 0
+  //   }
+  //   this.webSocket.send(JSON.stringify(getField))
+  // }
 
-  loadChatMessages() {
-    const request: IMessage = {
-      type: 'chat_history',
-      data: '',
-      id: 0
-    }
-    this.webSocket.send(JSON.stringify(request));
-  }
+  // loadChatMessages() {
+  //   const request: IMessage = {
+  //     type: 'chat_history',
+  //     data: '',
+  //     id: 0
+  //   }
+  //   this.webSocket.send(JSON.stringify(request));
+  // }
 
   close() {
     this.webSocket.close();
   }
 
   attack(x: number, y: number,gameId:number) {
-    const request: IMessage = {
-      type: 'attack',
-      data: JSON.stringify({ x, y ,gameId, indexPlayer: this.playerIdx}),
-      id: 0
-    }
-    this.webSocket.send(JSON.stringify(request))
+    this.sendMessage('attack', JSON.stringify({ x, y ,gameId, indexPlayer: this.playerIdx}))
   }
 
-  sendChatMessage(inputMsg: string) {
-    const request: IMessage = {
-      type: 'chat_message',
-      data: inputMsg,
-      id: 0
-    }
-    this.webSocket.send(JSON.stringify(request))
-  }
-
+  // sendChatMessage(inputMsg: string) {
+  //   const request: IMessage = {
+  //     type: 'chat_message',
+  //     data: inputMsg,
+  //     id: 0
+  //   }
+  //   this.webSocket.send(JSON.stringify(request));
+  // }
   reg(data:IRegData){
-    const request: IMessage = {
-      type: 'reg',
-      data: JSON.stringify(data),
-      id: 0
-    }
-    this.webSocket.send(JSON.stringify(request))
+    this.sendMessage('reg',JSON.stringify(data))
   }
   createRoom(){
-    const request: IMessage = {
-      type: 'create_room',
-      data: '',
-      id: 0
-    }
-    this.webSocket.send(JSON.stringify(request))
+    this.sendMessage('create_room','')
   }
   addUserToRoom(indexRoom: number){
-    const request: IMessage = {
-      type: 'add_user_to_room',
-      data: JSON.stringify({ indexRoom}),
-      id: 0
-    }
-    this.webSocket.send(JSON.stringify(request))
+    this.sendMessage('add_user_to_room', JSON.stringify({ indexRoom}))
   }
   startGame(gameId: number, ships: IShip[]){
-    const request: IMessage = {
-      type: 'add_ships',
-      data: JSON.stringify({gameId, ships, indexPlayer: this.playerIdx}),
-      id: 0
-    }
-    this.webSocket.send(JSON.stringify(request))
+    this.sendMessage('add_ships', JSON.stringify({gameId, ships, indexPlayer: this.playerIdx}))
   }
 
-  singlePlay(){
+  singlePlay(data:{board:number[][],shipsToPut:Record<string, number>}){
+    this.sendMessage('single_play',JSON.stringify({board:data.board,shipsToPut:data.shipsToPut}))
+  }
+  sendMessage(type: string, message: string){
     const request: IMessage = {
-      type: 'single_play',
-      data: '',
+      type: type,
+      data: message,
       id: 0
     }
     this.webSocket.send(JSON.stringify(request))
