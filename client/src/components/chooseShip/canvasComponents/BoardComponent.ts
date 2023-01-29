@@ -57,5 +57,6 @@ export default class BoardComponent extends Control {
 	drawScene(matrix: number[][], shipsOnCanvas?: tShipCanvas[]) {
 		this.drawBoard(matrix)
 		shipsOnCanvas && this.drawShips(shipsOnCanvas)
+
 	}
 }

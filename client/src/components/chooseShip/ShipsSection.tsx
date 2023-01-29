@@ -22,13 +22,14 @@ const ShipsSection = ({onStartGame}
 	}
 	const dispatch = useDispatch<AppDispatch>()
 	return (
-		<div>
+		<div style={{display: 'flex',	alignItems: 'end', justifyContent:'space-evenly'}}>
 			{
 				Object.entries(ships).map((ship: [string, number], i) => {
 					const count = 'Count:'+ship[1]
 					return (
 						<p key={i}>
 							<ImageComponent
+								shipType={ship[0]}
 								onClick={() => {
 									if (ship[1] > 0) dispatch(setActiveShip(ship[0]))
 								}

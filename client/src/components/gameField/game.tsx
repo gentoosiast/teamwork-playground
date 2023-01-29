@@ -12,6 +12,7 @@ import {IShipsStore} from "../../reducer/shipsReducer";
 import SubTitle from '../styledComponents/subTitle';
 import Content from '../styledComponents/content'
 import Wrapper from '../styledComponents/wrapper'
+import {SpriteCanvas} from "./SpriteCanvas";
 const styleMap = {
 	[Cell.Empty]: '',
 	[Cell.Occupied]: 'cell_occupied',
@@ -72,9 +73,15 @@ export function OurField({shipsImages}:{shipsImages:imagesObjType}) {
 		const Board = new BoardComponent(ourRef.current,cellInRow,cellInRow,cellSize,shipsImages)
 		Board.drawScene(ourField)
 		setBoard(Board)
+	//	const sprite=new SpriteCanvas(ourRef.current)
 	}, [])
+
 	return (
-	<div ref={ourRef}/>
+		<div style={{position:'relative'}}>
+			<div ref={ourRef}/>
+			<SpriteCanvas/>
+		</div>
+
 	);	// <div className="field">
 	// 	{ourField.map((row, i) => {
 	// 		return (

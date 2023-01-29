@@ -8,7 +8,8 @@ import {SocketModel} from '../../socketModel';
 import ChooseComponent from "./ChooseComponent";
 import {IShipsStore} from "../../reducer/shipsReducer";
 import {imagesObjType} from "../application/app";
-import styled from 'styled-components';
+import {SpriteCanvas} from "../gameField/SpriteCanvas";
+
 interface IChooseShip {
 	socket: SocketModel,
 	imagesObj: imagesObjType
@@ -19,9 +20,7 @@ interface IUserStore {
 }
 
 const ChooseShip = ({socket, imagesObj}: IChooseShip) => {
-//	const rand = 0//Math.floor(Math.random()*3)
 	const idGame = useSelector((state: IUserStore) => state.userData.idGames)
-	//const ships=null
 	const shipsOnCanvas= useSelector((state:IShipsStore)=>state.shipsData.shipsOnCanvas)
 	return (<>
 		<ChooseComponent imagesObj={imagesObj} onStartGame={()=>{

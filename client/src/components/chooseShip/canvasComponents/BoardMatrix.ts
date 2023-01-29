@@ -1,15 +1,16 @@
 import {log} from "../CanvasSection";
-export class BoardMatrixBase{
+export class BoardMatrixElementary{
 	public cellsInRow: number;
 	public _cellSize: number;
-	onFillCells: (fillData: { data: string[], value: number }) => void
-	onClearHovered: (value: number) => void
 	public board: number[][];
-//todo cellSize from reducer
 	constructor(board: number[][]) {
 		this.board = JSON.parse(JSON.stringify(board))
 		this.cellsInRow = 10
 		this._cellSize = 30
+	}
+
+	getCurrentCell(x: number, y: number) {
+		return {x: Math.floor(x / this._cellSize), y: Math.floor(y / this._cellSize)}
 	}
 	public getCursorPosition(event: MouseEvent, node: HTMLElement) {
 		const rect = node.getBoundingClientRect()
@@ -17,8 +18,35 @@ export class BoardMatrixBase{
 		const y = event.clientY - rect.top
 		return this.getCurrentCell(x, y)
 	}
-	getCurrentCell(x: number, y: number) {
-		return {x: Math.floor(x / this.cellSize), y: Math.floor(y / this.cellSize)}
+}
+export class SpriteBoardMatrix extends BoardMatrixElementary{
+	private ctx: CanvasRenderingContext2D;
+	constructor(board:number[][],ctx:CanvasRenderingContext2D) {
+		super(board);
+		this.ctx=ctx
+		this.drawBoard()
+	}
+	drawBoard(){
+		this.board.forEach((row, rI) => {
+			row.forEach((cell, cI) => {
+				this.ctx.fillStyle = `rgba(255,20,20,0.2)`
+				this.ctx.fillRect((this.inPixels(cI)) + 1, (this.inPixels(rI)) + 1,
+					this._cellSize - 2, this._cellSize - 2);
+			})
+		})
+	}
+	inPixels(indx:number){
+		return indx*this._cellSize
+	}
+
+}
+export class BoardMatrixBase extends BoardMatrixElementary{
+	onFillCells: (fillData: { data: string[], value: number }) => void
+	onClearHovered: (value: number) => void
+//todo cellSize from reducer
+	constructor(board: number[][]) {
+		super(board)
+
 	}
 	isOnBoard(x: number, y: number, activeSize: number, rotated: boolean) {
 		const v = !rotated
@@ -47,7 +75,7 @@ export class BoardMatrixGameField extends BoardMatrixBase{
 		this.onGetClickedCell(x,y)
 	}
 }
-export default class BoardMatrix extends BoardMatrixBase{
+export default class BoardMatrixChooseShips extends BoardMatrixBase{
 
 	private boardMatrixEmptyValue: number;
 	private boardMatrixFullValue: number;

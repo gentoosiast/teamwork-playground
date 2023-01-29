@@ -1,17 +1,18 @@
 import imageObj from "./Image";
 import {imagesObjType} from "../components/application/app";
-
+//todo imagesStore?????
 export function createImagesObject(base: number, sizes: Record<string, number>,callBack:(obj:imagesObjType)=>void) {
 	const sizesArr: string[] = ['small', 'medium', 'large', 'huge']
+
 	const imagesObjects: () => Promise<imagesObjType> = () => {
 		return new Promise((resB, rej) => {
 			const allVertical = Promise.all(
-				Object.entries(sizes).map(c => imageObj('./public/assets/ship.png', base, c[1]))
+				Object.entries(sizes).map(c => imageObj(`./public/assets/ships/${c[0]}.png`, base, c[1]))
 			)
 
 			allVertical.then(vert => {
 				const allHorizont = Promise.all(
-					Object.entries(sizes).map(c => imageObj('./public/assets/ship.png', c[1], base)))
+					Object.entries(sizes).map(c => imageObj(`./public/assets/ships/${c[0]}.png`, c[1], base)))
 				allHorizont.then(hor => {
 					const hO: Record<string, HTMLImageElement> = {}
 					const vO: Record<string, HTMLImageElement> = {}

@@ -1,5 +1,5 @@
 import Control from "../../../common/controll";
-import BoardMatrix from "./canvasComponents/BoardMatrix";
+import BoardMatrixChooseShips from "./canvasComponents/BoardMatrix";
 import RandomShips from "./canvasComponents/RandomShips";
 import {ShipsSizes,tShipCanvas} from "../../dto";
 import {imagesObjType} from "../application/app";
@@ -14,7 +14,7 @@ export class CanvasSection extends Control {
 	private moveBinded: (e: MouseEvent) => void;
 	private clickBinded: () => void;
 	private rotateShipBinded: any;
-	private boardMatrix: BoardMatrix;
+	private boardMatrix: BoardMatrixChooseShips;
 	private randomShips: RandomShips;
 	private shipsOnCanvas: tShipCanvas[];
 	private isRotated: any;
@@ -42,7 +42,7 @@ export class CanvasSection extends Control {
 		this.activeShip = activeShip
 		this.activeSize = ShipsSizes[this.activeShip as keyof typeof ShipsSizes]
 		this.board = board
-		this.boardMatrix = new BoardMatrix(this.board)
+		this.boardMatrix = new BoardMatrixChooseShips(this.board)
 		this.boardComponent = new BoardComponent(this.node, 10, 10, this.boardMatrix.cellSize, imagesObj)
 		this.boardMatrix.onClearHovered = (value: number) => this.onClearHovered(value)
 		this.boardMatrix.onFillCells = (fillData: { data: string[], value: number }) => {
