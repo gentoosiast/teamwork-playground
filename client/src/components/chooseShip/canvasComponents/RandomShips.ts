@@ -25,7 +25,6 @@ export default class RandomShips {
 				}
 			}
 	}
-
 	* genShipsToAuto() {
 		const y: string[] = []
 		Object.entries(this.ships).forEach(k => {
@@ -38,7 +37,6 @@ export default class RandomShips {
 		}
 	}
 	interval() {
-		console.log("INTERVALLL")
 		const val = this.generator.next().value
 		console.log(val)
 		if (val) {

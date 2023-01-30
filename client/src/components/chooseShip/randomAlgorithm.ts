@@ -1,32 +1,23 @@
 import {log} from "./CanvasSection";
+type tSuitedItem={id:number,data:number[][],longer:number}
 
 type axisData = { id: number, data: number[][], longer: number }
-const tryT: number[] = []
-
 export class EmptyAreas {
 	private matrix: number[][];
-	// private verticalAreas: any[];
-	// private horizontalAreas: any[];
 	onGetCoordinates: (type: string, y: number, x: number, isRotate: boolean) => void
 	private notRotatedAreas: axisData[];
 	private rotatedAreas: axisData[];
+	private forSmallShips: tSuitedItem[];
 
 	constructor() {
 		this.matrix = null
-		//	this.verticalAreas = null
-		//	this.horizontalAreas = null
+		this.forSmallShips=[]
 	}
 
 	start(matrix: number[][]) {
 		this.matrix = matrix
-		log("Ramdomstrt")
-		log(matrix)
-		//***** logic Mistake
 		this.notRotatedAreas = this.arrayDataFromArray('horizont', matrix)
 		this.rotatedAreas = this.arrayDataFromArray('vertical', matrix)
-		log("VV--HH")
-		log(this.notRotatedAreas)
-		log(this.rotatedAreas)
 	}
 
 	isNext(first: number, second: number) {
@@ -54,8 +45,8 @@ export class EmptyAreas {
 		return subAr
 	}
 
-	axisData(_axis: string, matrix: number[][]) {
-		const arr = []
+	axisData(_axis: string, matrix: number[][]):number[][][] {
+		const arr:number[][][] = []
 		for (let i = 0; i < matrix.length; i++) {
 			const s: number[] = []
 			for (let j = 0; j < matrix[0].length; j++) {
@@ -68,7 +59,7 @@ export class EmptyAreas {
 		return arr
 	}
 
-	longerSub(arr: number[][]) {
+	longerSub(arr: number[][]):number {
 		let longer = 0
 		arr.forEach(s => {
 			if (longer < s.length) longer = s.length
@@ -81,7 +72,6 @@ export class EmptyAreas {
 	}
 
 	arrayDataFromArray(value: string, board: number[][]) {
-		//console.log(value)
 		const ar: axisData[] = []
 		const r = this.axisData(value, board)
 		r.forEach((row, i) => {
@@ -91,7 +81,6 @@ export class EmptyAreas {
 		return this.sortByLonger(ar)
 	}
 
-//todo MAP ITERATION
 	elementsHasntInSet(el: axisData, set: Set<string>) {
 		return el.data.flat().filter(num => {
 			if (!set.has(`${num}`)) {
@@ -104,7 +93,6 @@ export class EmptyAreas {
 		const objAxis = axis === 'y' ? this.notRotatedAreas : this.rotatedAreas
 		const el = objAxis.find(e => e.id == +d[0])
 		const idx = objAxis.indexOf(el)
-		//console.log("EL", el)
 		const setAxis = new Set(d[1].split('-'))
 		const rr = this.elementsHasntInSet(el, setAxis)
 		const subs = this.arrToSubArr(rr)
@@ -138,37 +126,13 @@ export class EmptyAreas {
 	}
 
 	generateRandomShip(type: string, size: number, isRotate: boolean) {
-		log(type)
 		const objAxis = isRotate ? JSON.parse(JSON.stringify(this.rotatedAreas))
 			: JSON.parse(JSON.stringify(this.notRotatedAreas))
-		//	console.log(JSON.parse(JSON.stringify(objAxis)), 'ObjAxis')
-		const suited = objAxis.filter((e: axisData) => e.longer >= size)
-		const r = () => {
-			const num = Math.round(Math.random() * (suited.length - 1))
-			if (type === 'small') {
-				if (tryT.includes(num)) {
-					r()
-				} else {
-					tryT.push(num)
-					return num
-				}
-			}
-			return num
-		}
-		const randomItm = r();//Math.floor(Math.random() * (suited.length-1))
-		console.log(randomItm, 'RANDitm')
-
+		const suited:tSuitedItem[] = objAxis.filter((e: axisData) => e.longer >= size)
+		const randomItm = Math.round(Math.random() * (suited.length - 1))
 		const coords = suited[randomItm].data.find((el: []) => el.length >= size)
-		console.log(coords, 'coords')
-
 		const x = !isRotate ? coords[Math.floor(Math.random() * (coords.length - size))] : suited[randomItm].id
 		const y = !isRotate ? suited[randomItm].id : coords[Math.floor(Math.random() * (coords.length - size))]
-
-		console.log('y-', y, 'x-', x)
 		this.onGetCoordinates(type, y, x, isRotate)
-		log("notROT")
-		log(this.notRotatedAreas)
-		log("Rot")
-		log(this.rotatedAreas)
 	}
 }
