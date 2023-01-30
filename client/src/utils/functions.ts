@@ -12,7 +12,7 @@ export function createImagesObject(base: number, sizes: Record<string, number>,c
 
 			allVertical.then(vert => {
 				const allHorizont = Promise.all(
-					Object.entries(sizes).map(c => imageObj(`./public/assets/ships/${c[0]}.png`, c[1], base)))
+					Object.entries(sizes).map(c => imageObj(`./public/assets/ships/${c[0]}H.png`, c[1], base)))
 				allHorizont.then(hor => {
 					const hO: Record<string, HTMLImageElement> = {}
 					const vO: Record<string, HTMLImageElement> = {}

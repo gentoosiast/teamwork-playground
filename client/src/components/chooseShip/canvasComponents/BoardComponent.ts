@@ -27,9 +27,14 @@ export default class BoardComponent extends Control {
 	inPixels(indx: number) {
 		return indx * this.cellSize
 	}
-
+//export const enum Cell {
+//     Empty = 0,
+//     Unavailable = 1,
+//     Occupied = 2,
+//     Shot = 3,
+//     Killed = 4
+//   }
 	drawBoard(matrix: number[][]) {
-		//console.log("drawBoard",matrix)
 		matrix.forEach((row, rI) => {
 			row.forEach((cell, cI) => {
 				this.ctx.fillStyle =

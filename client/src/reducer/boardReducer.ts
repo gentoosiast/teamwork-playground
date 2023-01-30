@@ -9,7 +9,8 @@ export interface IShipsInitialState {
 	cellSize:number,
 	boardMatrix: number[][],
 	_moveAdded:boolean,
-	_ckickAdded:boolean
+	_ckickAdded:boolean,
+	enemyOccupiedData:[]
 }
 
 function emptyMatrix(len: number) {
@@ -21,7 +22,8 @@ const initialState: IShipsInitialState = {
 	cellSize:30,
 	boardMatrix: emptyMatrix(10),
 	_moveAdded:false,
-	_ckickAdded:false
+	_ckickAdded:false,
+	enemyOccupiedData:[]
 	//	return createEmptyMatrix(this.cellsInRow)
 
 };
@@ -33,6 +35,9 @@ const boardReducer = createSlice({
 	name: "boardData",
 	initialState,
 	reducers: {
+		enemyOccupied(state,action:PayloadAction<[]>){
+			state.enemyOccupiedData=action.payload
+		},
 		fillAreaCells(state, action: PayloadAction<{data:string[],value:number}>){
 			action.payload.data.forEach(c=>{
 				const d=c.split('-')
@@ -63,6 +68,6 @@ const boardReducer = createSlice({
 
 const {actions, reducer} = boardReducer;
 
-export const {fillCells,clearHovered,setMoveAdded,fillAreaCells} = actions;
+export const {fillCells,clearHovered,setMoveAdded,fillAreaCells,enemyOccupied} = actions;
 
 export default reducer;

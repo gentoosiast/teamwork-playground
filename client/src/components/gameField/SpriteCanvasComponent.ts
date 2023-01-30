@@ -18,4 +18,7 @@ export class SpriteCanvasComponent extends Control<HTMLCanvasElement>{
 		this.spriteMatrix=new SpriteBoardMatrix(this.board,this.ctx)
 		this.node.onclick=(e)=>	this.onClickSprite(this.spriteMatrix.getCursorPosition(e,this.node))
 	}
+	upDateOccupied(occupied:[]){
+		this.spriteMatrix.upDateOccupid(occupied)
+}
 }

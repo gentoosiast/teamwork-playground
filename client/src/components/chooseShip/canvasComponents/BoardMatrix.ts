@@ -21,12 +21,14 @@ export class BoardMatrixElementary{
 }
 export class SpriteBoardMatrix extends BoardMatrixElementary{
 	private ctx: CanvasRenderingContext2D;
+	private occupied: [];
 	constructor(board:number[][],ctx:CanvasRenderingContext2D) {
 		super(board);
 		this.ctx=ctx
 		this.drawBoard()
 	}
 	drawBoard(){
+
 		this.board.forEach((row, rI) => {
 			row.forEach((cell, cI) => {
 				this.ctx.fillStyle = `rgba(255,20,20,0.2)`
@@ -34,11 +36,19 @@ export class SpriteBoardMatrix extends BoardMatrixElementary{
 					this._cellSize - 2, this._cellSize - 2);
 			})
 		})
+		//this.occupied.forEach(oc=>{
+
+			// this.ctx.drawImage(`./public/assets/explosion.png`,(this.inPixels(cI)) + 1, (this.inPixels(rI)) + 1,
+			// 	this._cellSize - 2, this._cellSize - 2);
+	//	})
 	}
 	inPixels(indx:number){
 		return indx*this._cellSize
 	}
 
+	upDateOccupid(occupied: []) {
+		this.occupied=occupied
+	}
 }
 export class BoardMatrixBase extends BoardMatrixElementary{
 	onFillCells: (fillData: { data: string[], value: number }) => void
@@ -70,9 +80,13 @@ export class BoardMatrixGameField extends BoardMatrixBase{
 		super(board);
 		this.ckickBinded=this.onClick.bind(this)
 	}
-	onClick(e:MouseEvent,HtmlEl:HTMLCanvasElement){
-		const {x,y}=this.getCursorPosition(e,HtmlEl)
-		this.onGetClickedCell(x,y)
+	onClick(cell:{x:number,y:number}){
+	//	const {x,y}=this.getCursorPosition(e,HtmlEl)
+		this.onGetClickedCell(cell.x,cell.y)
+	}
+
+	occupiedCells(occupied: {x:number,y:number}[]) {
+
 	}
 }
 export default class BoardMatrixChooseShips extends BoardMatrixBase{
