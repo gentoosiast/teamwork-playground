@@ -1,6 +1,6 @@
 import React from 'react';
 import { IRoom,IRoomsInitialState,IUserInitialData } from '../../dto';
-import {backGroundColor, generalColor} from '../../styleConst';
+import {backGroundColorOpacity, generalColor} from '../../styleConst';
 import SubTitle from '../styledComponents/subTitle';
 import { useSelector } from 'react-redux';
 import { ButtonRooms } from '../styledComponents/buttons';
@@ -15,7 +15,7 @@ interface IRoomsList{
 const RoomsContainer =styled.div`
     padding: 50px;
     width:330px;
-    background-color: ${backGroundColor} ;
+    background-color: ${backGroundColorOpacity} ;
     max-height: 90vh;
     border-radius: 10px;
     border: 1px solid ${generalColor};

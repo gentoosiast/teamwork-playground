@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import {IRegData} from '../../dto'
 import { SocketModel } from '../../socketModel';
 import Wrapper from '../styledComponents/wrapper';
-import { backGroundColor, generalColor } from '../../styleConst'
+import { backGroundColorOpacity, generalColor } from '../../styleConst'
 import Title from '../styledComponents/title';
 import SubTitle from '../styledComponents/subTitle';
 import { ButtonGeneral } from '../styledComponents/buttons'

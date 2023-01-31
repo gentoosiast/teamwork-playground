@@ -1,12 +1,12 @@
 import React from "react";
 import styled from "styled-components";
-import { backGroundColor,generalColor } from '../../styleConst'
+import { backGroundColorOpacity,generalColor } from '../../styleConst'
 interface IContentComponent{
     width?: number;
 }
 
 const ContentComponent = styled.div<IContentComponent>`
-   background-color: ${backGroundColor};
+   background-color: ${backGroundColorOpacity};
     padding: 50px;
     border-radius: 10px;
     width:  ${(props)=>props.width?props.width+'px':''};

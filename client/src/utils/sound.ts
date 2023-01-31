@@ -2,66 +2,79 @@ import { useDispatch, useSelector } from "react-redux";
 import { AppDispatch, ISetting} from "../dto";
 
 class Sound {
-    private audio: HTMLAudioElement;
-    private music: HTMLAudioElement;
-    private isMusicPlay: boolean = true;
-    private isSound: boolean = true;
-    private volumeValue: number = 1;
-    private isMusic: boolean = false;
-    private musicValue: number = 1;
+    private soundAudio: HTMLAudioElement;
+    private musicAudio: HTMLAudioElement;
+    private sound:ISetting = {
+      volume: 0.5,
+      isSound: true
+    }
+    private music:ISetting = {
+      volume: 0.5,
+      isSound: false
+    }
+    // private isSound: boolean = true;
+    // private volumeValue: number = 0.5
+    // private isMusic: boolean = false;
+    // private musicValue: number = 0.5;
     constructor() {
-      this.audio = new Audio();
-      this.music = new Audio();
-      this.music.src = './assets/mp3/music.mp3';
-      this._playMusic()
+      this.soundAudio = new Audio();
+      this.musicAudio = new Audio();
+      this.musicAudio.currentTime = 0;
+      this.musicAudio.src = './assets/mp3/music.mp3';
+      //this._playMusic()
+    }
+
+    getSetting(type:'music'|'sound') {
+      if(type==='music'){
+        return this.music;
+      }
+      return this.sound;
     }
   
-    updateSetting(setting:ISetting) {
-      this.isSound = setting.isSound;
-      this.volumeValue = setting.volumeSound;
-      this.isMusic = setting.isMusic;
-      this.musicValue = setting.volumeMusic;
-      if (this.isMusic) {
+    updateSetting(type:string, setting:ISetting) {
+      if(type==='music'){
+        this.music = Object.assign(setting);
+        
+      }else{
+        this.sound = Object.assign(setting);
+      }
+      if (this.music.isSound) {
         this._playMusic();
       } else {
-        this.music.pause();
-        this.isMusicPlay = false;
+        this.musicAudio.pause();
       }
     }
   
     killShip() {
-      if (this.isSound) {
-        this.audio.src = './assets/mp3/kill.mp3';
-        this.audio.volume = this.volumeValue;
-        this.audio.play();
+      if (this.sound.isSound) {
+        this.soundAudio.src = './assets/mp3/kill.mp3';
+        this.soundAudio.volume = this.sound.volume;
+        this.soundAudio.play();
       }
     }
   
     shotShip() {
-      if (this.isSound) {
-        this.audio.src = './assets/mp3/shot.mp3';
-        this.audio.volume = this.volumeValue;
-        this.audio.play();
+      if (this.sound.isSound) {
+        this.soundAudio.src = './assets/mp3/shot.mp3';
+        this.soundAudio.volume = this.sound.volume;
+        this.soundAudio.play();
       }
     }
   
     missShip() {
-      if (this.isSound) {
-        this.audio.src = './assets/mp3/miss.mp3';
-        this.audio.volume = this.volumeValue;
-        this.audio.play();
+      if (this.sound.isSound) {
+        this.soundAudio.src = './assets/mp3/miss.mp3';
+        this.soundAudio.volume = this.sound.volume;
+        this.soundAudio.play();
       }
     }
   
-    _playMusic() {
-      if (!this.isMusicPlay) {
-        this.music.currentTime = 0;
-      }
-      this.music.volume = this.musicValue;
-      this.music.play();
-      this.music.onended = () => {
-        this.music.currentTime = 0;
-        this.music.play();
+    private _playMusic() {
+      this.musicAudio.volume = this.music.volume;
+      this.musicAudio.play();
+      this.musicAudio.onended = () => {
+        this.musicAudio.currentTime = 0;
+        this.musicAudio.play();
       };
     }
   }

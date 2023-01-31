@@ -1,5 +1,6 @@
 import React from "react";
 import styled from 'styled-components';
+import setting from '../../assets/svg/setting.svg'
 
 interface ISettingIcon{
     handleClick: ()=>void;
@@ -22,7 +23,7 @@ const Image = styled.img`
 const SettingIcon = ({handleClick}:ISettingIcon)=>{
     return(
     <Button onClick={handleClick}>
-        <Image src='../../assets/svg/setting.svg' alt='icons'/>
+        <Image src={setting} alt='icon'/>
     </Button>
     )
 }
