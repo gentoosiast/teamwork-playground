@@ -25,7 +25,7 @@ export default class RandomShipsServer {
 		this.isRandomActive = false
 		this.circleSteps = [
 			{x: 0, y: 1}, {x: 1, y: 1}, {x: -1, y: 1},
-			{x: 1, y: 0}, {x: -1, y: 0},
+			{x: 1, y: 0}, {x: -1, y: 0},{x:0,y:0},
 			{x: 0, y: -1}, {x: 1, y: -1}, {x: -1, y: -1}
 		]
 		this.emptyAreas = new EmptyAreas()

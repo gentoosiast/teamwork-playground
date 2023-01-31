@@ -1,16 +1,17 @@
 import Control from "../../../common/controll";
 import React from "react";
 
-const ImageComponent=({size,onClick}:{size:number,onClick:()=>void})=>{
-	const src=`./public/assets/ship.png`
-	const width=30
-	const height='60%'
+const ImageComponent=({shipType,size,onClick}:{shipType:string,size:number,onClick:()=>void})=>{
+	const src=`./public/assets/ships/${shipType}.png`
+	//const width=30
+	//const height='60%'
 
 	return(
 		<img
+			style={{display:'block'}}
 			src={src}
 			alt="ship"
-			style={{width:`${30*size}px`}}
+			//style={{width:`${30*size}px`}}
 			onClick={onClick}
 		/>
 	)

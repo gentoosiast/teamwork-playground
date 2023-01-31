@@ -19,7 +19,8 @@ interface IPage {
 }
 export type imagesObjType = {
 	vertical: Record<string, HTMLImageElement>,
-	horizont: Record<string, HTMLImageElement>
+	horizont: Record<string, HTMLImageElement>,
+	fire:HTMLImageElement
 }
 export const App = () => {
 	const [socket, setSocket] = useState<SocketModel>(null);
@@ -48,7 +49,8 @@ export const App = () => {
 	}, [page]);
 
 	useEffect(() => {
-		createImagesObject(30,{small: 30, medium: 60, large: 90, huge: 120},(imagesObj)=>{
+		createImagesObject(30,{small: 30, medium: 60, large: 90, huge: 120},
+			(imagesObj)=>{
 			setImagesObj(imagesObj)
 			const webSocket = new SocketModel({dispatch});
 			setSocket(webSocket);
