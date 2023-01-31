@@ -7,7 +7,7 @@ import Title from '../styledComponents/title';
 import SubTitle from '../styledComponents/subTitle';
 import { ButtonRooms } from '../styledComponents/buttons';
 import RoomList from './roomList';
-import { generalColor,backGroundColor } from '../../styleConst';
+import { generalColor,backGroundColorOpacity } from '../../styleConst';
 import {IShipsStore} from "../../reducer/shipsReducer";
 import {IBoardStore} from "../../reducer/boardReducer";
 import Wrapper from '../styledComponents/wrapper'
@@ -24,7 +24,7 @@ interface IRoomsStore {
   }
 // const Header = styled.div`
 //     width:500px;    
-//     background-color: ${backGroundColor} ;
+//     background-color: ${backGroundColorOpacity} ;
 //     padding: 50px;
 //     border-radius: 10px;
 //     border: 1px solid ${generalColor};

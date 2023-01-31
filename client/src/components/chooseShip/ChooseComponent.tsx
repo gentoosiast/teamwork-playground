@@ -8,7 +8,7 @@ import {setAutoPut} from '../../reducer/shipsReducer'
 import {imagesObjType} from "../application/app";
 import {AppDispatch, tShipCanvas} from "../../dto";
 import SubTitle from "../styledComponents/subTitle";
-import {backGroundColor, generalColor} from '../../styleConst'
+import {backGroundColorOpacity, generalColor} from '../../styleConst'
 import styled from "styled-components";
 import Wrapper from "../styledComponents/wrapper";
 import {ButtonRooms} from '../styledComponents/buttons'

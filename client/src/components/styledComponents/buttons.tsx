@@ -2,7 +2,7 @@ import React from "react";
 import styled from "styled-components";
 import { fontSize, generalColor } from '../../styleConst'
 interface IButton{
-    children:string;
+    children:string|JSX.Element;
     onClick:(e: React.MouseEvent<HTMLButtonElement>)=>void;
 }
 
@@ -44,4 +44,20 @@ const ButtonRooms = ({children, onClick}:IButton)=>{
     </BtnRoomsComponent>)
 }
 
-export { ButtonGeneral, ButtonRooms };
+const ButtonCloseComponent =  styled(BtnComponent)`
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 5px;
+`
+
+const ButtonClose = ({children, onClick}:IButton)=>{
+    return (<ButtonCloseComponent type="submit" onClick={onClick}>
+        {children} 
+    </ButtonCloseComponent>)
+}
+
+export { ButtonGeneral, ButtonRooms, ButtonClose };
