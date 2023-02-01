@@ -15,7 +15,7 @@ export class IPlayerController{
     
     constructor(id: number, sendMessage: (position: IVector,status: string, isChangeCurrent: boolean)=>void, finishGame:(winPlayer:number)=>void){
         this.id = id;
-        this.shipField=new Array(10).fill(new Array(10).fill(0))
+       // this.shipField=new Array(10).fill(new Array(10).fill(0))
         this.sendMessage = (position,status, isChangeCurrent=false)=>{
             sendMessage(position,status,isChangeCurrent)
         }
@@ -39,11 +39,10 @@ export class IPlayerController{
          for (let j = 0; j < 10; j += 1) {
            row.push(-1);
          }
-         this.shipField.push(row);
+         this.shipField.push(row); 
        }
         //console.log("THIS<SHIP",this.shipField)
        ships.forEach((ship, idx) => {
-console.log("SHIP",ship)
          for (let i = 0; i < ship.length; i += 1) {
            if (!ship.direction) {
             //===0

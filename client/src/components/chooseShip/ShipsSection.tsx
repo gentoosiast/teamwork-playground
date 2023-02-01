@@ -5,7 +5,7 @@ import {IShipsStore} from "../../reducer/shipsReducer";
 import {setActiveShip} from '../../reducer/shipsReducer'
 import acorn from "acorn";
 import {AppDispatch, ShipsSizes, tShipCanvas} from "../../dto";
-import {useCallback} from "react";
+import {useCallback,useEffect} from "react";
 import Span from "../styledComponents/span";
 
 
@@ -13,13 +13,20 @@ const ShipsSection = ({onStartGame}
 												: { onStartGame: (ships: tShipCanvas[]) => void }) => {
 	const ships = useSelector(((state: IShipsStore) => state.shipsData.shipsToPut))
 	const shipsOnCanvas = useSelector((state: IShipsStore) => state.shipsData.shipsOnCanvas)
-	const isReady = useCallback(() => {
-		return Object.values(ships).every(e => e === 0)
+	// const isReady = useCallback(() => {
+	// 	return Object.values(ships).every(e => e === 0)
+	// }, [ships])
+	// if (isReady()) {
+	// 	//console.log(shipsOnCanvas,'^')
+	// 	onStartGame(shipsOnCanvas);
+	// }
+	useEffect(()=>{
+		if(Object.values(ships).every(e => e === 0)){
+			onStartGame(shipsOnCanvas);
+			return()=>{}
+		}
 	}, [ships])
-	if (isReady()) {
-		//console.log(shipsOnCanvas,'^')
-		onStartGame(shipsOnCanvas)
-	}
+
 	const dispatch = useDispatch<AppDispatch>()
 	return (
 		<div style={{display: 'flex',	alignItems: 'end', justifyContent:'space-evenly'}}>

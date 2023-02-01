@@ -32,6 +32,7 @@ const ChooseShip = ({socket, imagesObj}: IChooseShip) => {
 					length: ShipsSizes[sh.type]
 				}
 			})
+			console.log('StartGame',toIShip )
 			socket?.startGame(idGame[idGame.length - 1], toIShip)
 			}}/>
 	</>)
