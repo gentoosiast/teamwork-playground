@@ -51,33 +51,35 @@ export class BotController extends IPlayerController{
     }
 
     attack(position: IVector){
-  
+      setTimeout(()=>{
+
         if(!this.checkEmpty(position)){
-            this.nextRound();
-            return;
-          } 
-        const shipIndex = this.shipField[position.y][position.x];
-        this.changeField(position);
-          if (shipIndex === -1) {
-            this.sendMessage(position, 'miss', true);         
-            return;
-          }     
-          const ship =this.ships[shipIndex];
-          const isKilled = this.checkShip(ship);
-         
-          if(!isKilled){
-            this.action.status = 'shot';
-            this.action.killed.push(position)
-            this.changeField(position, 'shot');
-            this.sendMessage(position, 'shot');
-          } else{
-            this.action.status = '';
-            this.action.killed=[]
-            this.killShip(ship);  
-          }
-          
           this.nextRound();
-          
-      }      
+          return;
+        } 
+      const shipIndex = this.shipField[position.y][position.x];
+      this.changeField(position);
+        if (shipIndex === -1) {
+          this.sendMessage(position, 'miss', true);         
+          return;
+        }     
+        const ship =this.ships[shipIndex];
+        const isKilled = this.checkShip(ship);
+       
+        if(!isKilled){
+          this.action.status = 'shot';
+          this.action.killed.push(position)
+          this.changeField(position, 'shot');
+          this.sendMessage(position, 'shot');
+        } else{
+          this.action.status = '';
+          this.action.killed=[]
+          this.killShip(ship);  
+        }
+        
+        this.nextRound();
+        
+      },1000) 
+    }    
     
 }

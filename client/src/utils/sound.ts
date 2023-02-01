@@ -39,21 +39,37 @@ class Sound {
         this.sound = Object.assign(setting);
       }
       if (this.music.isSound) {
-        this._playMusic();
+        this.playMusic();
       } else {
         this.musicAudio.pause();
       }
     }
+    
+    playAudio(status: string){
+      console.log(status)
+      switch (status){
+        case 'shot':
+          this.shotShip();
+          break;
+        case 'killed':
+          this.killShip();
+          break;
+        case 'miss':
+          this.missShip()
+          break;
+      }
+
+    }
   
-    killShip() {
+    private killShip() {
       if (this.sound.isSound) {
-        this.soundAudio.src = './assets/mp3/kill.mp3';
+        this.soundAudio.src = './assets/mp3/killed.mp3';
         this.soundAudio.volume = this.sound.volume;
         this.soundAudio.play();
       }
     }
   
-    shotShip() {
+    private shotShip() {
       if (this.sound.isSound) {
         this.soundAudio.src = './assets/mp3/shot.mp3';
         this.soundAudio.volume = this.sound.volume;
@@ -61,7 +77,7 @@ class Sound {
       }
     }
   
-    missShip() {
+    private missShip() {
       if (this.sound.isSound) {
         this.soundAudio.src = './assets/mp3/miss.mp3';
         this.soundAudio.volume = this.sound.volume;
@@ -69,7 +85,7 @@ class Sound {
       }
     }
   
-    private _playMusic() {
+    private playMusic() {
       this.musicAudio.volume = this.music.volume;
       this.musicAudio.play();
       this.musicAudio.onended = () => {

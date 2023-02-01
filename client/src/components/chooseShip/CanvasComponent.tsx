@@ -7,7 +7,7 @@ import {addShip, setActiveShip, isRotateShip, setDecShip, randomRotate} from '..
 import {fillCells, clearHovered, setMoveAdded, IBoardStore, fillAreaCells} from '../../reducer/boardReducer'
 import {imagesObjType} from "../application/app";
 import RandomShips from "./canvasComponents/RandomShips";
-
+import Sound from '../../utils/sound'
 export const CanvasComponent = ({imagesObj}: { imagesObj: imagesObjType }) => {
 	const canvasRef = useRef(null)
 	const dispatch = useDispatch<AppDispatch>()
@@ -35,6 +35,7 @@ export const CanvasComponent = ({imagesObj}: { imagesObj: imagesObjType }) => {
 				const canvas = new CanvasSection(canvasRef.current, ships, board, isRotated,
 					activeShip, shipsOnCanvas, imagesObj, isAutoPut,
 					(ship: tShipCanvas) => {
+						Sound.playAudio('miss')
 						dispatch(addShip({ship: JSON.stringify(ship), active: activeShip}))
 						dispatch(setActiveShip(null))
 						dispatch(setDecShip(ship.type))
@@ -53,16 +54,11 @@ export const CanvasComponent = ({imagesObj}: { imagesObj: imagesObjType }) => {
 			}
 		}, []
 	)
-	useEffect(() => canvSection?.autoPutShips(ships, board), [isAutoPut])
-	useEffect(() => {
-		canvSection?.updateShipOnBoard(shipsOnCanvas)
-		// if(shipsOnCanvas.length===10){
-		//
-		// }
-	}, [shipsOnCanvas])
-	useEffect(() => canvSection?.updateBoard(board), [board])
-	useEffect(() => canvSection?.addActiveShip(activeShip), [activeShip])
-	useEffect(() => canvSection?.setRotate(isRotated), [isRotated])
+	useEffect(() => canvSection?.autoPutShips(ships, board), [isAutoPut]);
+	useEffect(() => canvSection?.updateShipOnBoard(shipsOnCanvas), [shipsOnCanvas]);
+	useEffect(() => canvSection?.updateBoard(board), [board]);
+	useEffect(() => canvSection?.addActiveShip(activeShip), [activeShip]);
+	useEffect(() => canvSection?.setRotate(isRotated), [isRotated]);
 	return (
 		<div ref={canvasRef}/>
 	)

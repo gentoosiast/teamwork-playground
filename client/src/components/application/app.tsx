@@ -11,7 +11,7 @@ import imageObj from "../../utils/Image";
 import {createImagesObject} from "../../utils/functions";
 import BackGround from '../styledComponents/background';
 import Setting  from '../setting/setting';
-
+import Sound from '../../utils/sound';
 interface IPage {
 	pagesData: {
 		page: string;
