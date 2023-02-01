@@ -51,12 +51,15 @@ const shipsReducer = createSlice({
 		randomRotate(state,action:PayloadAction<boolean>){
 			state.isRotate=action.payload
 	//		console.log("--------stateRot",state.isRotate)
+		},
+		setShipsOnCanvas(state,action:PayloadAction<Array<tShipCanvas>>){
+			state.shipsOnCanvas=action.payload
 		}
 	},
 });
 
 const { actions, reducer } = shipsReducer;
 
-export const {isRotateShip,addShip,setActiveShip,setAutoPut,setDecShip,randomRotate} = actions;
+export const {isRotateShip,addShip,setActiveShip,setAutoPut,setDecShip,randomRotate,setShipsOnCanvas} = actions;
 
 export default reducer;

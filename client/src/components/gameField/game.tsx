@@ -70,7 +70,7 @@ export function EnemyField(props: IGameFieldProps) {
 }
 
 export function OurField({shipsImages}: { shipsImages: imagesObjType }) {
-	const ships= useSelector((state:IShipsStore)=>state.shipsData.shipsOnCanvas)
+//	const ships= useSelector((state:IShipsStore)=>state.shipsData.shipsOnCanvas)
 	const ourField = useSelector((state: IFieldStore) => state.fieldsData.ourField);
 	const ourRef = useRef(null)
 	const cellInRow = useSelector((state: IBoardStore) => state.boardData.cellsInRow)
@@ -78,7 +78,7 @@ export function OurField({shipsImages}: { shipsImages: imagesObjType }) {
 	const [board, setBoard] = useState(null)
 	useEffect(() => {
 		board?.drawBoard(ourField)
-	//	board?.drawShips(ships)
+		//board?.drawShips(ourField)
 
 	}, [ourField])
 	useEffect(() => {

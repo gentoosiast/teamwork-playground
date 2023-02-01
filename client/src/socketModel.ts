@@ -5,6 +5,7 @@ import {addUserName,addUserIndex,addIdGame,changeCurrentPlayer,setWinner} from '
 import { setRooms } from "./reducer/roomsReducer";
 import { changePage } from './reducer/pagesReduser';
 import {changeField,addField} from './reducer/fieldsReducer';
+import {setShipsOnCanvas} from './reducer/shipsReducer';
 interface ISocketModel{
   dispatch: AppDispatch
 }
@@ -61,6 +62,7 @@ export class SocketModel {
                }
               });
         //  console.log( shipForClient)
+          dispatch(setShipsOnCanvas(ships))
           dispatch(addField({field:shipForClient}));
           dispatch(changeCurrentPlayer({isCurrentPlayer: currentPlayerIndex=== this.playerIdx}))
           break;

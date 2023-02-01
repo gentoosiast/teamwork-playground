@@ -31,7 +31,6 @@ export const App = () => {
 
 
 	useEffect(() => {
-	//	console.log("PAGEuseEff")
 		if (page === 'room') {
 			setContent(<Room socket={socket}/>);
 		}

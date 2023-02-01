@@ -15,6 +15,7 @@ export class IPlayerController{
     
     constructor(id: number, sendMessage: (position: IVector,status: string, isChangeCurrent: boolean)=>void, finishGame:(winPlayer:number)=>void){
         this.id = id;
+        this.shipField=new Array(10).fill(new Array(10).fill(0))
         this.sendMessage = (position,status, isChangeCurrent=false)=>{
             sendMessage(position,status,isChangeCurrent)
         }
@@ -30,7 +31,7 @@ export class IPlayerController{
     }
 
     addEnemyShips(ships: IShip[]){
-
+      if(!this.shipField || !ships)return
         this.ships = ships;
 
         for (let i = 0; i < 10; i += 1) {
@@ -40,12 +41,13 @@ export class IPlayerController{
          }
          this.shipField.push(row);
        }
-        console.log("THIS<SHIP",this.shipField)
+        //console.log("THIS<SHIP",this.shipField)
        ships.forEach((ship, idx) => {
-
+console.log("SHIP",ship)
          for (let i = 0; i < ship.length; i += 1) {
            if (!ship.direction) {
             //===0
+             console.log(ship.position.y,'-----',ship.position.x + i)
              this.shipField[ship.position.y][ship.position.x + i] = idx;
            } else {
              this.shipField[ship.position.y + i][ship.position.x] = idx;

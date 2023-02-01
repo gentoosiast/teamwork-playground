@@ -7,6 +7,7 @@ import { Provider } from "react-redux";
 import store from "./store/store";
 import imageObj from "./utils/Image";
 // ReactDOM.render()
+
 const root = ReactDOM.createRoot(document.body);
 
 
