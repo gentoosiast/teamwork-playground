@@ -45,19 +45,19 @@ export class BotController extends IPlayerController{
         }       
         return;
       }
-        const x = Math.floor(Math.random()*9);
-        const y = Math.floor(Math.random()*9) ;
-        this.attack({x,y})
+        const possiblePositions:IVector[] = [];
+        this.enemyField.forEach((row, y)=>row.map((cell, x)=>{
+          if(!cell){
+            possiblePositions.push({x,y})
+          }
+        }))
+        const randomPosition = Math.round(Math.random()*(possiblePositions.length-1));
+        this.attack(possiblePositions[randomPosition])
     }
 
     attack(position: IVector){
       setTimeout(()=>{
-
-        if(!this.checkEmpty(position)){
-          this.nextRound();
-          return;
-        } 
-      const shipIndex = this.shipField[position.y][position.x];
+        const shipIndex = this.shipField[position.y][position.x];
       this.changeField(position);
         if (shipIndex === -1) {
           this.sendMessage(position, 'miss', true);         
@@ -78,8 +78,7 @@ export class BotController extends IPlayerController{
         }
         
         this.nextRound();
-        
-      }, 1000) 
+      },1000)
     }    
     
 }
