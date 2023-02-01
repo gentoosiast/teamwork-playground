@@ -5,6 +5,7 @@ import {addUserName,addUserIndex,addIdGame,changeCurrentPlayer,setWinner} from '
 import { setRooms } from "./reducer/roomsReducer";
 import { changePage } from './reducer/pagesReducer';
 import {changeField,addField} from './reducer/fieldsReducer';
+import Sound from './utils/sound';
 interface ISocketModel{
   dispatch: AppDispatch
 }
@@ -43,6 +44,7 @@ export class SocketModel {
           const {position, currentPlayer, status} = JSON.parse(parsedMsg.data)
           const player = this.playerIdx=== currentPlayer?'enemyField':'ourField';
           dispatch(changeField({position, status, player}))
+          Sound.playAudio(status);
           break;
         }
         case 'start_game': {     

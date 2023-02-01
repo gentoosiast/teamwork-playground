@@ -5,7 +5,6 @@ import {ShipsSizes,tShipCanvas} from "../../dto";
 import {imagesObjType} from "../application/app";
 import CanvasSectionController from "./canvasComponents/CanvasSectionController";
 import BoardComponent from "./canvasComponents/BoardComponent";
-
 export const log = function (arg: any) {
 	console.log(JSON.parse(JSON.stringify(arg)))
 }
