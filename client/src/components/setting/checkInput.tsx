@@ -21,7 +21,7 @@ const Wrapper = styled.label`
     user-select: none;
     width: 25px;
     height: 25px;
-`
+`;
 
 const CheckMark = styled.span`
     position: absolute;
@@ -34,7 +34,7 @@ const CheckMark = styled.span`
     &:hover{
         background-color: #ccc;
     }
-`
+`;
 
 const CheckBox = styled.input`
     position: absolute;
@@ -58,10 +58,7 @@ const CheckBox = styled.input`
             transform: rotate(45deg);
         }
     }
-`
-
-
-
+`;
 
 const CheckInput = ({isSound, handleChange, type}:ICheckInput)=>{
     return(<Wrapper htmlFor={type}>
@@ -71,6 +68,6 @@ const CheckInput = ({isSound, handleChange, type}:ICheckInput)=>{
         id={type}/>
         <CheckMark/>
     </Wrapper>)
-}
+};
 
 export default CheckInput;
