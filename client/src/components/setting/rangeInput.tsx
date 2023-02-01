@@ -38,6 +38,6 @@ const RangeInput = ({ volume, handleChange}:IRangeInput)=>{
         </>
        
     )
-}
+};
 
 export default RangeInput;

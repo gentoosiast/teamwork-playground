@@ -79,7 +79,7 @@ export class BotController extends IPlayerController{
         
         this.nextRound();
         
-      },1000) 
+      }, 1000) 
     }    
     
 }
