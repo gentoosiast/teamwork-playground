@@ -14,6 +14,7 @@ import Wrapper from "../styledComponents/wrapper";
 import {ButtonRooms} from '../styledComponents/buttons'
 import Content from "../styledComponents/content";
 import {SpriteCanvas} from "../gameField/SpriteCanvas";
+import TimerComponent from '../timer/timerComponent';
 
 const ChooseComponent = ({imagesObj, onStartGame}
 													 : { imagesObj: imagesObjType, onStartGame: (ship: tShipCanvas[]) => void }) => {
@@ -25,6 +26,10 @@ const ChooseComponent = ({imagesObj, onStartGame}
 			<Content width={500}>
 				<div ref={shipsRef}>
 					<SubTitle>Arrange your ships on grid</SubTitle>
+					<TimerComponent count={5} endTimer={()=>{
+						console.log('end');
+						dispatch(setAutoPut());
+					}}/>
 					<ShipsSection onStartGame={(ships: tShipCanvas[]) => {
 						setTimeout(() => onStartGame(ships), 2000)
 					}}/>
