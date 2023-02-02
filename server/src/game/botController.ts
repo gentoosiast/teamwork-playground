@@ -45,14 +45,7 @@ export class BotController extends IPlayerController{
         }       
         return;
       }
-        const possiblePositions:IVector[] = [];
-        this.enemyField.forEach((row, y)=>row.map((cell, x)=>{
-          if(!cell){
-            possiblePositions.push({x,y})
-          }
-        }))
-        const randomPosition = Math.round(Math.random()*(possiblePositions.length-1));
-        this.attack(possiblePositions[randomPosition])
+      this.randomAttack();
     }
 
     attack(position: IVector){

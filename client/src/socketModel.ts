@@ -6,6 +6,7 @@ import { setRooms } from "./reducer/roomsReducer";
 import { changePage } from './reducer/pagesReducer';
 import {changeField,addField} from './reducer/fieldsReducer';
 import Sound from './utils/sound';
+import { changeTimer } from "./reducer/timerReducer";
 interface ISocketModel{
   dispatch: AppDispatch
 }
@@ -37,7 +38,9 @@ export class SocketModel {
         // }
         case 'turn':{
           const {currentPlayer} = JSON.parse(parsedMsg.data);
-          dispatch(changeCurrentPlayer({isCurrentPlayer: currentPlayer=== this.playerIdx}))
+          const turn = currentPlayer=== this.playerIdx
+          dispatch(changeCurrentPlayer({isCurrentPlayer: turn}));
+          dispatch(changeTimer({timer: turn}))
           break;
         }
         case 'attack': {
@@ -157,6 +160,9 @@ export class SocketModel {
 
   attack(x: number, y: number,gameId:number) {
     this.sendMessage('attack', JSON.stringify({ x, y ,gameId, indexPlayer: this.playerIdx}))
+  }
+  randomAttack(gameId:number){
+    this.sendMessage('randomAttack', JSON.stringify({ gameId, indexPlayer: this.playerIdx}))
   }
 
   // sendChatMessage(inputMsg: string) {
