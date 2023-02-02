@@ -84,6 +84,14 @@ export class Game {
 		const player = this.playerControllers.get(indexPlayer);
 		player?.attack(position);
 	}
+	
+	randomAttack(indexPlayer: number){
+		if (this.currentPlayer !== indexPlayer) {
+			return;
+		}
+		const player = this.playerControllers.get(indexPlayer);
+		player?.randomAttack();
+	}
 
 	finishGame(winPlayer: number) {
 		this.sendMessageToAll('finish', JSON.stringify({winPlayer: winPlayer}))

@@ -81,3 +81,9 @@ export interface ISetting {
   volume: number,
   isSound: boolean
 }
+
+export interface ITimer {
+	timerData: {
+		timer: boolean
+	}
+}

@@ -10,7 +10,7 @@ export default class Timer {
         this.count = size;
         this.size = size;
         this.func = func;
-        this.endTimer =endTimer
+        this.endTimer =endTimer;
     } 
 
     startTimer(){

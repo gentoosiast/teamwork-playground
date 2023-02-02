@@ -86,6 +86,12 @@ websocket.on('request', (e) => {
         game?.attack({x: data.x, y: data.y}, data.indexPlayer )
         break;
       }
+      case 'randomAttack':{
+        const data= JSON.parse(parsedMsg.data);
+        const game = games.get(data.gameId);
+        game?.randomAttack(data.indexPlayer )
+        break;
+      }
       // case 'get_field': {
       //   // const field: IVector = JSON.parse(parsedMsg.data);
       //   const responseObj: IMessage = {
