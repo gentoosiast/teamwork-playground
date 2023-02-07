@@ -96,10 +96,16 @@ export class IPlayerController{
       this.demeges++;
       const height = this.enemyField.length;
       const width =  this.enemyField[0].length;
+      console.log(this.enemyField)
       if (!ship.direction){ ////====0
         for (let i =-1; i < ship.length+1; i += 1){
           for (let j =-1; j < 2; j += 1){
-            if(ship.position.y+j>=0&&ship.position.y+j<height&&ship.position.x + i>=0&&ship.position.x + i<width){
+            if(ship.position.y+j>=0
+              &&ship.position.y+j<height
+              &&ship.position.x + i>=0
+              &&ship.position.x + i<width
+              &&!this.enemyField[ship.position.y+j][ship.position.x + i]){
+              console.log(ship.position.x + i,ship.position.y+j,this.enemyField[ship.position.y+j][ship.position.x + i])
                this.changeField({y: ship.position.y+j, x:ship.position.x + i}, 'miss');
               this.sendMessage({y: ship.position.y+j, x:ship.position.x + i}, 'miss');
             }                
@@ -112,7 +118,11 @@ export class IPlayerController{
       } else {
         for (let i =-1; i < ship.length+1; i += 1){
           for (let j =-1; j < 2; j += 1){
-            if(ship.position.y+i>=0&&ship.position.y+i<height&&ship.position.x + j>=0&&ship.position.x + j<width){
+            if(ship.position.y+i>=0
+                &&ship.position.y+i<height
+                &&ship.position.x + j>=0
+                &&ship.position.x + j<width
+                &&!this.enemyField[ship.position.y+i][ship.position.x + j]){
               this.changeField({y: ship.position.y+i, x:ship.position.x + j}, 'miss');
               this.sendMessage({y: ship.position.y+i, x:ship.position.x + j}, 'miss');
             }            
