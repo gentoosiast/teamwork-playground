@@ -43,7 +43,8 @@ export function EnemyField(props: IGameFieldProps) {
 	const dispatch= useDispatch()
 	const [board, setBoard] = useState(null);
 	useEffect(() => {
-		board?.drawBoard(enemyField)
+		board?.drawBoard(enemyField);
+		board?.drawShotShips(enemyField)
 		const occupied:{x:number,y:number}[]=[]
 			enemyField.forEach((row,indRow)=>{
 			row.forEach((cell,indCell)=>{
@@ -83,13 +84,13 @@ export function OurField({shipsImages}: { shipsImages: imagesObjType }) {
 	const shipsOnCanvas = useSelector((state: IShipsStore) => state.shipsData.shipsOnCanvas)
 	const [board, setBoard] = useState(null)
 	useEffect(() => {
-		board?.drawBoard(ourField);
-		//board.drawScene(ourField,shipsOnCanvas)
+		//board?.drawBoard(ourField);
+		board?.drawScene(ourField,shipsOnCanvas)
 		console.log(shipsOnCanvas)
 	}, [ourField])
 	useEffect(() => {
 		const Board = new BoardComponent(ourRef.current, cellInRow, cellInRow, cellSize, shipsImages)
-		Board.drawScene(ourField)
+		Board.drawScene(ourField,shipsOnCanvas)
 		setBoard(Board)
 		//	const sprite=new SpriteCanvas(ourRef.current)
 	}, [])

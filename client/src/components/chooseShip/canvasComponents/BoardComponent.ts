@@ -54,14 +54,27 @@ export default class BoardComponent extends Control {
 		shipsOnCanvas?.forEach(ship => {
 			const axis = ship.isRotate ? 'vertical' : 'horizont'
 			const img = this.imagesData[axis][ship.type]
+	
 			this.ctx.drawImage(img, this.inPixels(ship.xC), this.inPixels(ship.yC),
 				img.width, img.height)
+		})
+	}
+
+	drawShotShips(matrix: number[][]){
+		matrix.forEach((row, rI) => {
+			row.forEach((cell, cI) => {
+				if(cell===4||cell===3){
+					const img = this.imagesData['vertical']['small'] ///!!!! тут маэ бути картинка з розбитим кореблем, я хз, як її добавити в загрузку картінок. типу фал fair 
+					this.ctx.drawImage(img, this.inPixels(cI), this.inPixels(rI), img.width, img.height)
+				}
+			})
 		})
 	}
 
 	drawScene(matrix: number[][], shipsOnCanvas?: tShipCanvas[]) {
 		this.drawBoard(matrix)
 		shipsOnCanvas && this.drawShips(shipsOnCanvas)
+		this.drawShotShips(matrix)
 
 	}
 }
