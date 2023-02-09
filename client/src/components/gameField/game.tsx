@@ -34,6 +34,7 @@ interface IFieldStore {
 }
 
 export function EnemyField(props: IGameFieldProps) {
+	const oc= useSelector((state:IFieldStore)=>state.fieldsData.occupiedCell)
 	const enemyField = useSelector((state: IFieldStore) => state.fieldsData.enemyField);
 	const idGame = useSelector((state: IUserStore) => state.userData.idGames)
 	const fieldRef = useRef(null)
@@ -45,13 +46,13 @@ export function EnemyField(props: IGameFieldProps) {
 	useEffect(() => {
 		board?.drawBoard(enemyField);
 		board?.drawShotShips(enemyField)
-		const occupied:{x:number,y:number}[]=[]
-			enemyField.forEach((row,indRow)=>{
-			row.forEach((cell,indCell)=>{
-				cell===1 && occupied.push({x:indCell,y:indRow})
-			})
-		})
-		dispatch(enemyOccupied(occupied as []))
+		// const occupied:{x:number,y:number}[]=[]
+		// 	enemyField.forEach((row,indRow)=>{
+		// 	row.forEach((cell,indCell)=>{
+		// 		cell===1 && occupied.push({x:indCell,y:indRow})
+		// 	})
+		// })
+		dispatch(enemyOccupied(oc))
 	}, [enemyField])
 	boardMatrix.onGetClickedCell = (x, y) => {
 		props.socket.attack(x, y, idGame[idGame.length - 1]);
@@ -85,15 +86,9 @@ export function OurField({shipsImages}: { shipsImages: imagesObjType }) {
 	const shipsOnCanvas = useSelector((state: IShipsStore) => state.shipsData.shipsOnCanvas)
 	const [board, setBoard] = useState(null)
 	useEffect(() => {
-<<<<<<< HEAD
-		board?.drawBoard(ourField)
-		//board?.drawShips(ourField)
-
-=======
 		//board?.drawBoard(ourField);
 		board?.drawScene(ourField,shipsOnCanvas)
-		console.log(shipsOnCanvas)
->>>>>>> 435dd79e85bb385a3fa9053ee8450e7ec9050697
+
 	}, [ourField])
 	useEffect(() => {
 		const Board = new BoardComponent(ourRef.current, cellInRow, cellInRow, cellSize, shipsImages)

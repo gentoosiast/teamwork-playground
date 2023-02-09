@@ -24,29 +24,17 @@ export class SpriteCanvasComponent extends Control<HTMLCanvasElement> {
 		this.node.onclick = (e) => this.onClickSprite(this.spriteMatrix.getCursorPosition(e, this.node))
 	}
 
-	upDateOccupied(occupied: { x: number, y: number }[]) {
-		const apdtdSet = new Set()
-		occupied.forEach(oc => apdtdSet.add(`${oc.y}-${oc.x}`))
-		occupied.forEach(oc => {
-			if (!this.hashedCells.has(`${oc.y}-${oc.x}`)) {
-				this.hashedCells.set(`${oc.y}-${oc.x}`, new SpriteImage(+oc.y,+oc.x,this.ctx,this.spriteMatrix.cellSize))
-			}
-		})
-
-		Array.from(this.hashedCells).forEach(c => {
-			if (!apdtdSet.has(c[0])) {
-				this.hashedCells.delete(c[0])
-			}
-		})
-
-		this.drawOc()
+	upDateOccupied(oc: { player: string, position: { x: number, y: number }, status: string }) {
+		console.log("HH")
+		new SpriteImage(+oc.position.y, +oc.position.x, this.ctx, this.spriteMatrix.cellSize,oc.status)
+		//	this.drawOc()
 	}
 
-	drawOc() {
-console.log("!!1")
-		Array.from(this.hashedCells).forEach(c=>{
-				console.log("CC",c)
-				this.spriteMatrix?.drawExp(c[0],c[1])
-		})
-	}
+// 	drawOc() {
+// console.log("!!1")
+// 		Array.from(this.hashedCells).forEach(c=>{
+// 				console.log("CC",c)
+// 				this.spriteMatrix?.drawExp(c[0],c[1])
+// 		})
+// 	}
 }

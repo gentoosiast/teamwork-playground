@@ -10,7 +10,7 @@ export interface IShipsInitialState {
 	boardMatrix: number[][],
 	_moveAdded:boolean,
 	_ckickAdded:boolean,
-	enemyOccupiedData:[]
+	enemyOccupiedData:{player:string,position:{x:number,y:number},status:string}
 }
 
 function emptyMatrix(len: number) {
@@ -23,7 +23,7 @@ const initialState: IShipsInitialState = {
 	boardMatrix: emptyMatrix(10),
 	_moveAdded:false,
 	_ckickAdded:false,
-	enemyOccupiedData:[]
+	enemyOccupiedData:null
 	//	return createEmptyMatrix(this.cellsInRow)
 
 };
@@ -35,7 +35,7 @@ const boardReducer = createSlice({
 	name: "boardData",
 	initialState,
 	reducers: {
-		enemyOccupied(state,action:PayloadAction<[]>){
+		enemyOccupied(state,action:PayloadAction<{player:string,position:{x:number,y:number},status:string}>){
 			state.enemyOccupiedData=action.payload
 		},
 		fillAreaCells(state, action: PayloadAction<{data:string[],value:number}>){

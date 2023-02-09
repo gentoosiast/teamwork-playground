@@ -15,6 +15,7 @@ export const SpriteCanvas = (props:{onClick?:(cell:{x:number,y:number})=>void}) 
 	useEffect(()=>{
 		sprite?.upDateOccupied(occupiedData)
 	},[occupiedData])
+
 	const [sprite,setSprite]=useState(null)
 	useEffect(() => {
 		const sp = new SpriteCanvasComponent(spriteRef.current, cellSize * celsInRow, cellSize * celsInRow)
