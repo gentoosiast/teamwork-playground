@@ -1,6 +1,6 @@
 import './game.css';
 import React, {useEffect, useRef, useState} from "react";
-import {Cell, IFieldsInitialState, IUserInitialData, tShipCanvas} from '../../dto'
+import {Cell, IFieldsInitialState, IUserInitialData, ITimer} from '../../dto'
 import {SocketModel} from "../../socketModel";
 import {useDispatch, useSelector} from 'react-redux';
 import BoardComponent from "../chooseShip/canvasComponents/BoardComponent";
@@ -14,6 +14,8 @@ import Content from '../styledComponents/content'
 import Wrapper from '../styledComponents/wrapper'
 import {SpriteCanvas} from "./SpriteCanvas";
 import {enemyOccupied} from '../../reducer/boardReducer'
+import TimerComponent from '../timer/timerComponent';
+import { changeTimer } from '../../reducer/timerReducer';
 const styleMap = {
 	[Cell.Empty]: '',
 	[Cell.Occupied]: 'cell_occupied',
@@ -39,9 +41,10 @@ export function EnemyField(props: IGameFieldProps) {
 	const cellSize = useSelector((state: IBoardStore) => state.boardData.cellSize)
 	const boardMatrix = new BoardMatrixGameField(enemyField)
 	const dispatch= useDispatch()
-	const [board, setBoard] = useState(null)
+	const [board, setBoard] = useState(null);
 	useEffect(() => {
-		board?.drawBoard(enemyField)
+		board?.drawBoard(enemyField);
+		board?.drawShotShips(enemyField)
 		const occupied:{x:number,y:number}[]=[]
 			enemyField.forEach((row,indRow)=>{
 			row.forEach((cell,indCell)=>{
@@ -63,7 +66,11 @@ export function EnemyField(props: IGameFieldProps) {
 	return (
 		<div style={{position: 'relative'}}>
 			<div ref={fieldRef}/>
-			<SpriteCanvas	onClick={(cell)=>{boardMatrix.onClick(cell)}}
+			<SpriteCanvas	onClick={(cell)=>{
+				boardMatrix.onClick(cell);
+				dispatch(changeTimer({timer:false}))
+
+			}}
 			/>
 		</div>
 	)
@@ -74,16 +81,23 @@ export function OurField({shipsImages}: { shipsImages: imagesObjType }) {
 	const ourField = useSelector((state: IFieldStore) => state.fieldsData.ourField);
 	const ourRef = useRef(null)
 	const cellInRow = useSelector((state: IBoardStore) => state.boardData.cellsInRow)
-	const cellSize = useSelector((state: IBoardStore) => state.boardData.cellSize)
+	const cellSize = useSelector((state: IBoardStore) => state.boardData.cellSize);
+	const shipsOnCanvas = useSelector((state: IShipsStore) => state.shipsData.shipsOnCanvas)
 	const [board, setBoard] = useState(null)
 	useEffect(() => {
+<<<<<<< HEAD
 		board?.drawBoard(ourField)
 		//board?.drawShips(ourField)
 
+=======
+		//board?.drawBoard(ourField);
+		board?.drawScene(ourField,shipsOnCanvas)
+		console.log(shipsOnCanvas)
+>>>>>>> 435dd79e85bb385a3fa9053ee8450e7ec9050697
 	}, [ourField])
 	useEffect(() => {
 		const Board = new BoardComponent(ourRef.current, cellInRow, cellInRow, cellSize, shipsImages)
-		Board.drawScene(ourField)
+		Board.drawScene(ourField,shipsOnCanvas)
 		setBoard(Board)
 		//	const sprite=new SpriteCanvas(ourRef.current)
 	}, [])
@@ -117,11 +131,14 @@ interface IUserStore {
 
 export function GameField(props: IGameFieldProps) {
 
-	const currentPlayer = useSelector((state: IUserStore) => state.userData.isCurrentPlayer)
+	const currentPlayer = useSelector((state: IUserStore) => state.userData.isCurrentPlayer);
+	const idGame = useSelector((state: IUserStore) => state.userData.idGames);
+	const timer = useSelector((state: ITimer)=>state.timerData.timer);
 	return (
 		<Wrapper>
-			<Content width={300}>
+			<Content width={310}>
 				<SubTitle>{currentPlayer ? 'Your Turn' : 'Next player goes'}</SubTitle>
+				<TimerComponent count={5} endTimer={()=>props.socket.randomAttack(idGame[idGame.length - 1])} startTimer={timer} />
 			</Content>
 
 			<>
