@@ -14,7 +14,8 @@ export function createImagesObject(base: number, sizes: Record<string, number>,c
 				const allHorizont = Promise.all(
 					Object.entries(sizes).map(c => imageObj(`./public/assets/ships/${c[0]}H.png`, c[1], base)))
 				allHorizont.then(hor => {
-					const hO: Record<string, HTMLImageElement> = {}
+					const brokenShip = imageObj(`./public/assets/ships/fair.png`, base, base).then((brokenShipImg)=>{
+						const hO: Record<string, HTMLImageElement> = {}
 					const vO: Record<string, HTMLImageElement> = {}
 					const sizesA = ['small', 'medium', 'large', 'huge']
 					sizesA.forEach((sz, ind) => {
@@ -30,7 +31,12 @@ export function createImagesObject(base: number, sizes: Record<string, number>,c
 					const obj:imagesObjType = {}
 					obj.vertical = vO
 					obj.horizont = hO
-				callBack(obj)
+					// @ts-ignore
+					obj.broken = brokenShipImg;
+					callBack(obj)
+					})
+
+					
 				})
 			})
 		})

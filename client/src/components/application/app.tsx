@@ -20,7 +20,7 @@ interface IPage {
 export type imagesObjType = {
 	vertical: Record<string, HTMLImageElement>,
 	horizont: Record<string, HTMLImageElement>,
-	fire:HTMLImageElement
+	broken:HTMLImageElement
 }
 export const App = () => {
 	const [socket, setSocket] = useState<SocketModel>(null);

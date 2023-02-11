@@ -34,7 +34,7 @@ export default class SpriteImage {
 			this.draw(count++)
 			frmsTotal--
 			if (frmsTotal == 0) clearInterval(intId)
-		}, 200)
+		}, 50)
 	}
 
 	draw(frame: number) {
