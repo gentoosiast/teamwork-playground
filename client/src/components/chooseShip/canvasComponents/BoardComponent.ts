@@ -35,15 +35,16 @@ export default class BoardComponent extends Control {
 //     Killed = 4
 //   }
 	drawBoard(matrix: number[][]) {
+		this.ctx.drawImage(this.imagesData.bgImg,0,0,this.canvasSection.node.width,this.canvasSection.node.height)
 		matrix.forEach((row, rI) => {
 			row.forEach((cell, cI) => {
 				this.ctx.fillStyle =
-					(cell === 5) ? "olive" :
-						(cell === 1) ? 'darkGreen' :
-						(cell === 2 ) ? 'blue' :
+					(cell === 5) ? "rgba(0,0,255,0.3)" ://shipPerimetr
+						(cell === 1) ? 'rgba(100,105,255,0.5)' ://miss
+						(cell === 2 ) ? 'rgba(0,0,255,0.1)' ://underShips
 							(cell === 7 || cell===3) ? "red":
 							(cell === 4 ) ? 'black' 
-								: "green"
+								: "rgba(0,50,255,0.5)"//empty space
 				this.ctx.fillRect((this.inPixels(cI)) + 1, (this.inPixels(rI)) + 1,
 					this.cellSize - 2, this.cellSize - 2);
 			})
