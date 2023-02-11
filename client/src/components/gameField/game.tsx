@@ -13,7 +13,7 @@ import SubTitle from '../styledComponents/subTitle';
 import Content from '../styledComponents/content'
 import Wrapper from '../styledComponents/wrapper'
 import {SpriteCanvas} from "./SpriteCanvas";
-import {enemyOccupied} from '../../reducer/boardReducer'
+import {enemyOccupied,ourOccupied} from '../../reducer/boardReducer'
 import TimerComponent from '../timer/timerComponent';
 import { changeTimer } from '../../reducer/timerReducer';
 const styleMap = {
@@ -34,7 +34,7 @@ interface IFieldStore {
 }
 
 export function EnemyField(props: IGameFieldProps) {
-	const oc= useSelector((state:IFieldStore)=>state.fieldsData.occupiedCell)
+	const oc= useSelector((state:IFieldStore)=>state.fieldsData.enemyOccupiedCell)
 	const enemyField = useSelector((state: IFieldStore) => state.fieldsData.enemyField);
 	const idGame = useSelector((state: IUserStore) => state.userData.idGames)
 	const fieldRef = useRef(null)
@@ -46,12 +46,6 @@ export function EnemyField(props: IGameFieldProps) {
 	useEffect(() => {
 		board?.drawBoard(enemyField);
 		board?.drawShotShips(enemyField)
-		// const occupied:{x:number,y:number}[]=[]
-		// 	enemyField.forEach((row,indRow)=>{
-		// 	row.forEach((cell,indCell)=>{
-		// 		cell===1 && occupied.push({x:indCell,y:indRow})
-		// 	})
-		// })
 		dispatch(enemyOccupied(oc))
 	}, [enemyField])
 	boardMatrix.onGetClickedCell = (x, y) => {
@@ -67,7 +61,7 @@ export function EnemyField(props: IGameFieldProps) {
 	return (
 		<div style={{position: 'relative'}}>
 			<div ref={fieldRef}/>
-			<SpriteCanvas	onClick={(cell)=>{
+			<SpriteCanvas	player="enemy" onClick={(cell)=>{
 				boardMatrix.onClick(cell);
 				dispatch(changeTimer({timer:false}))
 
@@ -78,17 +72,20 @@ export function EnemyField(props: IGameFieldProps) {
 }
 
 export function OurField({shipsImages}: { shipsImages: imagesObjType }) {
-//	const ships= useSelector((state:IShipsStore)=>state.shipsData.shipsOnCanvas)
+	const oc= useSelector((state:IFieldStore)=>state.fieldsData.ourOccupiedCell)
+
 	const ourField = useSelector((state: IFieldStore) => state.fieldsData.ourField);
 	const ourRef = useRef(null)
 	const cellInRow = useSelector((state: IBoardStore) => state.boardData.cellsInRow)
 	const cellSize = useSelector((state: IBoardStore) => state.boardData.cellSize);
 	const shipsOnCanvas = useSelector((state: IShipsStore) => state.shipsData.shipsOnCanvas)
 	const [board, setBoard] = useState(null)
+	const dispatch= useDispatch()
+
 	useEffect(() => {
 		//board?.drawBoard(ourField);
 		board?.drawScene(ourField,shipsOnCanvas)
-
+		dispatch(ourOccupied(oc))
 	}, [ourField])
 	useEffect(() => {
 		const Board = new BoardComponent(ourRef.current, cellInRow, cellInRow, cellSize, shipsImages)
@@ -100,7 +97,8 @@ export function OurField({shipsImages}: { shipsImages: imagesObjType }) {
 	return (
 		<div style={{position: 'relative'}}>
 			<div ref={ourRef}/>
-		{/*//todo add 	<SpriteCanvas occupied={[]}/>*/}
+			<SpriteCanvas	player="our"/>
+				{/*//todo add 	<SpriteCanvas occupied={[]}/>*/}
 		</div>
 
 	);	// <div className="field">

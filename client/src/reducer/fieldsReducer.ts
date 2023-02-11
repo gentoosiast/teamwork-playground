@@ -5,7 +5,8 @@ import {emptyState} from '../utils/fieldGenerator';
 const initialState: IFieldsInitialState = {
 	enemyField: emptyState(),
 	ourField: emptyState(),
-	occupiedCell: null
+	enemyOccupiedCell: null,
+	ourOccupiedCell:null
 };
 
 interface IField {
@@ -40,7 +41,12 @@ const fieldsReducer = createSlice({
 					return position.x === x && position.y === y ? Cell.Unavailable : cell;
 				})
 			})
-			state.occupiedCell = {player, position, status}
+			if(player==='ourField'){
+				state.ourOccupiedCell = {position, status}
+			}else{
+				state.enemyOccupiedCell = {position, status}
+			}
+
 			state[player] = arr;
 		},
 	},

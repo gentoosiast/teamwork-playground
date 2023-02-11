@@ -5,16 +5,18 @@ import {useSelector} from "react-redux";
 import {IBoardStore} from "../../reducer/boardReducer";
 import {BoardMatrixBase} from "../chooseShip/canvasComponents/BoardMatrix";
 
-export const SpriteCanvas = (props:{onClick?:(cell:{x:number,y:number})=>void}) => {
+export const SpriteCanvas = (props:{player:string,onClick?:(cell:{x:number,y:number})=>void}) => {
 	const spriteRef = useRef(null)
 	const cellSize = useSelector((state: IBoardStore) => state.boardData.cellSize)
 	const celsInRow = useSelector((state: IBoardStore) => state.boardData.cellsInRow)
 
-	const occupiedData=useSelector((state:IBoardStore) => state.boardData.enemyOccupiedData)
-
+	const ourData=useSelector((state:IBoardStore) => state.boardData.ourOccupiedData)
+	const enemyData=useSelector((state:IBoardStore) => state.boardData.enemyOccupiedData)
+//porps.enemy
+const data=props.player==='enemy'?enemyData:ourData
 	useEffect(()=>{
-		sprite?.upDateOccupied(occupiedData)
-	},[occupiedData])
+		sprite?.upDateOccupied(data)
+	},[data])
 
 	const [sprite,setSprite]=useState(null)
 	useEffect(() => {

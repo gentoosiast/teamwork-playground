@@ -41,7 +41,8 @@ export interface IRegData{
 export interface IFieldsInitialState {
   enemyField: Cell[][],
   ourField: Cell[][],
-  occupiedCell :{player:string,position:{x:number,y:number},status:string}
+  enemyOccupiedCell :{position:{x:number,y:number},status:string},
+  ourOccupiedCell :{position:{x:number,y:number},status:string}
 }
 export interface IVector{
   x: number;

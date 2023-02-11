@@ -24,17 +24,7 @@ export class SpriteCanvasComponent extends Control<HTMLCanvasElement> {
 		this.node.onclick = (e) => this.onClickSprite(this.spriteMatrix.getCursorPosition(e, this.node))
 	}
 
-	upDateOccupied(oc: { player: string, position: { x: number, y: number }, status: string }) {
-		console.log("HH")
+	upDateOccupied(oc: {position: { x: number, y: number }, status: string }) {
 		new SpriteImage(+oc.position.y, +oc.position.x, this.ctx, this.spriteMatrix.cellSize,oc.status)
-		//	this.drawOc()
 	}
-
-// 	drawOc() {
-// console.log("!!1")
-// 		Array.from(this.hashedCells).forEach(c=>{
-// 				console.log("CC",c)
-// 				this.spriteMatrix?.drawExp(c[0],c[1])
-// 		})
-// 	}
 }
