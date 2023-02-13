@@ -1,6 +1,6 @@
 import React from "react";
 import styled from 'styled-components';
-import setting from '../../assets/svg/setting.svg'
+import setting from '../../public/svg/setting.svg'
 
 interface ISettingIcon{
     handleClick: ()=>void;

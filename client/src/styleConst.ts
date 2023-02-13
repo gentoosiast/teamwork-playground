@@ -1,6 +1,6 @@
-export const generalColor = 'rgb(101, 0, 0)';
-export const backGroundColor = 'rgb(255, 253, 191)';
-export const backGroundColorOpacity = 'rgba(255, 253, 191, 0.7)';
+export const generalColor = 'rgb(0, 4, 23)';
+export const backGroundColor = 'rgb(109, 128, 155)';
+export const backGroundColorOpacity = 'rgb(109, 128, 155, 0.7)';
 
 export const fontSize ={
     'fontLarge':{

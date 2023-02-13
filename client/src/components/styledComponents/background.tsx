@@ -4,14 +4,15 @@ import styled from "styled-components";
 interface IBackGround{
     children:JSX.Element|JSX.Element[];
 }
-// const Video = styled.video`
-//     position: fixed;
-//     right: 0;
-//     bottom: 0;
-//     min-width: 100%;
-//     min-height: 100%;    
-//     background: rgba(0, 0, 0, 0.5);
-// `
+const Video = styled.video`
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    min-width: 100%;
+    min-height: 100%;    
+    background: rgba(0, 0, 0, 0.5);
+    z-index: -1;
+`
 // const Content = styled.div`
 //     position: fixed;
 //     top: 0;
@@ -20,10 +21,10 @@ interface IBackGround{
 //     min-height: 100%; 
 // `
 const Wrapper = styled.div`
-    background-image: url('../../assets/jpg/4.jpg');
+    /* background-image: url('../../assets/jpg/4.jpg');
     background-repeat: no-repeat;
     background-size: cover;
-    background-position: center center;
+    background-position: center center; */
     width: 100vw;
     height: 100vh;
 `
@@ -31,9 +32,9 @@ const Wrapper = styled.div`
 const BackGround=({children}:IBackGround)=>{
   
     return (<Wrapper>
-        {/* <Video loop id="myVideo" autoPlay muted>
-            <source src="../../assets/mp4/bg3.mp4" type="video/mp4"/>
-        </Video> */}
+        <Video loop id="myVideo" autoPlay muted>
+            <source src="../../public/assets/mp4/bg3-1.mp4" type="video/mp4"/>
+        </Video>
         {children}
  
     </Wrapper>)

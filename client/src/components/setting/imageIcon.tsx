@@ -1,6 +1,6 @@
 import React from 'react';
-import sound from '../../assets/svg/sound.svg';
-import music from '../../assets/svg/music.svg';
+import sound from '../../public/svg/sound.svg';
+import music from '../../public/svg/music.svg';
 import styled from 'styled-components';
 
 interface IImageIcon{

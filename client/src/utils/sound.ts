@@ -20,7 +20,7 @@ class Sound {
       this.soundAudio = new Audio();
       this.musicAudio = new Audio();
       this.musicAudio.currentTime = 0;
-      this.musicAudio.src = './assets/mp3/music.mp3';
+      this.musicAudio.src = './public/assets/mp3/music.mp3';
       //this._playMusic()
     }
 
@@ -63,7 +63,7 @@ class Sound {
   
     private killShip() {
       if (this.sound.isSound) {
-        this.soundAudio.src = './assets/mp3/killed.mp3';
+        this.soundAudio.src = './public/assets/mp3/killed.mp3';
         this.soundAudio.volume = this.sound.volume;
         this.soundAudio.play();
       }
@@ -71,7 +71,7 @@ class Sound {
   
     private shotShip() {
       if (this.sound.isSound) {
-        this.soundAudio.src = './assets/mp3/shot.mp3';
+        this.soundAudio.src = './public/assets/mp3/shot.mp3';
         this.soundAudio.volume = this.sound.volume;
         this.soundAudio.play();
       }
@@ -79,7 +79,7 @@ class Sound {
   
     private missShip() {
       if (this.sound.isSound) {
-        this.soundAudio.src = './assets/mp3/miss.mp3';
+        this.soundAudio.src = './public/assets/mp3/miss.mp3';
         this.soundAudio.volume = this.sound.volume;
         this.soundAudio.play();
       }

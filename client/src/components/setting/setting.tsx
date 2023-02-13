@@ -3,7 +3,7 @@ import styled from "styled-components";
 import SettingIcon from "./settingIcon";
 import SettingComponent from './setting-component';
 import {ButtonClose} from '../styledComponents/buttons';
-import close from '../../assets/svg/close.svg'
+import close from '../../public/svg/close.svg'
 import { generalColor,backGroundColor } from "../../styleConst";
 const Popup = styled.div`
     position: relative;
