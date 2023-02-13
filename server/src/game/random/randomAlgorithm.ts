@@ -71,7 +71,6 @@ export class EmptyAreas {
 	}
 
 	arrayDataFromArray(value: string, board: number[][]) {
-		//console.log(value)
 		const ar: axisData[] = []
 		const r = this.axisData(value, board)
 		r.forEach((row, i) => {
@@ -94,7 +93,6 @@ export class EmptyAreas {
 		const objAxis = axis === 'y' ? this.notRotatedAreas : this.rotatedAreas
 		const el = objAxis.find(e => e.id == +d[0]) as axisData
 		const idx = objAxis.indexOf(el)
-		//console.log("EL", el)
 		const setAxis = new Set(d[1].split('-'))
 		const rr = this.elementsHasntInSet(el , setAxis)
 		const subs = this.arrToSubArr(rr)
@@ -136,7 +134,6 @@ export class EmptyAreas {
 		const coords = suited[randomItm].data.find((el: []) => el.length >= size)
 		const x = !isRotate ? coords[Math.floor(Math.random() * (coords.length - size))] : suited[randomItm].id
 		const y = !isRotate ? suited[randomItm].id : coords[Math.floor(Math.random() * (coords.length - size))]
-		console.log("X<Y",x,y)
 		return({type:type as ShipType, position:{y, x}, direction:isRotate, length: size})
 	}
 }

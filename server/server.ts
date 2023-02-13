@@ -127,15 +127,20 @@ websocket.on('request', (e) => {
           return;
         }
         rooms.forEach(it=>it.removeUser(user.connection))
-        console.log('CREATEROOM')
         room.addUser(user.connection, user.index,user.name)
         rooms.set(ind, room);
+        
         // const responseObj: IMessage = {
         //   type: "create_room",
         //   data: JSON.stringify({roomId: room.id, roomUsers: room.sendUsers()}),
         //   id: 0
         // }
         // clients.forEach((c) => c.connection.sendUTF(JSON.stringify(responseObj)));
+        rooms.forEach(room=>{
+          if(!room.users.length){
+            rooms.delete(room.id);
+          }
+        })
         sendMessageRooms(rooms, clients)
         break;
       } 
@@ -154,6 +159,11 @@ websocket.on('request', (e) => {
           games.set(idGame, new Game(room.users, idGame) );
           rooms.delete(room.id)
         }
+        rooms.forEach(room=>{
+          if(!room.users.length){
+            rooms.delete(room.id);
+          }
+        })
         sendMessageRooms(rooms, clients);
         break;
       }

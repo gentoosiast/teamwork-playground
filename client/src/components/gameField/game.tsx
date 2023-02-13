@@ -127,11 +127,18 @@ export function GameField(props: IGameFieldProps) {
 	const currentPlayer = useSelector((state: IUserStore) => state.userData.isCurrentPlayer);
 	const idGame = useSelector((state: IUserStore) => state.userData.idGames);
 	const timer = useSelector((state: ITimer)=>state.timerData.timer);
+	const dispatch= useDispatch()
 	return (
 		<Wrapper>
 			<Content width={310}>
 				<SubTitle>{currentPlayer ? 'Your Turn' : 'Next player goes'}</SubTitle>
-				<TimerComponent count={5} endTimer={()=>props.socket.randomAttack(idGame[idGame.length - 1])} startTimer={timer} />
+				<TimerComponent 
+					count={1} 
+					endTimer={()=>{
+						dispatch(changeTimer({timer: false}))
+						props.socket.randomAttack(idGame[idGame.length - 1])
+					}} 
+					startTimer={timer} />
 			</Content>
 
 			<>

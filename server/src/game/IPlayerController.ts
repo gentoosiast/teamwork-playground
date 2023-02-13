@@ -11,8 +11,7 @@ export class IPlayerController{
     sendMessage: (position: IVector,status: string, isChangeCurrent?: boolean)=>void;
     finishGame: (winPlayer: number)=>void;
     ourShips: IShip[]=[];
-    fake: IShip[]=[];
-    
+   
     constructor(id: number, sendMessage: (position: IVector,status: string, isChangeCurrent: boolean)=>void, finishGame:(winPlayer:number)=>void){
         this.id = id;
        // this.shipField=new Array(10).fill(new Array(10).fill(0))
@@ -41,19 +40,15 @@ export class IPlayerController{
          }
          this.shipField.push(row); 
        }
-        //console.log("THIS<SHIP",this.shipField)
        ships.forEach((ship, idx) => {
          for (let i = 0; i < ship.length; i += 1) {
            if (!ship.direction) {
-            //===0
-             console.log(ship.position.y,'-----',ship.position.x + i)
              this.shipField[ship.position.y][ship.position.x + i] = idx;
            } else {
              this.shipField[ship.position.y + i][ship.position.x] = idx;
            }
          }
        });
-      this.fake = ships
     }
 
     checkEmpty(position: IVector){
@@ -96,7 +91,6 @@ export class IPlayerController{
       this.demeges++;
       const height = this.enemyField.length;
       const width =  this.enemyField[0].length;
-      console.log(this.enemyField)
       if (!ship.direction){ ////====0
         for (let i =-1; i < ship.length+1; i += 1){
           for (let j =-1; j < 2; j += 1){
@@ -105,9 +99,8 @@ export class IPlayerController{
               &&ship.position.x + i>=0
               &&ship.position.x + i<width
               &&!this.enemyField[ship.position.y+j][ship.position.x + i]){
-              console.log(ship.position.x + i,ship.position.y+j,this.enemyField[ship.position.y+j][ship.position.x + i])
-               this.changeField({y: ship.position.y+j, x:ship.position.x + i}, 'miss');
-              this.sendMessage({y: ship.position.y+j, x:ship.position.x + i}, 'miss');
+                this.changeField({y: ship.position.y+j, x:ship.position.x + i}, 'miss');
+                this.sendMessage({y: ship.position.y+j, x:ship.position.x + i}, 'miss');
             }                
           }             
         }

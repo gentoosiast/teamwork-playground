@@ -68,8 +68,10 @@ export class BotController extends IPlayerController{
           this.action.status = '';
           this.action.killed=[]
           this.killShip(ship);  
+          if(this.demeges===10){
+            return;
+          }
         }
-        
         this.nextRound();
       },1000)
     }    
