@@ -190,8 +190,13 @@ websocket.on('request', (e) => {
        const idGame = Math.floor(Math.random()*100)+'';
        const game = new Game([{ connection: client,
         index: 0,
-        name: 'ddd'}], idGame, ()=>{     
-        })
+        name: 'ddd'}], idGame, ((connection)=>{
+          const user = clients.find(it=>it.connection===connection);
+          if(user){
+              user.wins++;
+          } 
+          sendWinners(clients)       
+        }));
        games.set(idGame, game );
        game.startSingleGame(data);
         break;

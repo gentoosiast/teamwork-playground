@@ -44,7 +44,10 @@ export class Game {
 			this.sendMessage(c.connection, "create_game", JSON.stringify({idGame: id, idPlayer: ind}));
 		})
 		this.onFinishGame = (winPlayer)=>{
-			finishGame(this.users[winPlayer].connection);
+			if(this.users[winPlayer]){
+				finishGame(this.users[winPlayer].connection);	
+			}
+			
 		}
 	}
 
