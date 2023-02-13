@@ -133,7 +133,7 @@ export function GameField(props: IGameFieldProps) {
 			<Content width={310}>
 				<SubTitle>{currentPlayer ? 'Your Turn' : 'Next player goes'}</SubTitle>
 				<TimerComponent 
-					count={1} 
+					count={5} 
 					endTimer={()=>{
 						dispatch(changeTimer({timer: false}))
 						props.socket.randomAttack(idGame[idGame.length - 1])

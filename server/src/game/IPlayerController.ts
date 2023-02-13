@@ -126,7 +126,7 @@ export class IPlayerController{
           this.sendMessage({y: ship.position.y+i, x:ship.position.x}, 'killed');
         }
       }
-      if(this.demeges===1){
+      if(this.demeges===10){
         this.finishGame(this.id);
       }
     }
