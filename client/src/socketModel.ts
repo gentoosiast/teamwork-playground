@@ -1,7 +1,8 @@
 import { Dispatch } from "react";
 import { emptyState } from "./utils/fieldGenerator";
 import {IRegData, IUser, IRoom, IShip, IMessage, Cell, AppDispatch, tShipCanvas} from "./dto";
-import {addUserName,addUserIndex,addIdGame,changeCurrentPlayer,setWinner} from './reducer/userReducer';
+import {addUserName,addUserIndex,addIdGame,changeCurrentPlayer,setWinner,addError} from './reducer/userReducer';
+import {setWinners} from './reducer/winnerReducer';
 import { setRooms } from "./reducer/roomsReducer";
 import { changePage } from './reducer/pagesReducer';
 import {changeField,addField} from './reducer/fieldsReducer';
@@ -72,15 +73,27 @@ export class SocketModel {
           break;
         }
         case 'reg':{
-          const {name} = JSON.parse(parsedData);
-          dispatch(addUserName({name: name}))
-          dispatch(changePage({page:'room'}))
+          const {name, error,errorText} = JSON.parse(parsedData);
+          if(error){
+            dispatch(addError({error, errorText}));
+          }else{
+            dispatch(addUserName({name: name}))
+            dispatch(addError({error, errorText:''}));
+            dispatch(changePage({page:'room'}))
+          }
+          
           
         break;  
         }
         case 'update_room':{
           const content:IRoom[] = JSON.parse(parsedData);
           dispatch(setRooms({data:content}))
+          break;
+        }
+        case 'update_winners':{
+          const winners=JSON.parse(parsedData);
+          console.log(winners)
+          dispatch(setWinners({winners}));
           break;
         }
         case 'create_game':{

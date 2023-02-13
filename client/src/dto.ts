@@ -1,5 +1,6 @@
 export interface IRegData{
     name: string,
+    password: string
   }
 
   export const enum Cell {
@@ -29,6 +30,8 @@ export interface IRegData{
       isCurrentPlayer: boolean,
       winner: boolean,
       idGames:number[],
+      error: boolean,
+      errorText: string,
   }
 
   export interface IRoom{
@@ -88,4 +91,13 @@ export interface ITimer {
 	timerData: {
 		timer: boolean
 	}
+}
+
+export interface IWinner{
+  name: string;
+  wins: number
+}
+
+export interface IWinnersState{
+  winners:IWinner[]
 }

@@ -4,7 +4,15 @@ export interface IClients{
     connection: connection,
     index: number,
     name: string,
+    password: string,
+    wins: number,
   };
+  export interface IClient{
+    connection: connection,
+    index: number,
+    name: string,
+  };
+
 export type ShipType = 'small'|'medium'|'large'|'huge';
 export interface IShip {
     position: {
@@ -45,4 +53,9 @@ export interface IPlayer {
   
   export interface IEnemyField {
     field: Array<Array<Cell>>;
+  }
+
+  export interface IWinner{
+    name: string,
+    wins: number,
   }

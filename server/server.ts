@@ -1,15 +1,9 @@
 import http from "http";
-import { IMessage, Cell} from "./src/dto";
+import { IMessage, Cell, IClients, IWinner} from "./src/dto";
 import { emptyState } from './src/utils/fieldGenerator'
 import * as WebSocket from "websocket";
 import Room from "./src/room/room";
 import { Game } from "./src/game/game";
-
-interface IPlayer {
-  connection: WebSocket.connection;
-  index: number;
-  shipField: Array<Array<number>>;
-}
 
 
 const server = http.createServer((req, res) =>
@@ -29,12 +23,6 @@ const server = http.createServer((req, res) =>
 server.listen(3000, () => {
   console.log((new Date()) + ' Server is listening port 3000');
 });
-
-interface IClients{
-  connection: WebSocket.connection,
-  index: number,
-  name: string,
-};
 
 
 const websocket = new WebSocket.server({ httpServer: server })
@@ -103,20 +91,44 @@ websocket.on('request', (e) => {
       //   break;
       // }
       case 'reg':{
-        const name = JSON.parse(parsedMsg.data).name;
-        const newClient = {connection: client, name: name,index:clients.length }
-        clients.push(newClient);
-
-        const responseObj: IMessage = {
-          type: "reg",
-          data: JSON.stringify({name,index: clients.length-1}),
-          id: 0
+        const {name, password} = JSON.parse(parsedMsg.data);
+        const user = clients.find(it=>it.name===name);
+        if(user){
+          if(user.password === password){
+            user.connection = client;
+            const responseObj: IMessage = {
+              type: "reg",
+              data: JSON.stringify({name,error: false}),
+              id: 0
+            }
+            
+            client.sendUTF(JSON.stringify(responseObj));
+            sendWinners(clients);
+            if(rooms.size ){
+              sendMessageRooms(rooms, [user])         
+            } 
+          }else{
+            const responseObj: IMessage = {
+              type: "reg",
+              data: JSON.stringify({name,error: true, errorText: 'A user with this name already exists and has a different password. Enter a correct password or new name'}),
+              id: 0
+            }
+            client.sendUTF(JSON.stringify(responseObj))
+          }
+        }else{
+          const newClient = {connection: client,name,index:clients.length, password, wins:0 };
+          clients.push(newClient);
+          const responseObj: IMessage = {
+            type: "reg",
+            data: JSON.stringify({name,index: clients.length-1, error: false}),
+            id: 0
+          }
+          client.sendUTF(JSON.stringify(responseObj));
+          sendWinners(clients)  
+          if(rooms.size ){
+            sendMessageRooms(rooms, [newClient])         
+          } 
         }
-        client.sendUTF(JSON.stringify(responseObj))
-        if(rooms.size ){
-          sendMessageRooms(rooms, [newClient])
-         
-        } 
         break; 
       }
       case 'create_room':{
@@ -156,7 +168,13 @@ websocket.on('request', (e) => {
         
         if(room.users.length>=2){
          const idGame = Math.floor(Math.random()*100)+''
-          games.set(idGame, new Game(room.users, idGame) );
+          games.set(idGame, new Game(room.users, idGame, ((connection)=>{
+            const user = clients.find(it=>it.connection===connection);
+            if(user){
+                user.wins++;
+            } 
+            sendWinners(clients)       
+          })));
           rooms.delete(room.id)
         }
         rooms.forEach(room=>{
@@ -172,7 +190,8 @@ websocket.on('request', (e) => {
        const idGame = Math.floor(Math.random()*100)+'';
        const game = new Game([{ connection: client,
         index: 0,
-        name: 'ddd'}], idGame)
+        name: 'ddd'}], idGame, ()=>{     
+        })
        games.set(idGame, game );
        game.startSingleGame(data);
         break;
@@ -212,6 +231,19 @@ websocket.on('request', (e) => {
   })
 })
 
+const sendWinners = (clients: IClients[])=>{
+  const winners = clients.filter(it=>it.wins>0);
+  let listOfWinners:IWinner[]=[]
+  if(winners.length){
+    winners.slice(0,10).forEach(it=>listOfWinners.push({name:it.name, wins: it.wins}));
+    const responseObj: IMessage = {
+      type: "update_winners",
+      data: JSON.stringify(listOfWinners),
+      id: 0
+    }
+    clients.forEach((c) => c.connection.sendUTF(JSON.stringify(responseObj)));
+  }
+}
 const sendMessageRooms = (rooms: Map<string, Room>, clients:IClients[])=>{
   const roomsInfo = [];
         for (const value of rooms.values()) {

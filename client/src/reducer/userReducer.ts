@@ -6,7 +6,9 @@ const initialState:IUserInitialData = {
     index: -1,
     isCurrentPlayer: false,
     winner: false,
-    idGames: []
+    idGames: [],
+    error: false,
+    errorText: '',
 };
 
 interface IUserName{
@@ -24,6 +26,10 @@ interface ICurrentPlayer{
 interface IWinner{
   winner: boolean
 }
+interface IUserError{
+  error: boolean,
+  errorText: string
+}
 
 const userReduser = createSlice({
   name: "userData",
@@ -31,6 +37,10 @@ const userReduser = createSlice({
   reducers: {
     addUserName(state, action: PayloadAction<IUserName>) {
         state.name = action.payload.name;
+    },
+    addError(state, action: PayloadAction<IUserError> ){
+      state.error = action.payload.error;
+      state.errorText = action.payload.errorText;
     },
     addUserIndex(state, action: PayloadAction<IUserIndex>) {
       state.index = action.payload.index;
@@ -49,6 +59,6 @@ const userReduser = createSlice({
 
 const { actions, reducer } = userReduser;
 
-export const {addUserName,addUserIndex,addIdGame,changeCurrentPlayer,setWinner } = actions;
+export const {addUserName,addUserIndex,addIdGame,changeCurrentPlayer,setWinner, addError } = actions;
 
 export default reducer;

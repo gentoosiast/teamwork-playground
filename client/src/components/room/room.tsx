@@ -11,7 +11,8 @@ import { generalColor,backGroundColorOpacity } from '../../styleConst';
 import {IShipsStore} from "../../reducer/shipsReducer";
 import {IBoardStore} from "../../reducer/boardReducer";
 import Wrapper from '../styledComponents/wrapper'
-import Content from '../styledComponents/content'
+import Content from '../styledComponents/content';
+import WinnerList from './winnerList';
 interface IUserStore {
     userData: IUserInitialData;
 }
@@ -45,6 +46,7 @@ const Room = ({socket}:IRoomComponent)=>{
                 </div>
             </Content>
         <RoomList socket={socket}/>
+        <WinnerList/>
     </Wrapper>)
 }
 export default Room;

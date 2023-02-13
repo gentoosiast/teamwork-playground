@@ -1,13 +1,9 @@
 import { connection } from "websocket";
-interface IClients{
-    connection: connection,
-    index: number,
-    name: string,
-  };
+import { IClient } from "../dto";
 
 export default class Room{
     id:string;
-    users: IClients[] =[];
+    users: IClient[] =[];
     constructor(id: string){
         this.id=id;
         

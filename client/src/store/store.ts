@@ -6,8 +6,9 @@ import fieldsData from '../reducer/fieldsReducer';
 import shipsData from '../reducer/shipsReducer';
 import boardData from '../reducer/boardReducer';
 import timerData from '../reducer/timerReducer';
+import winnerData from '../reducer/winnerReducer';
 
 const store = configureStore({
-	reducer: {userData, pagesData, roomsData, fieldsData, shipsData, boardData,timerData}
+	reducer: {userData, pagesData, roomsData, fieldsData, shipsData, boardData,timerData,winnerData}
 });
 export default store;

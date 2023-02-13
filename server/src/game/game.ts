@@ -1,5 +1,5 @@
 import {connection} from "websocket";
-import {IClients, IShip, IPlayer, IVector, IMessage} from '../dto';
+import {IClient, IShip, IPlayer, IVector, IMessage} from '../dto';
 import {BotController} from "./botController";
 import {IPlayerController} from "./IPlayerController";
 import {PlayerController} from "./playerController";
@@ -27,14 +27,15 @@ const botShip: IShip[] = [{
 	}]
 
 export class Game {
-	users: IClients[] = [];
+	users: IClient[] = [];
 	id: string;
 	players: IPlayer[] = [];
 	playerControllers = new Map<number, IPlayerController>()
 	currentPlayer = 0;
 	size = 0;
+	onFinishGame:(winPlayer: number)=>void;
 
-	constructor(users: IClients[], id: string) {
+	constructor(users: IClient[], id: string, finishGame:(connection?:connection)=>void) {
 		this.users = users;
 		this.id = id;
 		this.users.forEach((c, ind) => {
@@ -42,6 +43,9 @@ export class Game {
 			this.playerControllers.set(ind, player);
 			this.sendMessage(c.connection, "create_game", JSON.stringify({idGame: id, idPlayer: ind}));
 		})
+		this.onFinishGame = (winPlayer)=>{
+			finishGame(this.users[winPlayer].connection);
+		}
 	}
 
 	isPlayer(connection: connection) {
@@ -95,6 +99,7 @@ export class Game {
 
 	finishGame(winPlayer: number) {
 		this.sendMessageToAll('finish', JSON.stringify({winPlayer: winPlayer}))
+		this.onFinishGame(winPlayer)
 	}
 
 	sendMessageAttack(position: IVector, status: string, isChangeCurrentPlayer: boolean = false) {

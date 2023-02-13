@@ -14,9 +14,10 @@ interface IInput{
     placeHolder:string;
     value: string;
     handlerChange:(e: React.ChangeEvent<HTMLInputElement>)=>void;
+    type?:string;
 }
-const Input = ({placeHolder,value, handlerChange}:IInput)=>{
-    return (<InputComponent type="text" onChange={handlerChange} placeholder={placeHolder} value={value}/>)
+const Input = ({placeHolder,value, handlerChange, type='text'}:IInput)=>{
+    return (<InputComponent onChange={handlerChange} placeholder={placeHolder} value={value} type={type}/>)
 }
 
 export default Input;
