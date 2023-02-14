@@ -24,7 +24,16 @@ const SettingComponent = ({type}:ISettingComponent) => {
 
     useEffect(()=>{
         Sound.updateSetting(type, setting);
-    },[setting])
+        localStorage.setItem(type, JSON.stringify({...setting}))
+    },[setting]);
+
+    const handleClick = (e:React.ChangeEvent<HTMLInputElement>)=>{
+        setState({...setting, isSound:  e.target.checked});
+    }
+
+    const handleChange = (e:React.ChangeEvent<HTMLInputElement>)=>{
+        setState({...setting, volume: +e.target.value})
+    }
 
     return(<Wrapper>
         <ImageIcon type={type} isSound={setting.isSound} />
@@ -32,10 +41,10 @@ const SettingComponent = ({type}:ISettingComponent) => {
         <CheckInput 
             isSound={setting.isSound} 
             type={type}
-            handleChange={e=>setState({...setting, isSound:  e.target.checked})}/>
+            handleChange={handleClick}/>
         <RangeInput 
             volume={setting.volume} 
-            handleChange={e=>setState({...setting, volume: +e.target.value})}/>
+            handleChange={handleChange}/>
     </Wrapper>)
 }
 

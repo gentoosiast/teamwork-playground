@@ -61,8 +61,28 @@ export const App = () => {
 			return () => {
 				webSocket.close();
 			}
-		})
-			},[])
+		});
+	},[])
+	useEffect(()=>{
+		const sound = localStorage.getItem("sound")
+			? JSON.parse(localStorage.getItem("sound"))
+			: {"volume":0.5,"isSound":true}
+		if(typeof sound.volume === 'number'&&
+			sound.volume>=0&&
+			sound.volume<=1&&
+			typeof sound.isSound === 'boolean'){
+				Sound.updateSetting('sound', {volume: sound.volume, isSound: sound.isSound});
+		}
+		const music = localStorage.getItem("music")
+			? JSON.parse(localStorage.getItem("music"))
+			: {"volume":0.5,"isSound":false};
+		if(typeof music.volume === 'number'&&
+			music.volume>=0&&
+			music.volume<=1&&
+			typeof music.isSound === 'boolean'){
+				Sound.updateSetting('music', {volume: music.volume, isSound: music.isSound});
+		}
+	},[])
 
 			return (
 				<BackGround>
