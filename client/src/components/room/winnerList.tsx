@@ -10,12 +10,13 @@ interface IWinnerStore {
 }
 const WinnerContainer =styled.div`
     padding: 50px;
-    width:330px;
-    background-color: ${backGroundColorOpacity} ;
+    margin: 20px;
+    width:330px;    
     max-height: 90vh;
     border-radius: 10px;
     border: 1px solid ${generalColor};
     overflow: auto;
+    background-color: ${backGroundColorOpacity} ;
 `
 
 const Table = styled.table`

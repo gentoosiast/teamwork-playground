@@ -1,12 +1,21 @@
 import React from "react";
 import styled from "styled-components";
-import { fontSize } from '../../styleConst'
+import { fontSize, devices } from '../../styleConst'
 interface ISubTitleComponent{
     textAlign?: string;
 }
 const SubTitleComponent= styled.span<ISubTitleComponent>`
     font-size: ${fontSize.fontSmall[1080]};
     text-align: ${(props)=>props.textAlign};
+    @media ${devices.tabletWidht}{
+        font-size: ${fontSize.fontSmall[768]};
+    }
+    @media ${devices.tabletHeight}{
+        font-size: ${fontSize.fontSmall[768]};
+    }
+    @media ${devices.mobileHeight}{
+        font-size: ${fontSize.fontSmall[575]};
+    }
 `
 interface ISpan{
     children:string|string[];

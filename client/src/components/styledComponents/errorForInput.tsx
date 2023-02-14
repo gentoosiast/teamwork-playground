@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { fontSize } from '../../styleConst'
+import { devices, fontSize } from '../../styleConst'
 
 const ErrorComponent= styled.div`
     position: absolute;
@@ -15,9 +15,17 @@ const ErrorComponent= styled.div`
     &:after {
         content: ''; 
         position: absolute;
-        left: 10px; bottom: -20px;
+        left: 10px; bottom: -15px;
         border: 10px solid transparent;
         border-top: 10px solid red;
+    }
+    @media ${devices.mobileWidht}{
+        top: -20px;
+        font-size: ${fontSize.fontSmall[575]};;
+    }
+    @media ${devices.mobileHeight}{
+        top: -20px;
+        font-size: ${fontSize.fontSmall[575]};;
     }
 `
 interface IError{

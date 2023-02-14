@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { fontSize, generalColor } from '../../styleConst'
+import { fontSize, generalColor, devices } from '../../styleConst'
 interface IButton{
     children:string|JSX.Element;
     onClick:(e: React.MouseEvent<HTMLButtonElement>)=>void;
@@ -14,6 +14,18 @@ const BtnComponent = styled.button`
     &:hover {
         transform: scale(1.1);
     }
+    @media ${devices.tabletWidht}{
+        font-size: ${fontSize.fontMiddle[768]};
+    }
+    @media ${devices.tabletHeight}{
+        font-size: ${fontSize.fontMiddle[768]};
+    }
+    @media ${devices.mobileWidht}{
+        font-size: ${fontSize.fontMiddle[575]};
+    }
+    @media ${devices.mobileHeight}{
+        font-size: ${fontSize.fontMiddle[575]};
+    }
 `
 
 const BtnGeneralComponent = styled(BtnComponent)`
@@ -22,6 +34,15 @@ const BtnGeneralComponent = styled(BtnComponent)`
     font-size: ${fontSize.fontMiddle[1080]};
     padding: 10px 100px;
     border-radius: 20px;
+    @media ${devices.mobileWidht}{
+        padding: 10px 30px;
+        margin: 10px auto 0;
+        font-size: ${fontSize.fontMiddle[575]};
+    }
+    @media ${devices.mobileHeight}{
+        padding: 10px 30px;
+        margin: 10px auto 0;
+    }
 `
 
 

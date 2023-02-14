@@ -14,12 +14,13 @@ interface IRoomsList{
 }
 const RoomsContainer =styled.div`
     padding: 50px;
-    width:330px;
-    background-color: ${backGroundColorOpacity} ;
+    margin: 20px;
+    width:330px;    
     max-height: 90vh;
     border-radius: 10px;
     border: 1px solid ${generalColor};
     overflow: auto;
+    background-color: ${backGroundColorOpacity} ;
 `
 const RoomList = ({socket}:IRoomsList)=>{
     const rooms = useSelector((state: IRoomsStore) => state.roomsData.data);

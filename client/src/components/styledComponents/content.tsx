@@ -1,16 +1,23 @@
 import React from "react";
 import styled from "styled-components";
-import { backGroundColorOpacity,generalColor } from '../../styleConst'
+import { backGroundColorOpacity,generalColor,devices } from '../../styleConst'
 interface IContentComponent{
     width?: number;
 }
 
 const ContentComponent = styled.div<IContentComponent>`
-   background-color: ${backGroundColorOpacity};
     padding: 50px;
-    border-radius: 10px;
+    margin: 20px;
     width:  ${(props)=>props.width?props.width+'px':''};
     border: 1px solid ${generalColor};
+    border-radius: 10px;
+    background-color: ${backGroundColorOpacity};
+    @media ${devices.mobileWidht}{
+        padding: 20px;
+    }
+    @media ${devices.mobileHeight}{
+        padding: 20px;
+    }
 `
 interface IContent{
     children:JSX.Element|JSX.Element[];

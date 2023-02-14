@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { IWinnersState} from "../dto";
 
 const initialState:IWinnersState = {
-    winners:[{name: 'admin', wins:3},{name: 'admin', wins:3},{name: 'admin', wins:3},{name: 'admin', wins:3},{name: 'admin', wins:3}]
+    winners:[{name: 'admin', wins:3},{name: 'admin', wins:3},{name: 'admin', wins:3},{name: 'admin', wins:3},{name: 'admin', wins:3},{name: 'admin', wins:3},{name: 'admin', wins:3},{name: 'admin', wins:3},{name: 'admin', wins:3},{name: 'admin', wins:3}]
 }
 
 const winnersReducer = createSlice({
