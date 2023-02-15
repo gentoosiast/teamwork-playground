@@ -26,6 +26,10 @@ const fieldsReducer = createSlice({
 		addField(state, action: PayloadAction<IField>) {
 			state.ourField = action.payload.field;
 		},
+		clearField(state){
+			state.ourField = emptyState();
+			state.enemyField =emptyState();
+		},
 		changeField(state, action: PayloadAction<IChangeField>) {
 			const {player, position, status} = action.payload
 			if (!state[player]) {
@@ -54,6 +58,6 @@ const fieldsReducer = createSlice({
 
 const {actions, reducer} = fieldsReducer;
 
-export const {changeField, addField} = actions;
+export const {changeField, addField,clearField} = actions;
 
 export default reducer;

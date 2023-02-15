@@ -5,7 +5,7 @@ import {addUserName,addUserIndex,addIdGame,changeCurrentPlayer,setWinner,addErro
 import {setWinners} from './reducer/winnerReducer';
 import { setRooms } from "./reducer/roomsReducer";
 import { changePage } from './reducer/pagesReducer';
-import {changeField,addField} from './reducer/fieldsReducer';
+import {changeField,addField, clearField} from './reducer/fieldsReducer';
 import Sound from './utils/sound';
 import { changeTimer } from "./reducer/timerReducer";
 interface ISocketModel{
@@ -110,7 +110,7 @@ export class SocketModel {
           const {winPlayer} = JSON.parse(parsedData);   
             dispatch(setWinner({winner: winPlayer===this.playerIdx}))
             dispatch(changePage({page:'finishGame'}))
-  
+            dispatch(clearField()); 
             break;
         }
         case 'diconnect':{

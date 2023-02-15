@@ -1,5 +1,5 @@
 import { SocketModel } from '../../socketModel';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IRoom,IRoomsInitialState,IUserInitialData } from '../../dto';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
