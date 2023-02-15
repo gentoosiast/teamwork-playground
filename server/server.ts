@@ -35,7 +35,7 @@ let currentPlayer = 0;
 const clients: Array<IClients> = [];
 const rooms = new Map<string, Room>()
 const games =new Map<string, Game>()
-
+let idUser = 0;
 websocket.on('request', (e) => {
   const client = e.accept()
   //clients.push({connection: client, name: 'ddd',index:0 })
@@ -116,7 +116,8 @@ websocket.on('request', (e) => {
             client.sendUTF(JSON.stringify(responseObj))
           }
         }else{
-          const newClient = {connection: client,name,index:clients.length, password, wins:0 };
+          const newClient = {connection: client,name,index:idUser, password, wins:0 };
+          idUser++;
           clients.push(newClient);
           const responseObj: IMessage = {
             type: "reg",
@@ -168,11 +169,12 @@ websocket.on('request', (e) => {
         
         if(room.users.length>=2){
          const idGame = Math.floor(Math.random()*100)+''
-          games.set(idGame, new Game(room.users, idGame, ((connection)=>{
-            const user = clients.find(it=>it.connection===connection);
+          games.set(idGame, new Game(room.users, idGame, ((id)=>{
+            const user = clients.find(it=>it.index===id);
             if(user){
                 user.wins++;
             } 
+            games.delete(idGame)
             sendWinners(clients)       
           })));
           rooms.delete(room.id)
@@ -186,19 +188,19 @@ websocket.on('request', (e) => {
         break;
       }
       case 'single_play':{
-        const data =JSON.parse(parsedMsg.data);
        const idGame = Math.floor(Math.random()*100)+'';
        const game = new Game([{ connection: client,
         index: 0,
-        name: 'ddd'}], idGame, ((connection)=>{
-          const user = clients.find(it=>it.connection===connection);
+        name: 'ddd'}], idGame, ((id)=>{
+          const user = clients.find(it=>it.index===id);
           if(user){
               user.wins++;
           } 
+          games.delete(idGame)
           sendWinners(clients)       
         }));
        games.set(idGame, game );
-       game.startSingleGame(data);
+       game.startSingleGame();
         break;
       }
       case 'add_ships':{
@@ -229,7 +231,13 @@ websocket.on('request', (e) => {
   client.on('close', () => {
     games.forEach(it=>{
       if(it.isPlayer(client)){
-        it.disconnect(client)        
+        it.disconnect(client) 
+        const opponent = it.users.find(it=>it.connection!=client);
+        if(opponent){
+          const opponentClient = clients.find(it=>it.index===opponent.index);
+          if(opponentClient) opponentClient.wins++;
+        } 
+        games.delete(it.id)      
       }
     })
     clients.filter(it=> it.connection!==client);

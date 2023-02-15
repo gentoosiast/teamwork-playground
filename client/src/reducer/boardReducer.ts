@@ -68,6 +68,9 @@ const boardReducer = createSlice({
 		setMoveAdded(state) {
 			state._moveAdded = true
 		},
+		clearMatrix(state){
+			state.boardMatrix= emptyMatrix(10);
+		}
 	}
 });
 
@@ -75,7 +78,7 @@ const {actions, reducer} = boardReducer;
 
 export const {
 	fillCells, clearHovered, setMoveAdded, fillAreaCells,
-	ourOccupied, enemyOccupied
+	ourOccupied, enemyOccupied,clearMatrix
 } = actions;
 
 export default reducer;
