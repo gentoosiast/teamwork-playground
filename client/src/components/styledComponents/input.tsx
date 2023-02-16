@@ -5,6 +5,7 @@ import { fontSize, generalColor, devices } from '../../styleConst'
 const InputComponent = styled.input`
     margin:0 auto;
     margin-top: 20px;
+    margin-bottom: 10px;
     font-size:${fontSize.fontMiddle[1080]};
     padding: 5px 20px;
     border: 1px soled ${generalColor};
