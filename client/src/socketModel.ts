@@ -110,11 +110,13 @@ export class SocketModel {
         }
         case 'finish':{
           const {winPlayer} = JSON.parse(parsedData);   
+          setTimeout(()=>{
             dispatch(setWinner({winner: winPlayer===this.playerIdx}))
             dispatch(changePage({page:'finishGame'}))
             dispatch(clearField()); 
             dispatch(cleanShips())
             dispatch(clearMatrix());
+          },1000)
             break;
         }
         case 'diconnect':{

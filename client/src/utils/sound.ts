@@ -75,6 +75,7 @@ class Sound {
     }
   
     private killShip() {
+      this.killAudio.currentTime = 0; 
       if (this.sound.isSound&&!(this.killAudio.currentTime > 0 && !this.killAudio.paused && !this.killAudio.ended 
         && this.killAudio.readyState > this.killAudio.HAVE_CURRENT_DATA)) {   
         this.killAudio.currentTime = 0;    
@@ -84,6 +85,7 @@ class Sound {
     }
   
     private shotShip() {
+      this.shotAudio.currentTime = 0; 
       if (this.sound.isSound&&!(this.shotAudio.currentTime > 0 && !this.shotAudio.paused && !this.shotAudio.ended 
         && this.shotAudio.readyState > this.shotAudio.HAVE_CURRENT_DATA)) {   
         this.shotAudio.currentTime = 0;    
@@ -93,6 +95,7 @@ class Sound {
     }
   
     private missShip() {
+      this.missAudio.currentTime = 0; 
       if (this.sound.isSound&&!(this.missAudio.currentTime > 0 && !this.missAudio.paused && !this.missAudio.ended 
         && this.missAudio.readyState > this.missAudio.HAVE_CURRENT_DATA)) {   
         this.missAudio.currentTime = 0;    

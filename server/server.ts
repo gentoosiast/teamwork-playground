@@ -44,7 +44,7 @@ websocket.on('request', (e) => {
   client.on('message', (msg) => {
     if (msg.type != 'utf8') return;
     const parsedMsg: IMessage = JSON.parse(msg.utf8Data);
-    console.log(parsedMsg)
+    //console.log(parsedMsg)
     switch (parsedMsg.type) {
       // case 'chat_message': {
       //   messages.push(parsedMsg.data)
@@ -124,6 +124,7 @@ websocket.on('request', (e) => {
             data: JSON.stringify({name,index: clients.length-1, error: false}),
             id: 0
           }
+          //console.log(clients)
           client.sendUTF(JSON.stringify(responseObj));
           sendWinners(clients)  
           if(rooms.size ){
@@ -189,10 +190,11 @@ websocket.on('request', (e) => {
       }
       case 'single_play':{
        const idGame = Math.floor(Math.random()*100)+'';
+       const user = clients.find(it=>it.connection===client);
        const game = new Game([{ connection: client,
-        index: 0,
-        name: 'ddd'}], idGame, ((id)=>{
-          const user = clients.find(it=>it.index===id);
+        index: user?.index||0,
+        name: user?.name||''}], idGame, ((id)=>{
+          //const user = clients.find(it=>it.index===id);
           if(user){
               user.wins++;
           } 
@@ -245,6 +247,7 @@ websocket.on('request', (e) => {
 })
 
 const sendWinners = (clients: IClients[])=>{
+  //console.log('sendWinners',clients)
   const winners = clients.filter(it=>it.wins>0);
   let listOfWinners:IWinner[]=[]
   if(winners.length){

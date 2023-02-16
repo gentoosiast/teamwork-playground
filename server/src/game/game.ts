@@ -82,7 +82,7 @@ export class Game {
 		this.playerControllers.set(1, new BotController(1, (position, status, isChangeCurrent) => this.sendMessageAttack(position, status, isChangeCurrent), (id) => this.finishGame(id)));
 		const ran = new RandomShipsServer({ huge: 1, large: 2, medium: 3, small: 4 })
 		const t = ran.putRandomShips(emptyState());
-		console.log('botShip', t)
+		//console.log('botShip', t)
 		this.addShip(t, 1);
 	}
 
