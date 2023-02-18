@@ -5,9 +5,11 @@ import {addUserName,addUserIndex,addIdGame,changeCurrentPlayer,setWinner,addErro
 import {setWinners} from './reducer/winnerReducer';
 import { setRooms } from "./reducer/roomsReducer";
 import { changePage } from './reducer/pagesReducer';
-import {changeField,addField} from './reducer/fieldsReducer';
+import {changeField,addField, clearField} from './reducer/fieldsReducer';
 import Sound from './utils/sound';
 import { changeTimer } from "./reducer/timerReducer";
+import { cleanShips } from "./reducer/shipsReducer";
+import { clearMatrix } from "./reducer/boardReducer";
 interface ISocketModel{
   dispatch: AppDispatch
 }
@@ -108,9 +110,13 @@ export class SocketModel {
         }
         case 'finish':{
           const {winPlayer} = JSON.parse(parsedData);   
+          setTimeout(()=>{
             dispatch(setWinner({winner: winPlayer===this.playerIdx}))
             dispatch(changePage({page:'finishGame'}))
-  
+            dispatch(clearField()); 
+            dispatch(cleanShips())
+            dispatch(clearMatrix());
+          },1000)
             break;
         }
         case 'diconnect':{
@@ -200,8 +206,8 @@ export class SocketModel {
     this.sendMessage('add_ships', JSON.stringify({gameId, ships, indexPlayer: this.playerIdx}))
   }
 
-  singlePlay(data:{board:number[][],shipsToPut:Record<string, number>}){
-    this.sendMessage('single_play',JSON.stringify({board:data.board,shipsToPut:data.shipsToPut}))
+  singlePlay(){
+    this.sendMessage('single_play','')
   }
   sendMessage(type: string, message: string){
     const request: IMessage = {

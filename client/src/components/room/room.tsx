@@ -1,5 +1,5 @@
 import { SocketModel } from '../../socketModel';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { IRoom,IRoomsInitialState,IUserInitialData } from '../../dto';
 import { useSelector } from 'react-redux';
 import styled from 'styled-components';
@@ -41,7 +41,7 @@ const Room = ({socket}:IRoomComponent)=>{
                 <div>
                     <SubTitle>Welcome to Battleship, {userName}</SubTitle>
                     <SubTitle>What game do you choose?</SubTitle> 
-                    <ButtonRooms onClick={()=>socket.singlePlay({board,shipsToPut:ships})}>Play with Bot</ButtonRooms>  
+                    <ButtonRooms onClick={()=>socket.singlePlay()}>Play with Bot</ButtonRooms>  
                     <ButtonRooms onClick={()=>socket.createRoom()}>Create Room</ButtonRooms>
                 </div>
             </Content>

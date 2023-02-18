@@ -34,6 +34,8 @@ export interface IRegData{
       errorText: string,
   }
 
+  export type IErrorType = 'name'|'password';
+
   export interface IRoom{
     roomId:number,
     roomUsers: IUser[]

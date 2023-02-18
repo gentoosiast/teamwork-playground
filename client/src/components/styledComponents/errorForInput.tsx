@@ -1,10 +1,13 @@
 import React from "react";
 import styled from "styled-components";
+import { IErrorType } from "../../dto";
 import { devices, fontSize } from '../../styleConst'
-
-const ErrorComponent= styled.div`
+interface IErrorComponent{
+    type: IErrorType;
+}
+const ErrorComponent= styled.div<IErrorComponent>`
     position: absolute;
-    top: -10px;
+    bottom: ${(props)=>props.type ==='name' ?'170px':'50px'};
     left: 10px;
     color:  white;
     background-color: red;
@@ -20,19 +23,20 @@ const ErrorComponent= styled.div`
         border-top: 10px solid red;
     }
     @media ${devices.mobileWidht}{
-        top: -20px;
+        bottom: ${(props)=>props.type ==='name' ?'125px':'45px'};
         font-size: ${fontSize.fontSmall[575]};;
     }
     @media ${devices.mobileHeight}{
-        top: -20px;
+        bottom: ${(props)=>props.type ==='name' ?'125px':'45px'};
         font-size: ${fontSize.fontSmall[575]};;
     }
 `
 interface IError{
     children:string;
+    type: IErrorType;
 }
-const Error = ({children}:IError)=>{
-    return (<ErrorComponent>
+const Error = ({children, type}:IError)=>{
+    return (<ErrorComponent type={type}>
         {children} 
     </ErrorComponent>)
 }

@@ -38,7 +38,6 @@ export default class RandomShips {
 	}
 	interval() {
 		const val = this.generator.next().value
-		console.log(val)
 		if (val) {
 			const isRotate = !!Math.round(Math.random())
 			const shipSize = ShipsSizes[val as keyof typeof ShipsSizes]
@@ -54,6 +53,7 @@ export default class RandomShips {
 	putRandomShips(shipsToPut: Record<string, number>, board: number[][]) {
 		this.ships = shipsToPut
 		this.emptyValues(board)
+		
 		this.generator = this.genShipsToAuto()
 		while (this.interval()) {console.log('1')}
 	}

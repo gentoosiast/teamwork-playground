@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
-import {IRegData, IUserInitialData} from '../../dto'
+import {IRegData, IUserInitialData,IErrorType} from '../../dto'
 import { SocketModel } from '../../socketModel';
 import Wrapper from '../styledComponents/wrapper';
 import { backGroundColorOpacity, generalColor } from '../../styleConst'
@@ -28,6 +28,7 @@ const Registration = ({socket}:IRegistratoon)=>{
     const [password, setPassword] = useState('');
     const [isError, setError] = useState(false);
     const [errorText, setErrorText] = useState('');
+    const [errorType, setErrorType] = useState<IErrorType>('name')
     const userData = useSelector( (state: IUserStore) => state.userData);
     const handlerName = (e:React.ChangeEvent<HTMLInputElement>)=>{
         setName(e.target.value);
@@ -41,16 +42,19 @@ const Registration = ({socket}:IRegistratoon)=>{
         e.preventDefault();
         if(name.length<5){
             setError(true);
+            setErrorType('name');
             setErrorText('Minimum 5 characters');
         } else if(password.length<5){
             setError(true);
-            setErrorText('Add password minimum 5 characters');
+            setErrorType('password');
+            setErrorText('Minimum 5 characters');
         } else{
             socket.reg({name,password})
         }
     }
     useEffect(()=>{
         setError(userData.error);
+        setErrorType('name');
         setErrorText(userData.errorText)
     },[userData])
     return (
@@ -61,7 +65,7 @@ const Registration = ({socket}:IRegistratoon)=>{
                 <form>
                     <InputContainer>
                         <Input handlerChange={handlerName} placeHolder="login" value={name}/>
-                        {isError?<Error>{errorText}</Error>:''}
+                        {isError?<Error type={errorType}>{errorText}</Error>:''}
                         <SubTitle textAlign={'center'}>Please, write your password</SubTitle>
                         <Input handlerChange={handlerPassword} placeHolder="password" value={password} type='password'/>
                     </InputContainer>

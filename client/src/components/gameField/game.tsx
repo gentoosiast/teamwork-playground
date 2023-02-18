@@ -16,6 +16,9 @@ import {SpriteCanvas} from "./SpriteCanvas";
 import {enemyOccupied,ourOccupied} from '../../reducer/boardReducer'
 import TimerComponent from '../timer/timerComponent';
 import { changeTimer } from '../../reducer/timerReducer';
+import Title from '../styledComponents/title';
+import styled from 'styled-components';
+import { backGroundColorOpacity, generalColor } from '../../styleConst';
 const styleMap = {
 	[Cell.Empty]: '',
 	[Cell.Occupied]: 'cell_occupied',
@@ -32,6 +35,18 @@ interface IGameFieldProps {
 interface IFieldStore {
 	fieldsData: IFieldsInitialState;
 }
+
+const Container = styled.div`
+	margin: 10px;
+`
+
+const ContainerForTitle = styled.div`
+	width: 300px;
+	margin-bottom: 10px;
+	padding: 10px;
+    border-radius: 10px; 	
+    background-color: ${backGroundColorOpacity};
+`
 
 export function EnemyField(props: IGameFieldProps) {
 	const oc= useSelector((state:IFieldStore)=>state.fieldsData.enemyOccupiedCell)
@@ -58,7 +73,10 @@ export function EnemyField(props: IGameFieldProps) {
 		Board.drawScene(enemyField)
 		setBoard(Board)
 	}, [])
-	return (
+	return (<Container>
+		<ContainerForTitle>
+			<SubTitle>Enemy Field</SubTitle>
+		</ContainerForTitle>		
 		<div style={{position: 'relative'}}>
 			<div ref={fieldRef}/>
 			<SpriteCanvas	player="enemy" onClick={(cell)=>{
@@ -68,6 +86,7 @@ export function EnemyField(props: IGameFieldProps) {
 			}}
 			/>
 		</div>
+	</Container>		
 	)
 }
 
@@ -94,12 +113,17 @@ export function OurField({shipsImages}: { shipsImages: imagesObjType }) {
 		//	const sprite=new SpriteCanvas(ourRef.current)
 	}, [])
 
-	return (
-		<div style={{position: 'relative'}}>
+	return (<Container>
+		<ContainerForTitle>
+			<SubTitle>Our Field</SubTitle>			
+		</ContainerForTitle>
+		<div style={{position: 'relative'}}>			
 			<div ref={ourRef}/>
 			<SpriteCanvas	player="our"/>
 				{/*//todo add 	<SpriteCanvas occupied={[]}/>*/}
 		</div>
+	</Container>
+		
 
 	);	// <div className="field">
 	// 	{ourField.map((row, i) => {
@@ -133,7 +157,7 @@ export function GameField(props: IGameFieldProps) {
 			<Content width={310}>
 				<SubTitle>{currentPlayer ? 'Your Turn' : 'Next player goes'}</SubTitle>
 				<TimerComponent 
-					count={5} 
+					count={1} 
 					endTimer={()=>{
 						dispatch(changeTimer({timer: false}))
 						props.socket.randomAttack(idGame[idGame.length - 1])

@@ -4,16 +4,22 @@ import SettingIcon from "./settingIcon";
 import SettingComponent from './setting-component';
 import {ButtonClose} from '../styledComponents/buttons';
 import close from '../../public/svg/close.svg'
-import { generalColor,backGroundColor } from "../../styleConst";
+import { generalColor,backGroundColor, devices } from "../../styleConst";
+
 const Popup = styled.div`
     position: relative;
     display: flex;
     justify-content: space-around;
     padding: 50px;
+    margin: 20px;
     border-radius: 10px;
     width: 500px;
     border: 1px solid ${generalColor};
     background-color: ${backGroundColor};
+    @media ${devices.tabletWidht}{
+        flex-wrap: wrap;
+        padding: 30px;
+    }
 `
  const BackgroundPopup = styled.div`
     position: fixed;

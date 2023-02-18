@@ -126,6 +126,7 @@ export class EmptyAreas {
 	}
 
 	generateRandomShip(type: string, size: number, isRotate: boolean) {
+		console.log('GENERATERANDOM', type, size, isRotate,JSON.parse(JSON.stringify(this.rotatedAreas)))
 		const objAxis = isRotate ? JSON.parse(JSON.stringify(this.rotatedAreas))
 			: JSON.parse(JSON.stringify(this.notRotatedAreas))
 		const suited:tSuitedItem[] = objAxis.filter((e: axisData) => e.longer >= size)

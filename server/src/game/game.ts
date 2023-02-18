@@ -6,6 +6,7 @@ import {PlayerController} from "./playerController";
 import RandomShips from "./random/RandomShipsServer";
 import RandomShipsServer from "./random/RandomShipsServer";
 import {ShipsCount} from "../../../client/src/reducer/shipsReducer";
+import { emptyState } from "../utils/fieldGenerator";
 
 const botShip: IShip[] = [{
 	position: {x: 0, y: 0},
@@ -35,7 +36,7 @@ export class Game {
 	size = 0;
 	onFinishGame:(winPlayer: number)=>void;
 
-	constructor(users: IClient[], id: string, finishGame:(connection?:connection)=>void) {
+	constructor(users: IClient[], id: string, finishGame:(id?:number)=>void) {
 		this.users = users;
 		this.id = id;
 		this.users.forEach((c, ind) => {
@@ -45,7 +46,7 @@ export class Game {
 		})
 		this.onFinishGame = (winPlayer)=>{
 			if(this.users[winPlayer]){
-				finishGame(this.users[winPlayer].connection);	
+				finishGame(this.users[winPlayer].index);	
 			}
 			
 		}
@@ -77,10 +78,11 @@ export class Game {
 
 	}
 
-	startSingleGame(data: { board: number[][], shipsToPut: Record<string, number> }) {
+	startSingleGame() {
 		this.playerControllers.set(1, new BotController(1, (position, status, isChangeCurrent) => this.sendMessageAttack(position, status, isChangeCurrent), (id) => this.finishGame(id)));
-		const ran = new RandomShipsServer(data.shipsToPut)
-		const t = ran.putRandomShips(data.board);
+		const ran = new RandomShipsServer({ huge: 1, large: 2, medium: 3, small: 4 })
+		const t = ran.putRandomShips(emptyState());
+		//console.log('botShip', t)
 		this.addShip(t, 1);
 	}
 

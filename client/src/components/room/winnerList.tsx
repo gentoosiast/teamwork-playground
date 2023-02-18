@@ -19,27 +19,40 @@ const WinnerContainer =styled.div`
     background-color: ${backGroundColorOpacity} ;
 `
 
-const Table = styled.table`
-   //border: 1px solid black;
+const Table = styled.table` 
+    width: 100%;
+    border-collapse: collapse;   
+    text-align: center;
 `;
+const TD = styled.td`
+    border: 1px solid ${generalColor};
+`;
+const TH = styled.th`
+    border: 1px solid ${generalColor};
+`
 const WinnerList = ()=>{
     const winners = useSelector((state: IWinnerStore) => state.winnerData.winners);
     const content = !winners.length?'':
     (<WinnerContainer>
         <SubTitle>Best players</SubTitle>
         <Table>
-            <tr key={0}>
-                <th>N</th>
-                <th>Name</th>
-                <th>Poins</th>
-            </tr>
+            <thead>
+                <tr key={0}>
+                    <TH>N</TH>
+                    <TH>Name</TH>
+                    <TH>Poins</TH>
+                </tr>
+            </thead>            
         {winners.map((it,ind)=>{
             return(
-            <tr key={ind+1}>
-                <td>{ind+1}</td>
-                <td>{it.name}</td>
-                <td>{it.wins}</td>
-            </tr>
+                <tbody key={ind+1}>
+                    <tr key={ind+1}>
+                        <TD>{ind+1}</TD>
+                        <TD>{it.name}</TD>
+                        <TD>{it.wins}</TD>
+                    </tr>
+                </tbody>
+           
             )
         })}
     </Table>

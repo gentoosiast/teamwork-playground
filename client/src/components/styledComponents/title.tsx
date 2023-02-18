@@ -31,7 +31,7 @@ interface ITitle{
     textAlign?: string;
 }
 const Title = ({children,textAlign}:ITitle)=>{
-    return (<TitleComponent>
+    return (<TitleComponent textAlign={textAlign}>
         {children} 
     </TitleComponent>)
 }

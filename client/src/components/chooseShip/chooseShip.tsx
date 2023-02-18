@@ -1,6 +1,6 @@
 
 import SubTitle from '../styledComponents/subTitle'
-import React, {useRef, useState} from 'react';
+import React, {useEffect, useRef, useState} from 'react';
 import {useSelector} from 'react-redux';
 import {IShip, IUserInitialData, ShipsSizes,tShipCanvas} from '../../dto';
 import Wrapper from '../styledComponents/wrapper'
@@ -22,6 +22,7 @@ interface IUserStore {
 const ChooseShip = ({socket, imagesObj}: IChooseShip) => {
 	const idGame = useSelector((state: IUserStore) => state.userData.idGames)
 	const shipsOnCanvas= useSelector((state:IShipsStore)=>state.shipsData.shipsOnCanvas)
+	console.log(shipsOnCanvas)
 	return (<>
 		<ChooseComponent imagesObj={imagesObj} onStartGame={()=>{
 			const toIShip:IShip[]=shipsOnCanvas.map(sh=>{
