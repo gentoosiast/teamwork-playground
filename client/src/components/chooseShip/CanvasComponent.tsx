@@ -8,7 +8,8 @@ import {fillCells, clearHovered, setMoveAdded, IBoardStore, fillAreaCells} from 
 import {imagesObjType} from "../application/app";
 import RandomShips from "./canvasComponents/RandomShips";
 import Sound from '../../utils/sound'
-export const CanvasComponent = ({imagesObj}: { imagesObj: imagesObjType }) => {
+export const CanvasComponent = ({imagesObj,isRotateInput}: { imagesObj: imagesObjType ,isRotateInput?:boolean}) => {
+	console.log("ISR",isRotateInput)
 	const canvasRef = useRef(null)
 	const dispatch = useDispatch<AppDispatch>()
 	const shipsOnCanvas = useSelector((state: IShipsStore) => state.shipsData.shipsOnCanvas)
@@ -60,6 +61,8 @@ export const CanvasComponent = ({imagesObj}: { imagesObj: imagesObjType }) => {
 	useEffect(() => canvSection?.addActiveShip(activeShip), [activeShip]);
 	useEffect(() => canvSection?.setRotate(isRotated), [isRotated]);
 	return (
+		<>
 		<div ref={canvasRef}/>
+		</>
 	)
 }

@@ -39,6 +39,9 @@ const shipsReducer = createSlice({
 		isRotateShip(state){
 			state.isRotate=!state.isRotate
 		},
+		rotateInput(state,action:PayloadAction<boolean>){
+			state.isRotate=action.payload
+		},
 		setActiveShip(state,action:PayloadAction<string>){
 			state.activeShip=action.payload
 		},
@@ -71,6 +74,6 @@ const shipsReducer = createSlice({
 
 const { actions, reducer } = shipsReducer;
 
-export const {isRotateShip,addShip,setActiveShip,setAutoPut,setDecShip,randomRotate,setShipsOnCanvas,cleanShips} = actions;
+export const {isRotateShip,addShip,setActiveShip,setAutoPut,setDecShip,randomRotate,rotateInput,setShipsOnCanvas,cleanShips} = actions;
 
 export default reducer;

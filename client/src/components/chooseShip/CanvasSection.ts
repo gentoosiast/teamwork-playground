@@ -36,6 +36,7 @@ export class CanvasSection extends Control {
 							onAddShip: (ship: tShipCanvas) => void
 	) {
 		super(parentNode);
+		console.log(isRotated,'CANVAISrot')
 		this.isRandomMode = false
 		this.isRotated = false
 		this.activeShip = activeShip
