@@ -21,7 +21,7 @@ export class SocketModel {
     websocket.onmessage = (msg) => {
       const parsedMsg: IMessage = JSON.parse(msg.data);
       const parsedData = parsedMsg.data;
-     console.log(parsedMsg)
+     //console.log(parsedMsg)
       switch (parsedMsg.type) {
         // case 'chat_message': {
 
@@ -56,7 +56,7 @@ export class SocketModel {
           dispatch(setWinner({winner:false}));
           const {ships,currentPlayerIndex} = JSON.parse(parsedMsg.data);
           const shipForClient = emptyState();
-          console.log('SOCKET', ships)
+         // console.log('SOCKET', ships)
           ships.forEach((ship:IShip) => {
                 for (let i = 0; i < ship.length; i++) {
                   if (!ship.direction) {
@@ -92,7 +92,7 @@ export class SocketModel {
         }
         case 'update_winners':{
           const winners=JSON.parse(parsedData);
-          console.log(winners)
+         // console.log(winners)
           dispatch(setWinners({winners}));
           break;
         }

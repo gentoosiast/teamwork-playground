@@ -22,10 +22,13 @@ export class IPlayerController{
           finishGame(winPlayer)
         }
     }
-    startGame(){}
+    startGame(){
+      //console.log(this.ourShips,'OUrships')
+    }
     nextRound(){}
 
     addOurShips(ships: IShip[]){
+      console.log('11111-----addOurShips',ships)
         this.ourShips = ships;
     }
 
